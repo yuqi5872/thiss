@@ -280,6 +280,57 @@ tbody tr.featured td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
 .disclaimer { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 15px; font-size: 12px; color: var(--ink-mute); margin-top: 18px; line-height: 1.7; }
 .age-tag { display: inline-flex; align-items: center; font-weight: 800; color: var(--red); }
 
+/* ---------- Floating ad ---------- */
+.float-ad {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 80;
+  width: min(230px, calc(100vw - 28px));
+  border-radius: 14px;
+  box-shadow: 0 16px 44px rgba(12,18,40,.24);
+}
+.float-ad[hidden] { display: none; }
+.float-ad a {
+  display: block;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.35);
+  background: #12152a;
+}
+.float-ad img { width: 100%; height: auto; display: block; }
+.float-ad-close {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(255,255,255,.55);
+  border-radius: 50%;
+  background: rgba(20,25,38,.9);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+}
+.float-ad-close:hover { background: rgba(12,16,26,.96); }
+
+@media (max-width: 599px) {
+  .float-ad {
+    right: 10px;
+    bottom: 10px;
+    width: min(160px, calc(100vw - 20px));
+  }
+  .float-ad-close {
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+  }
+}
+
 /* =========================================================
    ≥ 600px：小平板／橫向手機 — 加上多欄與並排
    ========================================================= */

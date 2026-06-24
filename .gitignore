@@ -1,0 +1,11 @@
+# 本機預覽設定（CF 部署不需要）
+.claude/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# 編輯器
+.vscode/
+.idea/
+*.swp

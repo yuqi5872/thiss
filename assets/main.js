@@ -15,4 +15,16 @@
       if (nav) nav.classList.remove('open');
     });
   });
+
+  var floatAd = document.querySelector('.float-ad');
+  if (floatAd && window.sessionStorage.getItem('ys368FloatAdClosed') === '1') {
+    floatAd.hidden = true;
+  }
+  var floatAdClose = document.querySelector('.float-ad-close');
+  if (floatAdClose && floatAd) {
+    floatAdClose.addEventListener('click', function () {
+      floatAd.hidden = true;
+      window.sessionStorage.setItem('ys368FloatAdClosed', '1');
+    });
+  }
 })();
