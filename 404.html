@@ -9,32 +9,97 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css?v=20260624-4">
+<style>
+  :root{
+    --navy:#0f1b3d; --navy2:#1c2c5e; --ink:#1a2238; --ink-soft:#5b6478; --gold:#d4af37;
+    --line:#e4e8f0; --bg-soft:#f5f7fb; --blue:#2f5fff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;
+    color:#1a2238; background:#fff;
+    min-height:100vh; display:flex; flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{text-decoration:none}
+  .nf-header{
+    border-bottom:1px solid #e4e8f0; background:#fff;
+  }
+  .nf-header .in{
+    max-width:1080px; margin:0 auto; padding:16px 20px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .nf-header img{height:38px; width:auto; display:block}
+  .nf-header .brand-txt{font-weight:900; font-size:18px; color:#0f1b3d; letter-spacing:.02em}
+  .nf-main{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:56px 24px 72px;
+    background:
+      radial-gradient(120% 90% at 50% 0%, rgba(212,175,55,.10), transparent 60%),
+      linear-gradient(180deg,#fff 0%,#f5f7fb 100%);
+  }
+  .nf-eye{
+    width:62px;height:62px;border-radius:50%;
+    background:linear-gradient(135deg,#0f1b3d,#1c2c5e);
+    display:grid;place-items:center;margin-bottom:22px;
+    box-shadow:0 10px 30px rgba(15,27,61,.25);
+  }
+  .nf-eye span{font-size:30px;line-height:1}
+  .nf-404{
+    font-size:clamp(84px,20vw,150px); font-weight:900; line-height:.9;
+    background:linear-gradient(135deg,#d4af37 0%,#f0d98a 50%,#bf962b 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    letter-spacing:.02em; margin-bottom:6px;
+    text-shadow:0 2px 30px rgba(212,175,55,.2);
+  }
+  .nf-title{font-size:clamp(21px,4.5vw,30px); font-weight:900; color:#0f1b3d; margin-bottom:12px}
+  .nf-desc{font-size:15.5px; color:#5b6478; line-height:1.7; max-width:440px; margin-bottom:30px}
+  .nf-btns{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+  .nf-btn{
+    display:inline-block; padding:13px 26px; border-radius:12px; font-weight:800; font-size:15px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .nf-btn.primary{background:linear-gradient(135deg,#2f5fff,#1c46d6); color:#fff; box-shadow:0 8px 22px rgba(47,95,255,.28)}
+  .nf-btn.ghost{background:#fff; color:#1a2238; border:1.5px solid #e4e8f0}
+  .nf-btn:hover{transform:translateY(-2px)}
+  .nf-btn.primary:hover{box-shadow:0 12px 28px rgba(47,95,255,.36)}
+  .nf-links{margin-top:34px; font-size:14px; color:#8a93a6}
+  .nf-links a{color:#2f5fff; font-weight:700; margin:0 8px}
+  .nf-links a:hover{text-decoration:underline}
+  .nf-footer{
+    border-top:1px solid #e4e8f0; text-align:center;
+    padding:20px; font-size:13px; color:#8a93a6; background:#fff;
+  }
+</style>
 </head>
 <body>
-<header class="site-header">
-  <div class="wrap nav">
-    <a href="/" class="brand"><img src="/assets/img/logo-header.webp" alt="電子遊戲觀測所 — 獨立老虎機數據評測" class="brand-logo"></a>
-    <button class="nav-toggle" aria-label="選單" onclick="document.getElementById('nav').classList.toggle('open')"><span></span><span></span><span></span></button>
-    <nav class="nav-links" id="nav">
-      <a href="/">首頁</a>
-      <a href="/storm-of-seth/">戰神賽特評測</a>
-      <a href="/rtp-ranking/">RTP 排行榜</a>
-      <a href="/guides/">老虎機攻略</a>
-      <a href="/about/">關於我們</a>
-    </nav>
-  </div>
+
+<header class="nf-header">
+  <a class="in" href="/">
+    <img src="/assets/img/logo-header.webp" alt="電子遊戲觀測所" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+    <span class="brand-txt" style="display:none">電子遊戲觀測所</span>
+  </a>
 </header>
-<div class="wrap" style="max-width:720px;text-align:center;padding:64px 20px 80px;">
-  <div style="font-size:clamp(64px,16vw,120px);font-weight:900;color:var(--accent,#d4af37);line-height:1;">404</div>
-  <h1 style="font-size:clamp(20px,4vw,28px);font-weight:900;margin:14px 0 10px;">這台機器不在線上</h1>
-  <p style="color:var(--ink-soft);font-size:15.5px;margin-bottom:28px;">你要找的頁面可能已移除或網址有誤。換條路試試：</p>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-    <a href="/" class="btn btn-primary">回首頁</a>
-    <a href="/rtp-ranking/" class="btn">RTP 排行榜</a>
-    <a href="/guides/" class="btn">老虎機攻略</a>
+
+<main class="nf-main">
+  <div class="nf-eye"><span>👁️</span></div>
+  <div class="nf-404">404</div>
+  <h1 class="nf-title">這台機器不在線上</h1>
+  <p class="nf-desc">你要找的頁面可能已移除、改名，或網址打錯了。<br>別空手而回，從這裡接著逛：</p>
+  <div class="nf-btns">
+    <a href="/" class="nf-btn primary">回首頁</a>
+    <a href="/rtp-ranking/" class="nf-btn ghost">RTP 排行榜</a>
+    <a href="/guides/" class="nf-btn ghost">老虎機攻略</a>
   </div>
-</div>
-<footer class="site-footer"><div class="wrap"><div class="foot-bottom"><span>© 2026 電子遊戲觀測所・獨立數據評測</span></div></div></footer>
+  <div class="nf-links">
+    熱門：
+    <a href="/storm-of-seth/">戰神賽特評測</a>·
+    <a href="/guides/atg/">ATG 電子</a>·
+    <a href="/guides/slot-rtp/">RTP 是什麼</a>
+  </div>
+</main>
+
+<footer class="nf-footer">© 2026 電子遊戲觀測所・獨立數據評測</footer>
+
 </body>
 </html>
