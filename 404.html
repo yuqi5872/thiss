@@ -38,13 +38,12 @@
       radial-gradient(120% 90% at 50% 0%, rgba(212,175,55,.10), transparent 60%),
       linear-gradient(180deg,#fff 0%,#f5f7fb 100%);
   }
-  .nf-eye{
-    width:62px;height:62px;border-radius:50%;
-    background:linear-gradient(135deg,#0f1b3d,#1c2c5e);
-    display:grid;place-items:center;margin-bottom:22px;
-    box-shadow:0 10px 30px rgba(15,27,61,.25);
+  .nf-badge{
+    width:118px;height:118px;margin-bottom:18px;
+    filter:drop-shadow(0 14px 32px rgba(15,27,61,.28));
+    animation:nfFloat 3.2s ease-in-out infinite;
   }
-  .nf-eye span{font-size:30px;line-height:1}
+  @keyframes nfFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
   .nf-404{
     font-size:clamp(84px,20vw,150px); font-weight:900; line-height:.9;
     background:linear-gradient(135deg,#d4af37 0%,#f0d98a 50%,#bf962b 100%);
@@ -82,7 +81,7 @@
 </header>
 
 <main class="nf-main">
-  <div class="nf-eye"><span>👁️</span></div>
+  <img class="nf-badge" src="/assets/img/logo-badge.webp" alt="電子遊戲觀測所" width="118" height="118">
   <div class="nf-404">404</div>
   <h1 class="nf-title">這台機器不在線上</h1>
   <p class="nf-desc">你要找的頁面可能已移除、改名，或網址打錯了。<br>別空手而回，從這裡接著逛：</p>
