@@ -9,3 +9,8 @@
 .vscode/
 .idea/
 *.swp
+
+# 內部規劃文件（不部署）
+長尾關鍵字作戰表.md
+*.md
+!llms.txt
