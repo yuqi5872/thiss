@@ -1,0 +1,36 @@
+# 電子遊戲觀測所（tsaishen888.com）
+
+> 獨立老虎機數據評測站。實測 RTP、波動率、爆分機制，幫玩家在下注前看懂數字。本站不經營博弈平台，資料以官方與多家實測比對為準，未取得一致數據者標「查證中」。主筆：陳柏宇（老虎機數據研究 8 年）。
+
+## 攻略（基礎概念）
+- [老虎機 RTP 是什麼？怎麼看、多少才算高](https://tsaishen888.com/guides/slot-rtp/): RTP 定義、判讀標準與查詢方法
+- [老虎機波動率（波幅）是什麼？高低波動該選哪個](https://tsaishen888.com/guides/slot-volatility/): 高低波動差異與依資金選台
+- [老虎機電子商比較：ATG／RSG／PG／BNG／RG 五大特性](https://tsaishen888.com/guides/slot-providers/): 五大電子商定位與代表作
+- [老虎機攻略總覽](https://tsaishen888.com/guides/): 所有攻略與評測入口
+
+## 電子商介紹
+- [PG 電子完整介紹](https://tsaishen888.com/guides/pg/): Fortune Tiger、麻將胡了，行動優先國際大廠，組合平均 RTP 96.73%
+- [RSG 皇家電子完整介紹](https://tsaishen888.com/guides/rsg/): 雷神之錘、美狄亞、狗來富，2016 成立 GLI 認證
+- [BNG 電子完整介紹](https://tsaishen888.com/guides/bng/): 天宮聖女、集鴻運機制，前身 Booongo 的 3D 大廠
+- [RG 電子完整介紹](https://tsaishen888.com/guides/rg/): 屠龍勇者、奇幻魔藥，自選機台首創、RTP 偏高
+
+## 戰神賽特（ATG）
+- [戰神賽特評測](https://tsaishen888.com/storm-of-seth/): ATG 招牌，RTP 96.89%、最高 51,000x、分裂符號機制
+- [戰神賽特2 覺醒之力評測](https://tsaishen888.com/storm-of-seth-2/): RTP 96.89%、最高 81,000x、黃金免費遊戲
+- [戰神賽特新手教學](https://tsaishen888.com/guides/storm-of-seth-beginner/): 玩法規則、免費遊戲、資金建議
+- [戰神賽特訊號怎麼看](https://tsaishen888.com/guides/seth-signal/): 七巧板、六眼、聖甲蟲與咬補分節奏（非破解，是時機判讀）
+
+## 單款遊戲評測
+- [Fortune Tiger 財神評測](https://tsaishen888.com/fortune-tiger/): PG，RTP 96.81%、最高 2,500x、respin 滿版
+- [麻將胡了評測](https://tsaishen888.com/mahjong-ways/): PG，RTP 96.92%、黃金百搭與遞增倍數
+- [雷神之錘評測](https://tsaishen888.com/thors-hammer/): RSG，官方 RTP 97.90%、最高 51,000x、隨處支付
+- [奇幻魔藥評測](https://tsaishen888.com/fantasy-potion/): RG，RTP 98.28%、最高 20,000x、魔藥缸蜂巢機制
+- [屠龍勇者評測](https://tsaishen888.com/dragon-slayer/): RG，RTP 98.08%、最高 51,000x、Blitz 狂暴模式
+- [大法師評測](https://tsaishen888.com/great-mage/): RG，RTP 97.80%、最高 10,000x、中低波動經典
+- [天宮聖女評測](https://tsaishen888.com/sky-palace-lady/): BNG，RTP 97.98%、集鴻運倍數球
+- [孫行者評測](https://tsaishen888.com/sun-wukong/): ATG，官方 RTP 96.7%、最高 3,000x、西遊玩法
+- [武俠評測](https://tsaishen888.com/wuxia/): ATG，官方 RTP 97%、最高 100,000x
+
+## 排行 / 關於
+- [電子老虎機 RTP 排行榜](https://tsaishen888.com/rtp-ranking/): 各電子商高回報率遊戲比較
+- [關於電子遊戲觀測所](https://tsaishen888.com/about/): 評測方法論與編輯立場

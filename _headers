@@ -1,0 +1,13 @@
+# 靜態資產：長快取（檔名帶版本或改名才會更新，避免舊圖卡住）
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML：短快取 + 每次驗證（改頁能即時生效）
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# 安全標頭
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
