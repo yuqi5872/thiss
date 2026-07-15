@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/seth-session.css?v=20260715-1">
+<link rel="stylesheet" href="/assets/seth-session.css?v=20260715-3">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -57,8 +57,11 @@
     <a class="session-brand" href="/" aria-label="電子遊戲觀測所首頁">
       <span class="brand-glyph">觀</span><span class="brand-copy"><b>電子遊戲觀測所</b><small>戰神賽特戰局計算器</small></span>
     </a>
-    <div class="truth-mark" id="truth-mark"><i></i>本機記錄・不預測結果</div>
-    <div class="live-status" id="live-status" hidden><i></i><span>場次進行中</span><strong id="elapsed">00:00:00</strong><button type="button" id="end-session">結束本場</button></div>
+    <div class="topbar-actions">
+      <button class="guide-trigger" type="button" id="open-guide" aria-haspopup="dialog"><span>?</span>使用教學</button>
+      <div class="truth-mark" id="truth-mark"><i></i>本機記錄・不預測結果</div>
+      <div class="live-status" id="live-status" hidden><i></i><span>場次進行中</span><strong id="elapsed">00:00:00</strong><button type="button" id="end-session">結束本場</button></div>
+    </div>
   </header>
 
   <section class="session-setup stage-enter" id="setup-view">
@@ -140,8 +143,27 @@
   </section>
 
   <footer class="session-footer"><span>資料僅保存在本機</span><strong>本工具不提高勝率、不預測爆分，也不替你選擇是否繼續。</strong></footer>
+  <div class="guide-overlay" id="guide-overlay" hidden>
+    <section class="guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guide-title" aria-describedby="guide-copy">
+      <div class="guide-head">
+        <div><span class="guide-kicker">新手導覽</span><b id="guide-progress">第 1 步／共 4 步</b></div>
+        <button type="button" class="guide-close" id="guide-close" aria-label="關閉使用教學">×</button>
+      </div>
+      <div class="guide-visual" id="guide-visual" aria-hidden="true"></div>
+      <div class="guide-body">
+        <span class="guide-step-number" id="guide-step-number">01</span>
+        <div><h2 id="guide-title">先建立這一場的基準</h2><p id="guide-copy">輸入開場本金、目前注額、停損與獲利目標。後面所有淨利與回撤都會以這組數字計算。</p></div>
+      </div>
+      <div class="guide-example" id="guide-example"><small>範例</small><span>開場本金 $2,000・停損 $1,000</span></div>
+      <div class="guide-dots" id="guide-dots" aria-label="教學進度"></div>
+      <div class="guide-actions">
+        <button type="button" class="guide-skip" id="guide-skip">跳過教學</button>
+        <div><button type="button" class="guide-back" id="guide-back" disabled>上一步</button><button type="button" class="guide-next" id="guide-next">下一步 <span>→</span></button></div>
+      </div>
+    </section>
+  </div>
   <div class="sr-only" aria-live="polite" id="status-announcer"></div>
 </main>
-<script src="/assets/seth-session.js?v=20260715-1" defer></script>
+<script src="/assets/seth-session.js?v=20260715-3" defer></script>
 </body>
 </html>

@@ -1,8 +1,10 @@
 (function(){
   'use strict';
   var STORAGE_KEY='tsaishen888-seth-session-v1';
+  var GUIDE_KEY='tsaishen888-seth-guide-seen-v1';
   var SCENES={setup:'/assets/videos/scene-01-desert-entrance.mp4',active:'/assets/videos/scene-02-gate-of-capital.mp4',danger:'/assets/videos/scene-03-scarab-storm-chamber.mp4',ended:'/assets/videos/scene-04-ai-core-sanctuary.mp4'};
   var session=null,timer=null;
+  var guideStep=0,guideLastFocus=null;
   var el=function(id){return document.getElementById(id)};
   var num=function(id){return Math.max(0,Number(el(id).value)||0)};
   var money=function(value){return new Intl.NumberFormat('zh-TW',{maximumFractionDigits:2}).format(Math.abs(value||0))};
@@ -10,6 +12,18 @@
   var eventId=function(){return Date.now()+'-'+Math.random().toString(36).slice(2,7)};
   var announce=function(text){el('status-announcer').textContent=text};
   var track=function(name,params){if(typeof window.gtag==='function')window.gtag('event',name,params||{})};
+  var GUIDE_STEPS=[
+    {title:'先建立這一場的基準',copy:'輸入開場本金、目前注額、停損與獲利目標。後面所有淨利與回撤都會以這組數字計算。',example:'開場本金 $2,000・停損 $1,000'},
+    {title:'餘額有變化時再記錄',copy:'不用每一轉都輸入。當你想確認戰況時，把當下餘額填入並按「記錄」，工具就會重算真實淨利。',example:'$2,000 → $1,500，真實淨利是 −$500'},
+    {title:'買免遊要同時記成本與回收',copy:'輸入這次買免遊花了多少、最後回收多少。系統會把差額直接納入本場餘額與時間線。',example:'成本 $300・回收 $180，本次結果 −$120'},
+    {title:'最後看的是淨利，不是單次回收',copy:'中央會顯示回本距離、最大回撤與停損使用率；右側只比較下一步需要再投入多少，不預測結果。',example:'回收 $500 不等於獲利 $500，要先扣掉本金與成本'}
+  ];
+  var GUIDE_VISUALS=[
+    '<div class="real-guide-shot main-shot"><img src="/assets/img/storm-of-seth-2-guide-composite.png" alt="戰神賽特2 實際遊戲畫面與購買特色畫面"><span>實際畫面・先找「點數」與「押注」</span></div>',
+    '<div class="game-reference"><small>畫面對照・戰神賽特2</small><div class="balance-flow"><span><em>原本點數</em><strong>2,000</strong></span><i>→</i><span class="changed"><em>現在點數</em><strong>1,500</strong></span></div><div class="tool-map"><b>填入「目前餘額」</b><span>工具自動計算淨利 −$500</span></div></div>',
+    '<div class="real-guide-shot purchase-shot"><img src="/assets/img/storm-of-seth-2-guide-composite.png" alt="戰神賽特2 實際購買特色選單，顯示 400、1,000 與 4,000 三種成本"><span>實際畫面・將選擇的價格填入「買免遊成本」</span></div>',
+    '<div class="result-reference"><small>工具結果對照</small><div><span><em>單次回收</em><strong>$500</strong><b>不代表獲利</b></span><i>≠</i><span class="truth"><em>本場真正淨利</em><strong>−$500</strong><b>餘額 − 開場本金</b></span></div></div>'
+  ];
 
   function duration(start,end){var seconds=Math.max(0,Math.floor((end-start)/1000)),hours=Math.floor(seconds/3600),minutes=Math.floor((seconds%3600)/60),rest=seconds%60;return[hours,minutes,rest].map(function(part){return String(part).padStart(2,'0')}).join(':')}
   function metrics(){var start=session.config.startingBankroll,net=session.currentBalance-start,loss=Math.max(0,-net),target=start+session.config.profitTarget;return{net:net,netPercent:ratio(net,start),breakEvenGap:Math.max(0,start-session.currentBalance),targetBalance:target,targetGap:Math.max(0,target-session.currentBalance),drawdown:ratio(Math.max(0,start-session.lowestBalance),start),lossLimitUsed:session.config.lossLimit>0?ratio(loss,session.config.lossLimit):0}}
@@ -32,5 +46,12 @@
   function resetSession(){session=null;save();['starting-bankroll','starting-bet','loss-limit','profit-target'].forEach(function(id,index){el(id).value=[2000,6,1000,500][index]});renderSetup();toggleState('setup');announce('已清除上一場記錄')}
   function restore(){try{session=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')}catch(error){session=null}if(!session){toggleState('setup');renderSetup();track('session_tool_open');return}el('balance-draft').value=session.currentBalance;el('bet-draft').value=session.currentBet;el('compare-bet').value=session.currentBet;if(session.status==='ended'){toggleState('ended');renderSummary()}else{toggleState('active');renderActive();startTimer()}track('session_tool_open',{restored_session:true})}
 
-  el('setup-form').addEventListener('submit',startSession);['starting-bankroll','starting-bet','loss-limit','profit-target'].forEach(function(id){el(id).addEventListener('input',renderSetup)});el('update-balance').addEventListener('click',updateBalance);el('update-bet').addEventListener('click',updateBet);el('record-feature').addEventListener('click',recordFeature);el('end-session').addEventListener('click',endSession);el('reset-session').addEventListener('click',resetSession);['compare-spins','compare-bet','compare-feature'].forEach(function(id){el(id).addEventListener('input',function(){if(session)renderCompare(metrics())})});restore();
+  function renderGuide(){var step=GUIDE_STEPS[guideStep];el('guide-progress').textContent='第 '+(guideStep+1)+' 步／共 '+GUIDE_STEPS.length+' 步';el('guide-step-number').textContent=String(guideStep+1).padStart(2,'0');el('guide-title').textContent=step.title;el('guide-copy').textContent=step.copy;el('guide-example').querySelector('span').textContent=step.example;el('guide-visual').setAttribute('data-step',String(guideStep));el('guide-visual').innerHTML=GUIDE_VISUALS[guideStep];el('guide-dots').innerHTML=GUIDE_STEPS.map(function(_,index){return'<i class="'+(index===guideStep?'active':'')+'"></i>'}).join('');el('guide-back').disabled=guideStep===0;el('guide-next').innerHTML=guideStep===GUIDE_STEPS.length-1?'開始使用 <span>✓</span>':'下一步 <span>→</span>'}
+  function openGuide(){guideLastFocus=document.activeElement;guideStep=0;renderGuide();el('guide-overlay').hidden=false;el('guide-close').focus();track('guide_open')}
+  function closeGuide(completed){el('guide-overlay').hidden=true;localStorage.setItem(GUIDE_KEY,'1');if(guideLastFocus&&guideLastFocus.focus)guideLastFocus.focus();track(completed?'guide_complete':'guide_skip')}
+  function nextGuide(){if(guideStep<GUIDE_STEPS.length-1){guideStep+=1;renderGuide();return}closeGuide(true)}
+  function previousGuide(){if(guideStep>0){guideStep-=1;renderGuide()}}
+  function guideKeyboard(event){if(el('guide-overlay').hidden)return;if(event.key==='Escape')closeGuide(false);if(event.key==='ArrowRight')nextGuide();if(event.key==='ArrowLeft')previousGuide()}
+
+  el('setup-form').addEventListener('submit',startSession);['starting-bankroll','starting-bet','loss-limit','profit-target'].forEach(function(id){el(id).addEventListener('input',renderSetup)});el('update-balance').addEventListener('click',updateBalance);el('update-bet').addEventListener('click',updateBet);el('record-feature').addEventListener('click',recordFeature);el('end-session').addEventListener('click',endSession);el('reset-session').addEventListener('click',resetSession);['compare-spins','compare-bet','compare-feature'].forEach(function(id){el(id).addEventListener('input',function(){if(session)renderCompare(metrics())})});el('open-guide').addEventListener('click',openGuide);el('guide-close').addEventListener('click',function(){closeGuide(false)});el('guide-skip').addEventListener('click',function(){closeGuide(false)});el('guide-next').addEventListener('click',nextGuide);el('guide-back').addEventListener('click',previousGuide);document.addEventListener('keydown',guideKeyboard);restore();if(!localStorage.getItem(GUIDE_KEY))setTimeout(openGuide,450);
 })();
