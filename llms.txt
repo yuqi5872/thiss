@@ -16,6 +16,7 @@
 
 ## 戰神賽特（ATG）
 - [戰神賽特評測](https://tsaishen888.com/storm-of-seth/): ATG 招牌，RTP 96.89%、最高 51,000x、分裂符號機制
+- [戰神賽特戰局計算器](https://tsaishen888.com/tools/storm-of-seth-session/): 記錄單場本金、餘額、注額與買免遊結果，即時計算淨利、回本距離、最大回撤與停損使用率；資料僅存本機，不預測爆分
 - [戰神賽特2 覺醒之力評測](https://tsaishen888.com/storm-of-seth-2/): RTP 96.89%、最高 81,000x、黃金免費遊戲
 - [戰神賽特新手教學](https://tsaishen888.com/guides/storm-of-seth-beginner/): 玩法規則、免費遊戲、資金建議
 - [戰神賽特訊號怎麼看](https://tsaishen888.com/guides/seth-signal/): 七巧板、六眼、聖甲蟲與咬補分節奏（非破解，是時機判讀）

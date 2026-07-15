@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XCBKJTBVTL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XCBKJTBVTL');
+</script>
+<title>戰神賽特戰局計算器｜即時淨利、回本距離與停損｜電子遊戲觀測所</title>
+<meta name="description" content="免費的戰神賽特戰局計算器：記錄本金、餘額、注額與買免遊結果，即時計算真實淨利、回本距離、最大回撤與停損使用率。資料只儲存在本機。">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tsaishen888.com/tools/storm-of-seth-session/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="戰神賽特戰局計算器｜別把回收當獲利">
+<meta property="og:description" content="輸入本金與餘額，即時看淨利、回本距離、回撤與下一步成本。">
+<meta property="og:url" content="https://tsaishen888.com/tools/storm-of-seth-session/">
+<meta property="og:image" content="https://tsaishen888.com/assets/img/storm-of-seth-og.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tsaishen888.com/assets/img/storm-of-seth-og.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/seth-session.css?v=20260715-1">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"戰神賽特戰局計算器",
+  "url":"https://tsaishen888.com/tools/storm-of-seth-session/",
+  "description":"記錄戰神賽特單場餘額與注額，計算淨利、回本距離、最大回撤與停損使用率。",
+  "applicationCategory":"UtilitiesApplication",
+  "operatingSystem":"Any",
+  "browserRequirements":"Requires JavaScript and local storage",
+  "inLanguage":"zh-Hant-TW",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"TWD"},
+  "publisher":{"@type":"Organization","name":"電子遊戲觀測所","url":"https://tsaishen888.com/"}
+}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://tsaishen888.com/"},{"@type":"ListItem","position":2,"name":"戰神賽特評測","item":"https://tsaishen888.com/storm-of-seth/"},{"@type":"ListItem","position":3,"name":"戰局計算器","item":"https://tsaishen888.com/tools/storm-of-seth-session/"}]}
+</script>
+</head>
+<body>
+<main class="session-stage session-setup-state" id="session-app">
+  <video class="scene-video" id="scene-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
+    <source id="scene-source" src="/assets/videos/scene-01-desert-entrance.mp4" type="video/mp4">
+  </video>
+  <div class="stage-shade" aria-hidden="true"></div>
+
+  <header class="session-topbar">
+    <a class="session-brand" href="/" aria-label="電子遊戲觀測所首頁">
+      <span class="brand-glyph">觀</span><span class="brand-copy"><b>電子遊戲觀測所</b><small>戰神賽特戰局計算器</small></span>
+    </a>
+    <div class="truth-mark" id="truth-mark"><i></i>本機記錄・不預測結果</div>
+    <div class="live-status" id="live-status" hidden><i></i><span>場次進行中</span><strong id="elapsed">00:00:00</strong><button type="button" id="end-session">結束本場</button></div>
+  </header>
+
+  <section class="session-setup stage-enter" id="setup-view">
+    <div class="setup-copy">
+      <p class="section-kicker">ATG 戰神賽特・即時戰局計算台</p>
+      <h1>你現在是真的賺，<br>還是只是<em>回收？</em></h1>
+      <p>開始一場後，只要更新餘額與注額。工具會即時計算淨利、回本距離、最大回撤，以及下一步要再投入多少。</p>
+      <div class="tool-promise"><b>它不會告訴你哪台會爆。</b><span>它會告訴你每個選擇確定要花多少。</span></div>
+      <a class="review-link" href="/storm-of-seth/">查看戰神賽特 RTP 與機制資料 <span>↗</span></a>
+    </div>
+    <form class="setup-panel" id="setup-form">
+      <div class="panel-title"><span>建立本場基準</span><small>資料只存在這台裝置</small></div>
+      <div class="setup-fields">
+        <label><span>開場本金</span><div><b>$</b><input id="starting-bankroll" type="number" min="1" step="1" value="2000" inputmode="decimal" required></div></label>
+        <label><span>目前每轉注額</span><div><b>$</b><input id="starting-bet" type="number" min="0.01" step="0.01" value="6" inputmode="decimal" required></div></label>
+        <label><span>本場停損</span><div><b>−</b><input id="loss-limit" type="number" min="0" step="1" value="1000" inputmode="decimal"></div></label>
+        <label><span>想淨賺多少</span><div><b>＋</b><input id="profit-target" type="number" min="0" step="1" value="500" inputmode="decimal"></div></label>
+      </div>
+      <div class="setup-preview"><span>目標餘額</span><strong id="target-balance">$2,500</strong><small id="stop-balance">停損餘額 $1,000</small></div>
+      <button class="start-session" type="submit">開始記錄這一場 <span>→</span></button>
+    </form>
+  </section>
+
+  <section class="session-cockpit stage-enter" id="cockpit-view" hidden>
+    <aside class="control-panel tool-panel">
+      <div class="panel-title"><span>快速更新</span><small>只記變化，不用逐局輸入</small></div>
+      <div class="quick-form">
+        <label><span>目前餘額</span><div><b>$</b><input id="balance-draft" type="number" min="0" inputmode="decimal"><button type="button" id="update-balance">記錄</button></div></label>
+        <label><span>目前注額</span><div><b>$</b><input id="bet-draft" type="number" min="0.01" step="0.01" inputmode="decimal"><button type="button" id="update-bet">更新</button></div></label>
+      </div>
+      <div class="feature-form">
+        <span>記錄一次買免遊</span>
+        <label><small>成本</small><input id="feature-cost" type="number" min="0" value="300" inputmode="decimal"></label>
+        <label><small>回收</small><input id="feature-return" type="number" min="0" value="0" inputmode="decimal"></label>
+        <button type="button" id="record-feature">加入紀錄</button>
+      </div>
+      <div class="timeline"><div class="timeline-title">本場時間線</div><div id="timeline-list"></div></div>
+    </aside>
+
+    <section class="live-dashboard tool-panel">
+      <div class="net-hero"><span>本場真正淨利</span><strong id="net-result">+$0</strong><small id="net-copy">目前剛好打平</small></div>
+      <div class="dashboard-metrics">
+        <article><span>目前餘額</span><strong id="current-balance">$2,000</strong><small id="opening-balance">開場 2,000</small></article>
+        <article><span>距離獲利目標</span><strong id="target-gap">$500</strong><small id="target-copy">目標餘額 2,500</small></article>
+        <article><span>最大回撤</span><strong id="drawdown">0.0%</strong><small id="lowest-balance">最低餘額 2,000</small></article>
+        <article><span>停損額度已用</span><strong id="loss-used">0%</strong><small id="loss-copy">設定 −1,000</small></article>
+      </div>
+      <div class="limit-track"><i id="limit-fill"></i><span>0</span><b>停損線</b></div>
+      <p class="live-message" id="live-message">畫面只反映你已輸入的真實數字，不把回收誤認成獲利。</p>
+    </section>
+
+    <aside class="compare-panel tool-panel">
+      <div class="panel-title"><span>下一步成本比較</span><small>以下只算新增投入</small></div>
+      <div class="compare-inputs">
+        <label><span>比較局數</span><input id="compare-spins" type="number" min="1" max="500" value="50" inputmode="numeric"></label>
+        <label><span>考慮的新注額</span><input id="compare-bet" type="number" min="0.01" step="0.01" value="6" inputmode="decimal"></label>
+        <label><span>買免遊成本</span><input id="compare-feature" type="number" min="0" value="300" inputmode="decimal"></label>
+      </div>
+      <div class="compare-options">
+        <article><span id="continue-label">維持 6 再轉 50 局</span><strong id="continue-cost">新增 $300</strong><small id="continue-after">若無回收，餘額剩 $1,700</small></article>
+        <article id="change-option"><span id="change-label">改注 6 再轉 50 局</span><strong id="change-cost">新增 $300</strong><small id="change-diff">比原注額多 $0</small></article>
+        <article><span>買一次免費遊戲</span><strong id="feature-compare-cost">新增 $300</strong><small>至少回收同額才是打平</small></article>
+        <article class="stop-option"><span>現在結束</span><strong id="stop-result">+$0</strong><small>這是目前可以確定的本場結果</small></article>
+      </div>
+    </aside>
+  </section>
+
+  <section class="session-summary stage-enter" id="summary-view" hidden>
+    <p class="section-kicker">SESSION COMPLETE</p><h1>本場已結束</h1>
+    <div class="summary-result" id="summary-result">+$0</div>
+    <div class="summary-grid">
+      <div><span>遊玩時間</span><strong id="summary-time">00:00:00</strong></div>
+      <div><span>開場／結束</span><strong id="summary-balances">$2,000 → $2,000</strong></div>
+      <div><span>最大回撤</span><strong id="summary-drawdown">0.0%</strong></div>
+      <div><span>紀錄事件</span><strong id="summary-events">0 次</strong></div>
+    </div>
+    <button class="start-session summary-reset" type="button" id="reset-session">開始新的場次 <span>↻</span></button>
+    <a class="review-link" href="/storm-of-seth/">回到戰神賽特評測</a>
+  </section>
+
+  <footer class="session-footer"><span>資料僅保存在本機</span><strong>本工具不提高勝率、不預測爆分，也不替你選擇是否繼續。</strong></footer>
+  <div class="sr-only" aria-live="polite" id="status-announcer"></div>
+</main>
+<script src="/assets/seth-session.js?v=20260715-1" defer></script>
+</body>
+</html>
