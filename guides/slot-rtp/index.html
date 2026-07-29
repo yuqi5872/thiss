@@ -96,6 +96,25 @@
           <div><strong>關鍵觀念：</strong>RTP 是<strong>數十萬、數百萬次旋轉</strong>後的統計平均值，<strong>不代表你單次或當天的結果</strong>。短期內你可能贏遠超過 RTP，也可能輸更多。把它當「長期期望」看，而不是「保證回本率」。</div>
         </div>
 
+        <h3>「玩家回報率」跟 RTP 是同一件事嗎？</h3>
+        <p>是。<strong>玩家回報率</strong>就是 RTP 的中文說法，兩者指的是同一個數字。你在不同地方可能看到「回報率」「返還率」「回饋率」「派彩率」——前三個通常都在講 RTP，但<strong>「派彩率」有時候指的是另一回事</strong>，這是最容易混淆的地方。</p>
+        <p>下面這張表把最常被搞混的四個詞分清楚：</p>
+        <div class="t-scroll">
+          <table>
+            <thead><tr><th>名詞</th><th>指的是什麼</th><th>典型數字</th></tr></thead>
+            <tbody>
+              <tr><td><strong>RTP／玩家回報率</strong></td><td>長期返還給玩家的投注比例，遊戲設計階段就決定</td><td class="num">94%～97%</td></tr>
+              <tr><td><strong>莊家優勢</strong></td><td>100% 減掉 RTP，是平台的長期抽成</td><td class="num">3%～6%</td></tr>
+              <tr><td><strong>命中率</strong></td><td>有中獎的旋轉佔全部旋轉的比例，跟 RTP 是<strong>兩回事</strong></td><td class="num">10%～30%</td></tr>
+              <tr><td><strong>派彩率</strong></td><td>有時指 RTP，有時指某段期間的實際派彩／投注，看語境</td><td>不固定</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout info">
+          <span class="ic">i</span>
+          <div><strong>命中率跟 RTP 沒有必然關係。</strong>一台 RTP 96% 的機器可以是「常常小中」（高命中率、低波動），也可以是「幾乎都沒中、偶爾大爆」（低命中率、高波動）。兩者長期返還一樣，體感天差地遠。我們用自製模擬器實測過一款高波動機制，<strong>86.7% 的旋轉是完全沒中的</strong>——命中率不到 14%，但 RTP 仍然接近 97%。</div>
+        </div>
+
         <h2>RTP 多少才算高？</h2>
         <div class="t-scroll">
           <table>
@@ -127,6 +146,24 @@
         <p>舉個簡化例子：假設一台機器只有兩種結果——90% 機率不中、10% 機率中 9.6 倍。跑 100 萬次模擬，總下注 100 萬元，總派彩約 96 萬元（10 萬次中獎 × 9.6 倍）。96 萬 ÷ 100 萬 × 100 ＝ <strong>RTP 96%</strong>。真實機台的賠付結構複雜得多（幾十種中獎組合疊加），但算法邏輯就是這樣。</p>
         <p>所以「RTP 計算」不是玩家自己能算的東西——你算不出官方賠付表，也跑不了幾百萬次模擬。玩家能做的只有<strong>查證官方公布的數字</strong>，方法見上面「怎麼查一台機的真實 RTP」那段。</p>
 
+        <h2>「長期」到底是多長？我們實測給你看</h2>
+        <p>所有攻略都會寫「RTP 是長期統計」，但很少有人說清楚<strong>長期是多長</strong>。我們用自製的<a href="/tools/seth-simulator/">機制模擬器</a>跑了 <strong>800 萬轉</strong>（8 個獨立種子、每個 100 萬轉），結果是這樣：</p>
+        <div class="t-scroll">
+          <table>
+            <thead><tr><th>跑多少轉</th><th>算出來的回收率</th><th>離目標值多遠</th></tr></thead>
+            <tbody>
+              <tr><td>1 萬轉</td><td>每次跑都可能差 10 個百分點以上</td><td>幾乎沒有參考價值</td></tr>
+              <tr><td>100 萬轉（單次）</td><td class="num">94.7% ～ 100.4%</td><td>仍有 ±1.84 個百分點的標準差</td></tr>
+              <tr><td>800 萬轉（彙總）</td><td class="num">97.28%</td><td>才收斂到接近設定值</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn">
+          <span class="ic">!</span>
+          <div><strong>這是最該記住的一件事：連跑 100 萬轉，回收率都還可能落在 94.7% 到 100.4% 之間。</strong>而一般人一個晚上大概轉幾百次。所以「這台今天的 RTP 好像不對」這種感覺，在統計上完全沒有意義——你的樣本數距離能驗證 RTP 還差好幾個數量級。RTP 能告訴你的是「這台長期對玩家友不友善」，不是「今天會不會贏」。</div>
+        </div>
+        <p>模擬器的方法、限制與完整統計都公開在<a href="/tools/seth-simulator/">那一頁</a>，你也可以自己按下去重跑一次。要說明的是：那是我們依公開賠率表自製的模型，不是原版遊戲，所以數字反映的是「高波動機制長什麼樣」，不是任何特定機台的實際表現。</p>
+
         <h2>RTP 與波動率要一起看</h2>
         <p>只看 RTP 不夠。<strong>波動率</strong>決定回報的「分布方式」——同樣 96% RTP，高波動讓你偶爾大爆、平時消耗快；低波動讓你頻繁小贏、資金耐用。</p>
         <ul>
@@ -134,7 +171,16 @@
           <li><strong>高 RTP + 高波動</strong>：追大獎、期望值好，但要有耐心與資金</li>
           <li><strong>低 RTP + 任何波動</strong>：長期較不利，建議避開</li>
         </ul>
-        <p>以 ATG 的 <a href="/storm-of-seth/">戰神賽特</a> 為例，官方 RTP 96.89% 屬中上，但波動標「高」、最高 51,000 倍——它的回報集中在少數大爆，就是典型的「高 RTP + 高波動」。</p>
+        <div class="t-scroll">
+          <table>
+            <thead><tr><th></th><th>低波動</th><th>高波動</th></tr></thead>
+            <tbody>
+              <tr><td><strong>高 RTP（96%+）</strong></td><td>資金最耐用，適合小資金與長時間遊玩</td><td>期望值好但起伏大，要有資金撐過乾旱期</td></tr>
+              <tr><td><strong>低 RTP（94% 以下）</strong></td><td>穩定地慢慢輸，長期最不划算</td><td>最不建議：既不利又難熬</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>以 ATG 的 <a href="/storm-of-seth/">戰神賽特</a> 為例，官方 RTP 96.89% 屬中上，但波動標「高」、最高 51,000 倍——它的回報集中在少數大爆，就是典型的「高 RTP + 高波動」。<strong>同樣是 96.89%，你的體感會完全取決於波動率那一欄。</strong></p>
 
         <h2>新手選台建議</h2>
         <ol>
@@ -159,7 +205,10 @@
         <div class="faq-item"><button class="faq-q">老虎機 RTP 是什麼意思？</button><div class="faq-a"><div class="faq-a-inner">RTP（Return to Player，玩家回報率）代表老虎機長期運作下返還給玩家的投注比例。RTP 96% 表示長期平均每投入 100 元返還 96 元。</div></div></div>
         <div class="faq-item"><button class="faq-q">老虎機 RTP 多少才算高？</button><div class="faq-a"><div class="faq-a-inner">一般以 96% 為分界，96% 以上算高、94% 以下偏低。線上老虎機普遍比實體機台高，多落在 94% 至 97% 之間。</div></div></div>
         <div class="faq-item"><button class="faq-q">RTP 高就一定會贏嗎？</button><div class="faq-a"><div class="faq-a-inner">不會。RTP 是長期統計平均，不保證單次或單日結果，且要搭配波動率一起看。高 RTP 只代表長期期望值較好。</div></div></div>
-      <div class="faq-item"><button class="faq-q">老虎機 RTP 可以被平台調整嗎？</button><div class="faq-a"><div class="faq-a-inner">部分遊戲支援「可調 RTP」，同一款在不同平台可能採用不同 RTP 設定（例如 96% 版與 94% 版）。所以攻略站寫的單一數字只能參考，最準的永遠是你實際遊玩平台「遊戲資訊頁」標示的數值。</div></div></div><div class="faq-item"><button class="faq-q">怎麼查一台老虎機的真實 RTP？</button><div class="faq-a"><div class="faq-a-inner">三個方法：①遊戲內「i」或「?」說明頁（最準）②電子商官網（如 ATG、PG 會標示每款 RTP）③獨立評測站比對整理。實體機台通常不標示，線上老虎機多數查得到。</div></div></div><div class="faq-item"><button class="faq-q">RTP 96% 和 97% 差多少？</button><div class="faq-a"><div class="faq-a-inner">差在莊家優勢：96% 的莊家優勢約 4%、97% 約 3%。以長期投注 10,000 元為例，理論返還分別約 9,600 與 9,700，差約 100 元。長期累積差距明顯，但單次結果仍由運氣與波動決定。</div></div></div></div>
+      <div class="faq-item"><button class="faq-q">老虎機 RTP 可以被平台調整嗎？</button><div class="faq-a"><div class="faq-a-inner">部分遊戲支援「可調 RTP」，同一款在不同平台可能採用不同 RTP 設定（例如 96% 版與 94% 版）。所以攻略站寫的單一數字只能參考，最準的永遠是你實際遊玩平台「遊戲資訊頁」標示的數值。</div></div></div><div class="faq-item"><button class="faq-q">怎麼查一台老虎機的真實 RTP？</button><div class="faq-a"><div class="faq-a-inner">三個方法：①遊戲內「i」或「?」說明頁（最準）②電子商官網（如 ATG、PG 會標示每款 RTP）③獨立評測站比對整理。實體機台通常不標示，線上老虎機多數查得到。</div></div></div><div class="faq-item"><button class="faq-q">玩家回報率就是 RTP 嗎？</button><div class="faq-a"><div class="faq-a-inner">是，玩家回報率就是 RTP 的中文說法，指同一個數字。「回報率」「返還率」「回饋率」通常也都在講 RTP；但「派彩率」要看語境，有時指 RTP、有時指某段期間的實際派彩除以投注。另外要注意「命中率」是完全不同的東西——它指有中獎的旋轉佔比，跟 RTP 沒有必然關係。</div></div></div>
+        <div class="faq-item"><button class="faq-q">RTP 怎麼計算？我可以自己算嗎？</button><div class="faq-a"><div class="faq-a-inner">公式是「RTP（%）＝ 總派彩 ÷ 總下注 × 100」，但玩家實務上算不出來。官方的 RTP 是開發商在設計階段拿賠付表與中獎機率跑數百萬到數千萬次模擬得到的理論值，而你手上沒有賠付表的完整機率、也跑不了那麼多次。玩家能做的是查證官方公布的數字，不是自己反推。</div></div></div>
+        <div class="faq-item"><button class="faq-q">要玩多少轉，實際回收率才會接近 RTP？</button><div class="faq-a"><div class="faq-a-inner">比多數人想的多得多。我們用自製模擬器跑 800 萬轉實測：即使單次跑滿 100 萬轉，算出來的回收率仍會落在 94.7% 到 100.4% 之間（標準差 1.84 個百分點），要彙總到 800 萬轉才收斂。一般人一個晚上轉幾百次，樣本數距離能驗證 RTP 還差好幾個數量級——所以「今天這台 RTP 好像不對」在統計上沒有意義。</div></div></div>
+        <div class="faq-item"><button class="faq-q">RTP 96% 和 97% 差多少？</button><div class="faq-a"><div class="faq-a-inner">差在莊家優勢：96% 的莊家優勢約 4%、97% 約 3%。以長期投注 10,000 元為例，理論返還分別約 9,600 與 9,700，差約 100 元。長期累積差距明顯，但單次結果仍由運氣與波動決定。</div></div></div></div>
 
       <div class="callout" style="margin-top:22px;">
         <span class="ic">i</span>
@@ -181,6 +230,7 @@
         <a href="/guides/rtp-vs-payout/" class="side-link">平台 RTP 可不可信</a>
         <a href="/rtp-ranking/" class="side-link">RTP 排行榜</a>
         <a href="/guides/high-rtp-slots/" class="side-link">高 RTP 老虎機推薦</a>
+        <a href="/tools/seth-simulator/" class="side-link">機制模擬器</a>
         <a href="/guides/slot-providers/" class="side-link">五大電子商比較</a>
         <a href="/storm-of-seth/" class="side-link">戰神賽特評測</a>
       </div>
