@@ -30,6 +30,14 @@
 { "@context": "https://schema.org", "@type": "SoftwareApplication", "name": "戰神賽特機制模擬器", "applicationCategory": "EducationalApplication", "operatingSystem": "Web", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" }, "publisher": { "@type": "Organization", "name": "電子遊戲觀測所" }, "description": "依公開賠率表自製的非官方老虎機機制模擬器，用於理解無賠付線、消除掉落與倍數累積的運作方式。不涉及真實金錢。" }
 </script>
 <style>
+  .hub-promo{border:1px solid var(--line,#e2e8f0);border-radius:16px;padding:20px;margin:26px 0;background:linear-gradient(160deg,#101828,#1d2939);color:#e8eaf0}
+  .hub-promo h3{margin:0 0 6px;font-size:19px}
+  .hub-promo p{margin:0 0 16px;font-size:14.5px;line-height:1.8;opacity:.85}
+  .hub-shots{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+  .hub-shots figure{margin:0}
+  .hub-shots img{width:100%;height:auto;border:1px solid rgba(255,255,255,.14);border-radius:10px;display:block}
+  .hub-shots figcaption{margin-top:7px;font-size:12.5px;opacity:.7;text-align:center}
+  @media(max-width:700px){.hub-shots{grid-template-columns:1fr}}
   .sim-warn{border:2px solid #f59e0b;background:#fffbeb;color:#78350f;border-radius:12px;padding:14px 18px;margin:18px 0;font-size:14.5px;line-height:1.8}
   .sim-warn b{color:#92400e}
   .sim-shell{border:1px solid var(--line,#e2e8f0);border-radius:16px;padding:16px;background:linear-gradient(160deg,#101828,#1d2939);color:#e8eaf0}
@@ -212,6 +220,17 @@
         </ul>
         <p style="font-size:14px;color:var(--ink-mute);">最後更新：2026-07-29。</p>
       </article>
+
+      <section class="hub-promo">
+        <h3>三個工具現在在同一頁了</h3>
+        <p>進場前的模擬器、玩的時候的戰局計算、換台前的多台比較，整合成一個工具台，分頁切換，數字互通不用重打。</p>
+        <div class="hub-shots">
+          <figure><img src="/assets/img/hub-sim-reels.webp" alt="工具台裡的機制模擬器盤面，可自訂起始點數與單注" width="760" height="1740" loading="lazy" decoding="async"><figcaption>盤面與自訂點數／單注</figcaption></figure>
+          <figure><img src="/assets/img/hub-sim-auto.webp" alt="自動 50 轉進行中，即時顯示已轉次數與目前回收率" width="760" height="1998" loading="lazy" decoding="async"><figcaption>自動 50 轉，回收率即時更新</figcaption></figure>
+          <figure><img src="/assets/img/hub-sim-batch.webp" alt="一萬轉批次模擬結果表，含完全沒中比例與最長乾旱期" width="760" height="1220" loading="lazy" decoding="async"><figcaption>一萬轉批次，看真正的分布</figcaption></figure>
+        </div>
+        <a href="/tools/storm-of-seth-session/" class="btn btn-primary">打開三合一工具台 →</a>
+      </section>
 
       <div class="cta-band">
         <h3>看懂機制了，再看真實數據</h3>
