@@ -11,7 +11,7 @@
   var $ = function (id) { return document.getElementById(id); };
 
   /* ---------- 分頁切換 ---------- */
-  var PANES = ['pre', 'live', 'pick'];
+  var PANES = ['pre', 'live', 'pick', 'faq'];
   var tabs = $('tool-tabs');
   if (tabs) {
     tabs.addEventListener('click', function (e) {

@@ -138,3 +138,8 @@
 #pane-pick #claim-gate p{color:#b9b2aa!important}
 #pane-pick #claim-gate h3{color:#f0e7d8}
 #pane-pick #claim-msg{color:#ffc0c9!important}
+.tool-tabs{grid-template-columns:repeat(4,1fr)}
+#pane-faq .hub-faq{color:#c6bfb6;font-size:.78rem;line-height:1.9}
+#pane-faq .hub-faq h2{font-size:1.3rem;margin-bottom:14px;color:#f0e7d8}
+#pane-faq .hub-faq h3{margin:20px 0 6px;font-size:.95rem;color:var(--bright)}
+#pane-faq .hub-faq p{margin:0}

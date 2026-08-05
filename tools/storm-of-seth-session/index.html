@@ -12,13 +12,13 @@
   gtag('js', new Date());
   gtag('config', 'G-XCBKJTBVTL');
 </script>
-<title>戰神賽特戰局計算器｜即時淨利、回本距離與停損｜電子遊戲觀測所</title>
-<meta name="description" content="免費的戰神賽特戰局計算器：記錄本金、餘額、注額與買免遊結果，即時計算真實淨利、回本距離、最大回撤與停損使用率。資料只儲存在本機。">
+<title>戰神賽特工具台｜機制模擬器＋戰局計算＋多台比較，三個免費工具一頁搞定</title>
+<meta name="description" content="戰神賽特三合一工具台：進場前用機制模擬器跑一萬轉看分布、玩的時候即時算淨利與回本距離、換台前多台實測回收率比較。三個工具都免費、不用註冊，資料只存在你的裝置。">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://tsaishen888.com/tools/storm-of-seth-session/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="戰神賽特戰局計算器｜別把回收當獲利">
-<meta property="og:description" content="輸入本金與餘額，即時看淨利、回本距離、回撤與下一步成本。">
+<meta property="og:title" content="戰神賽特工具台｜三個免費工具一頁搞定">
+<meta property="og:description" content="進場前跑一萬轉看分布、玩的時候算淨利與停損、換台前多台比較。不預測結果，只把成本算清楚。">
 <meta property="og:url" content="https://tsaishen888.com/tools/storm-of-seth-session/">
 <meta property="og:image" content="https://tsaishen888.com/assets/img/storm-of-seth-og.webp">
 <meta name="twitter:card" content="summary_large_image">
@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/seth-session.css?v=20260805-hub">
+<link rel="stylesheet" href="/assets/seth-session.css?v=20260805-seo">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -69,6 +69,7 @@
     <button type="button" data-pane="pre"><b>① 進場前</b>機制模擬器</button>
     <button type="button" data-pane="live" class="on"><b>② 玩的時候</b>戰局計算</button>
     <button type="button" data-pane="pick"><b>③ 換台前</b>AI 選房數據助手</button>
+    <button type="button" data-pane="faq"><b>？</b>常見問題</button>
   </nav>
 
   <div id="pane-live">
@@ -139,7 +140,7 @@
   </section>
 
   <section class="session-summary stage-enter" id="summary-view" hidden>
-    <p class="section-kicker">SESSION COMPLETE</p><h1>本場已結束</h1>
+    <p class="section-kicker">SESSION COMPLETE</p><h2>本場已結束</h2>
     <div class="summary-result" id="summary-result">+$0</div>
     <div class="summary-grid">
       <div><span>遊玩時間</span><strong id="summary-time">00:00:00</strong></div>
@@ -273,8 +274,26 @@
 
   </div><!-- /#tool-body -->
 
-  <article class="prose">
-    <h2>
+  <section class="tool-pane" id="pane-faq" hidden>
+    <div class="pane-inner narrow">
+    <article class="prose hub-faq">
+      <h2>常見問題</h2>
+
+      <h3>戰局計算器怎麼用？</h3>
+      <p>填開場本金、每轉注額、停損與獲利目標，按「開始記錄這一場」。之後每次餘額變動就更新一次，工具會即時算出本場真正淨利、距離回本還差多少、最大回撤與停損額度已用幾成。資料只存在你這台裝置。</p>
+
+      <h3>機制模擬器的數據可以拿來預測嗎？</h3>
+      <p>不行。模擬器不是 ATG 官方遊戲，符號出現機率是站方自行設定後校準的，手感不等於原版，也不涉及真實金錢。它的用途是讓你看懂消除掉落與倍數球怎麼運作、看清楚「高波動」實際長什麼樣——例如約 86.74% 的轉完全沒中、免費遊戲平均每 192 轉才進一次。這些是已經發生的統計，不是對下一局的預測。</p>
+
+      <h3>AI 選房數據助手怎麼領？</h3>
+      <p>在「③ 換台前」分頁加官方 LINE 取得解鎖碼，輸入後工具本體就會展開。它把你自己記錄的多台數據依實測回收率排序，並標出信心分數與資金狀態。它不判斷「哪台快爆了」——那種說法沒有資料可以證明。</p>
+
+      <h3>信心分數是什麼意思？</h3>
+      <p>信心分數只反映「這筆資料的樣本夠不夠大」，跟下一局中不中獎完全無關。10 轉大約只有 10～15 分，300 轉以上才會接近 90 分，最高封頂 95 分——樣本再大也留 5% 不確定。</p>
+
+      <h3>這三個工具會提高勝率嗎？</h3>
+      <p>不會。老虎機每一局是獨立事件，沒有任何工具能改變期望值。這三個工具做的是把成本算清楚：進場前知道這筆錢能撐幾轉、玩的時候知道自己是賺還是在回收、換台前知道每一台實際花了多少。它們不預測結果，也不替你決定是否繼續。</p>
+    </article>
     </div>
   </section>
 
@@ -288,7 +307,7 @@
       <div class="guide-visual" id="guide-visual" aria-hidden="true"></div>
       <div class="guide-body">
         <span class="guide-step-number" id="guide-step-number">01</span>
-        <div><h2 id="guide-title">先建立這一場的基準</h2><p id="guide-copy">輸入開場本金、目前注額、停損與獲利目標。後面所有淨利與回撤都會以這組數字計算。</p></div>
+        <div><h3 id="guide-title">先建立這一場的基準</h3><p id="guide-copy">輸入開場本金、目前注額、停損與獲利目標。後面所有淨利與回撤都會以這組數字計算。</p></div>
       </div>
       <div class="guide-example" id="guide-example"><small>範例</small><span>開場本金 $2,000・停損 $1,000</span></div>
       <div class="guide-dots" id="guide-dots" aria-label="教學進度"></div>
@@ -303,7 +322,7 @@
 <script src="/assets/seth-session.js?v=20260805-hub" defer></script>
 <script src="/assets/seth-sim.js?v=20260729" defer></script>
 <script src="/assets/seth-ai-assistant.js?v=20260803" defer></script>
-<script src="/assets/seth-hub.js?v=20260805-2" defer></script>
+<script src="/assets/seth-hub.js?v=20260805-3" defer></script>
 
 </body>
 </html>
