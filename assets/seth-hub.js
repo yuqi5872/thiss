@@ -208,6 +208,106 @@
     if (srcBet && srcBet.value) $('set-bet').value = Math.max(1, Math.round(+srcBet.value)) || 10;
   });
 
+
+  /* ---------- 群體實測排行 ＋ 匿名回報 ---------- */
+  // API key 會出現在前端原始碼裡，任何人都看得到——它擋的是隨手寫的腳本，不是有心人。
+  // 真正的防線在後端：3 台不重複裝置、2 個獨立網路來源、單一裝置不得超過七成樣本。
+  var RANK_API = 'https://seth-room-live.ysyyds0002.workers.dev';
+  var RANK_KEY = 'seth-report-d082189443a28564c3c86988';
+
+  function cidOf() {
+    var v = null;
+    try { v = localStorage.getItem('sethReportCid'); } catch (e) {}
+    if (!v) {
+      v = 'cli-' + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+      try { localStorage.setItem('sethReportCid', v); } catch (e) {}
+    }
+    return v;
+  }
+
+  function loadRank() {
+    var body = $('live-rank-body'), meta = $('live-rank-meta');
+    if (!body) return;
+    fetch(RANK_API + '/api/ranking?hours=24&game=seth1')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var rows = d.ranking || [];
+        meta.textContent = d.computed_at
+          ? new Date(d.computed_at).toLocaleString('zh-TW') + ' 更新'
+          : '尚無資料';
+        if (!rows.length) {
+          body.className = 'empty-state';
+          body.innerHTML = '目前還沒有足夠的回報。進榜門檻是 ' +
+            (d.threshold ? d.threshold.min_reporters : 3) + ' 台不重複裝置、' +
+            (d.threshold ? d.threshold.min_ips : 2) + ' 個獨立網路來源、總樣本 ' +
+            (d.threshold ? d.threshold.min_spins : 600) + ' 轉以上——門檻低了排行就是廣告，不是資料。';
+          return;
+        }
+        body.className = '';
+        body.innerHTML = rows.map(function (x) {
+          var medal = ['🥇', '🥈', '🥉'][x.rank - 1] || x.rank;
+          return '<div class="compare-row"><span class="compare-medal">' + medal + '</span>' +
+            '<span class="compare-name">' + x.room + '</span>' +
+            '<span class="compare-score">' + x.recovery_pct.toFixed(1) + '%</span>' +
+            '<span class="compare-status">' + x.reporters + ' 台裝置</span>' +
+            '<span class="compare-note">樣本 ' + x.spins.toLocaleString('zh-TW') +
+            ' 轉　信心 ' + x.confidence + '／100（只反映樣本大小，跟下一局無關）</span></div>';
+        }).join('');
+      })
+      .catch(function () {
+        body.className = 'empty-state';
+        body.innerHTML = '排行服務暫時連不上，工具本身不受影響。';
+      });
+  }
+
+  function bindReport() {
+    var btn = $('btn-report');
+    if (!btn) return;
+    btn.onclick = function () {
+      // seth-ai-assistant.js 宣告了 STORAGE_KEY 但沒有真的寫進 localStorage，
+      // 房間資料只活在它的記憶體裡。所以直接讀畫面上的欄位，看到什麼就送什麼。
+      var ok = [].slice.call(document.querySelectorAll('#room-list .room-card')).map(function (card) {
+        var get = function (f) {
+          var el = card.querySelector('[data-field="' + f + '"]');
+          return el ? el.value : '';
+        };
+        return {
+          roomNo: (get('roomNo') || '').trim(),
+          spins: +get('spins') || 0,
+          totalBet: +get('totalBet') || 0,
+          totalReturn: +get('totalReturn') || 0,
+          maxDrySpins: +get('maxDrySpins') || 0,
+          naturalFeatureCount: +get('naturalFeatureCount') || 0,
+        };
+      }).filter(function (r) { return r.roomNo && r.totalBet > 0 && r.spins >= 30; });
+
+      var msg = $('report-msg');
+      if (!ok.length) {
+        msg.textContent = '至少要有一台填了房號、總投入，而且轉數 30 以上才能回報。';
+        return;
+      }
+      if (!confirm('要把 ' + ok.length + ' 台的數字匿名上傳嗎？\n只送房號、轉數、投入、回收，沒有任何個人資料。')) return;
+      btn.disabled = true; msg.textContent = '上傳中…';
+      var cid = cidOf(), done = 0;
+      Promise.all(ok.map(function (r) {
+        return fetch(RANK_API + '/api/report', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-report-key': RANK_KEY },
+          body: JSON.stringify({
+            game: 'seth1', room: String(r.roomNo).slice(0, 40), client_id: cid,
+            spins: Math.round(+r.spins), total_in: +r.totalBet, total_out: +(r.totalReturn || 0),
+            max_dry: Math.round(+(r.maxDrySpins || 0)),
+            free_hits: Math.round(+(r.naturalFeatureCount || 0)),
+          }),
+        }).then(function (x) { return x.json(); }).then(function (j) { if (j.ok) done++; }).catch(function () {});
+      })).then(function () {
+        btn.disabled = false;
+        msg.textContent = '已回報 ' + done + ' 台。你的資料要跟其他人的合在一起、且來自不同網路來源，才會出現在排行上。';
+        loadRank();
+      });
+    };
+  }
+
   /* ---------- ③ AI 選房：解鎖閘門 ---------- */
   // 軟鎖：會翻原始碼的人繞得過去，但那種人本來就不會儲值。
   // 它的工作是製造一個非去 LINE 不可的理由。換碼改下面這一行、重新部署即可。
@@ -234,5 +334,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     bindGate();
+    bindReport();
+    loadRank();
   });
 })();
