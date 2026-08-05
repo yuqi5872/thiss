@@ -64,6 +64,14 @@
     </div>
   </header>
 
+
+  <nav class="tool-tabs" id="tool-tabs" aria-label="工具切換">
+    <button type="button" data-pane="pre"><b>① 進場前</b>機制模擬器</button>
+    <button type="button" data-pane="live" class="on"><b>② 玩的時候</b>戰局計算</button>
+    <button type="button" data-pane="pick"><b>③ 換台前</b>AI 選房數據助手</button>
+  </nav>
+
+  <div id="pane-live">
   <section class="session-setup stage-enter" id="setup-view">
     <div class="setup-copy">
       <p class="section-kicker">ATG 戰神賽特・即時戰局計算台</p>
@@ -71,7 +79,7 @@
       <p>開始一場後，只要更新餘額與注額。工具會即時計算淨利、回本距離、最大回撤，以及下一步要再投入多少。</p>
       <div class="tool-promise"><b>它不會告訴你哪台會爆。</b><span>它會告訴你每個選擇確定要花多少。</span></div>
       <a class="review-link" href="/storm-of-seth/">查看戰神賽特 RTP 與機制資料 <span>↗</span></a>
-      <a class="review-link" href="/tools/seth-ai-assistant/">多台一起記？改用 AI 快速數據助手 <span>↗</span></a>
+      <a class="review-link" href="/tools/seth-ai-assistant/">多台一起記？看 AI 快速數據助手（需在 LINE 領取） <span>↗</span></a>
     </div>
     <form class="setup-panel" id="setup-form">
       <div class="panel-title"><span>建立本場基準</span><small>資料只存在這台裝置</small></div>
@@ -149,6 +157,127 @@
     </div>
   </section>
 
+  </div><!-- /pane-live -->
+
+  <section class="tool-pane" id="pane-pre" hidden>
+  <div class="pane-inner narrow">
+      <div class="sim-warn">
+        <b>先講清楚三件事，這很重要：</b><br>
+        1. <b>這不是 ATG 的官方遊戲，也不是原版程式碼。</b>符號、視覺、程式全部是我們自己寫的，只借用公開的賠率表與觸發規則。<br>
+        2. <b>符號出現的機率官方從未公開</b>，是我們自己設定後校準的。所以本模擬器的手感<b>不等於原版</b>。<br>
+        3. <b>這裡不涉及任何真實金錢</b>，也不能拿來預測你在真錢版的結果。它的用途只有一個：<b>讓你看懂機制、看清楚「高波動」到底是什麼意思</b>。
+      </div>
+
+      <div class="sim-shell">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;opacity:.75">
+          <span>6×5・同符號 8 個以上得分・消除掉落</span>
+          <span id="sim-mode">主遊戲</span>
+        </div>
+        <div class="sim-config">
+          <label><span>起始點數</span><input id="set-bal" type="number" min="100" step="100" value="2000" inputmode="numeric"></label>
+          <label><span>單注</span><input id="set-bet" type="number" min="1" step="1" value="10" inputmode="numeric"></label>
+          <button type="button" id="btn-apply">套用並重設</button>
+        </div>
+        <div class="sim-grid" id="grid"></div>
+        <div class="sim-stat">
+          <div><span>點數</span><b id="s-bal">2000</b></div>
+          <div><span>單注</span><b id="s-bet">10</b></div>
+          <div><span>本轉贏分</span><b id="s-win">0</b></div>
+          <div><span>總倍數</span><b id="s-mult">—</b></div>
+          <div><span>已轉</span><b id="s-spins">0</b></div>
+          <div><span>目前回收率</span><b id="s-rtp">—</b></div>
+        </div>
+        <div class="sim-msg" id="msg">按「旋轉」開始。倍數球是紫色的，聖甲蟲是綠色的。</div>
+        <div class="sim-bar">
+          <button class="b-spin" id="btn-spin">旋轉</button>
+          <button class="b-auto" id="btn-auto">自動 50 轉</button>
+          <button class="b-buy" id="btn-buy">買免費遊戲（模擬 88 注）</button>
+          <button class="b-auto" id="btn-reset">重設點數</button>
+        </div>
+      </div>
+
+      <div class="batch-box">
+        <div style="font-weight:800;font-size:16.5px;margin-bottom:6px;">批次模擬：一次跑完，看真正的分布</div>
+        <p style="font-size:14px;color:var(--ink-soft);margin-bottom:12px;">一轉一轉玩看不出高波動，因為樣本太小。跑一萬轉以上，數字才會開始說實話。</p>
+        <label for="batch-n">轉數</label>
+        <select id="batch-n">
+          <option value="1000">1,000 轉</option>
+          <option value="10000" selected>10,000 轉</option>
+          <option value="50000">50,000 轉</option>
+          <option value="200000">200,000 轉</option>
+        </select>
+        <button id="btn-batch">開始模擬</button>
+        <div id="batch-out"></div>
+      </div>
+
+      <article class="prose" style="max-width:none;margin-top:26px;">
+        <h2>我們跑了 800 萬轉，結果長這樣</h2>
+        <p>這是本模擬器的實測統計：<strong>8 個獨立種子、每個 100 萬轉，共 800 萬轉</strong>。這是我們自己跑出來的第一手數據，不是抄別人的。再強調一次——<strong>它反映的是本模擬器，不是原版遊戲</strong>。</p>
+
+  </div>
+  </section>
+
+
+
+  <section class="tool-pane" id="pane-pick" hidden>
+    <div class="pane-inner narrow">
+<div id="claim-gate" class="tool-panel" style="text-align:center;padding:30px 20px">
+    <div style="font-size:34px;line-height:1;margin-bottom:10px" aria-hidden="true">🔒</div>
+    <h3 style="margin:0 0 10px;font-size:17px">工具本體要在 LINE 領取</h3>
+    <p style="margin:0 auto 18px;max-width:32em;font-size:14.5px;line-height:1.85;color:var(--ink-mute)">
+      下面完整公開它用的每一條公式、每一個判定門檻，以及它<b>刻意不做</b>的事。<br>
+      先看完再決定要不要領。
+    </p>
+    <a href="https://line.me/R/ti/p/@128zirab" target="_blank" rel="noopener"
+       style="display:inline-block;padding:13px 28px;border-radius:999px;background:#06c755;color:#fff;
+              font-weight:800;font-size:15px;text-decoration:none">加 LINE 領取解鎖碼</a>
+    <p style="margin:14px 0 10px;font-size:13px;color:#7c8899">加好之後傳「領取工具」或「AI助手」</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <input id="claim-code" type="text" autocomplete="off" placeholder="輸入解鎖碼"
+             style="height:42px;padding:0 14px;border:1px solid var(--line);border-radius:8px;font-size:15px;min-width:180px">
+      <button type="button" class="start-session" id="claim-submit"
+              style="height:42px;padding:0 24px;border-radius:8px;border:1px solid var(--blue);
+                     background:var(--blue);color:#fff;font-weight:700;cursor:pointer">解鎖</button>
+    </div>
+    <p id="claim-msg" role="status" style="margin:10px 0 0;font-size:13.5px;min-height:1.2em"></p>
+  </div>
+  <div id="tool-body" hidden>
+<section class="tool-panel">
+        <h3>資金設定（選填，用來判斷是否已達停損）</h3>
+        <div class="ai-bankroll">
+          <label><span>本金</span><input type="number" min="0" id="bankroll-starting" placeholder="例：3000"></label>
+          <label><span>停損金額</span><input type="number" min="0" id="bankroll-stoploss" placeholder="例：1000"></label>
+        </div>
+        <div id="bankroll-output"></div>
+      </section>
+
+      <section class="tool-panel" style="margin-top:14px">
+        <h3>各台數據</h3>
+        <div class="room-list" id="room-list"></div>
+        <button type="button" id="add-room" style="height:40px;padding:0 16px;border-radius:8px;border:1px dashed var(--line,#dfe4ea);background:#fff;cursor:pointer;font-size:13.5px;font-weight:700;width:100%">+ 新增一台</button>
+
+        <div class="ai-toolbar">
+          <button type="button" class="start-session" id="calc-all">重新計算</button>
+          <div class="mode-switch">
+            <button type="button" data-mode="quick" class="active">快速模式</button>
+            <button type="button" data-mode="detail">詳細模式</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-panel" style="margin-top:14px">
+        <div id="compare-output"></div>
+        <div id="room-output"></div>
+      </section>
+      
+
+  </div><!-- /#tool-body -->
+
+  <article class="prose">
+    <h2>
+    </div>
+  </section>
+
   <footer class="session-footer"><span>資料僅保存在本機</span><strong>本工具不提高勝率、不預測爆分，也不替你選擇是否繼續。</strong></footer>
   <div class="guide-overlay" id="guide-overlay" hidden>
     <section class="guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guide-title" aria-describedby="guide-copy">
@@ -172,5 +301,9 @@
   <div class="sr-only" aria-live="polite" id="status-announcer"></div>
 </main>
 <script src="/assets/seth-session.js?v=20260715-3" defer></script>
+<script src="/assets/seth-sim.js?v=20260729" defer></script>
+<script src="/assets/seth-ai-assistant.js?v=20260803" defer></script>
+<script src="/assets/seth-hub.js?v=1" defer></script>
+
 </body>
 </html>

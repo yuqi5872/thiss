@@ -16,3 +16,125 @@
 @media(max-width:410px){.section-kicker{font-size:.55rem}.setup-copy>p:not(.section-kicker){display:none}.session-cockpit{grid-template-rows:146px 188px minmax(0,1fr)}.feature-form small{font-size:.5rem}}
 @media(max-height:700px) and (min-width:761px){.dashboard-metrics article{min-height:66px}.timeline-row:nth-child(n+4){display:none}.setup-copy h1{font-size:4rem}}
 @media(prefers-reduced-motion:reduce),(update:slow){.stage-enter{animation:none}.scene-video{display:none}*{transition:none!important}}
+
+/* ---- 工具台分頁（三合一） ---- */
+.tool-tabs{position:absolute;left:0;right:0;top:68px;z-index:9;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 10px 0}
+.tool-tabs button{padding:9px 6px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(16,12,20,.96),rgba(7,6,10,.89));color:#9b948c;font-family:inherit;font-size:.72rem;line-height:1.35;cursor:pointer}
+.tool-tabs button b{display:block;font-size:.58rem;font-weight:700;opacity:.7;margin-bottom:2px}
+.tool-tabs button.on{border-color:var(--bright);background:linear-gradient(135deg,#f4cf78,#a97b2c);color:#15100a;font-weight:900}
+.tool-tabs button.on b{opacity:.75}
+#pane-live>.session-setup,#pane-live>.session-cockpit,#pane-live>.session-summary{inset:118px 0 36px}
+.tool-pane{position:absolute;inset:118px 0 36px;overflow-y:auto;padding:10px}
+.pane-inner{display:grid;grid-template-columns:minmax(340px,1fr) minmax(320px,420px);gap:10px;align-items:start}
+.pane-inner.narrow{grid-template-columns:minmax(0,760px);justify-content:center}
+.pane-hint{margin:8px 0 0;color:var(--muted);font-size:.66rem;line-height:1.7}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media(max-width:900px){.pane-inner{grid-template-columns:1fr}}
+@media(max-width:760px){.tool-tabs{top:54px;padding:6px 6px 0;gap:4px}.tool-tabs button{padding:7px 4px;font-size:.62rem}.tool-tabs button b{font-size:.5rem}
+#pane-live>.session-setup,#pane-live>.session-cockpit,#pane-live>.session-summary{inset:104px 0 32px}
+.tool-pane{inset:104px 0 32px;padding:6px}}
+
+
+
+
+.tool-pane .tool-panel{padding:14px 16px}
+
+/* ---- ③ AI 選房：把 style.css 的版面規則搬進工具台，讓它跟這頁同一套視覺 ---- */
+#pane-pick .ai-bankroll,#pane-pick .ai-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+#pane-pick label{display:inline-flex;align-items:center;gap:7px;color:#bcb5ac;font-size:.68rem}
+#pane-pick input[type=text],#pane-pick input[type=number]{min-width:0;width:150px;height:40px;padding:0 10px;border:1px solid rgba(255,255,255,.14);outline:none;background:rgba(255,255,255,.025);color:#fff;font-family:inherit;font-size:.75rem}
+#pane-pick input:focus{border-color:var(--gold)}
+#pane-pick .room-list{display:grid;gap:10px;margin:12px 0}
+#pane-pick .room-card{display:grid;gap:8px;padding:13px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.025)}
+#pane-pick .room-card input{width:100%}
+#pane-pick .mode-switch{display:inline-flex;gap:4px;margin-left:auto}
+#pane-pick .mode-switch button{padding:7px 12px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#9b948c;font-family:inherit;font-size:.66rem;cursor:pointer}
+#pane-pick .mode-switch button.active{border-color:var(--bright);background:rgba(217,170,79,.12);color:var(--bright)}
+#pane-pick .output-card{display:grid;gap:7px;margin-top:9px;padding:12px 14px;border:1px solid rgba(255,255,255,.1);border-left:3px solid rgba(255,255,255,.2);background:rgba(255,255,255,.025)}
+#pane-pick .output-card.status-danger{border-left-color:var(--red)}
+#pane-pick .output-card.status-warn{border-left-color:var(--bright)}
+#pane-pick .output-card.status-good{border-left-color:var(--green)}
+#pane-pick .output-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:800}
+#pane-pick .output-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+#pane-pick .output-grid.dense{grid-template-columns:repeat(4,1fr)}
+#pane-pick .output-grid>div{padding:8px 10px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.25)}
+#pane-pick .output-foot,#pane-pick .empty-state{color:var(--muted);font-size:.64rem;line-height:1.7}
+#pane-pick .compare-row{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:9px;padding:9px 11px;border-top:1px solid rgba(255,255,255,.07);font-size:.7rem}
+#pane-pick .compare-medal{font-size:1rem}
+#pane-pick .compare-score{color:var(--bright);font-weight:800}
+#pane-pick .prose{color:#b9b2aa;font-size:.7rem;line-height:1.8}
+#pane-pick #claim-code{width:220px}
+#pane-pick .room-card-head{display:flex;align-items:center;gap:9px}
+#pane-pick .room-no{color:var(--bright);font-weight:800;font-size:.72rem}
+#pane-pick .room-remove{margin-left:auto;width:30px;height:30px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#9b948c;cursor:pointer}
+#pane-pick .room-fields{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#pane-pick .room-fields label{display:grid;gap:4px;font-size:.6rem}
+#pane-pick .room-recent{font-size:.63rem;color:var(--muted)}
+#pane-pick .output-name{font-weight:800}
+#pane-pick .output-status{font-size:.63rem}
+#pane-pick .output-judgment{color:#c6bfb6;font-size:.66rem;line-height:1.7}
+#pane-pick .compare-name{font-weight:700}
+#pane-pick .compare-note{grid-column:1/-1;color:var(--muted);font-size:.62rem}
+@media(max-width:760px){#pane-pick .room-fields,#pane-pick .output-grid,#pane-pick .output-grid.dense{grid-template-columns:repeat(2,1fr)}}
+
+
+/* ---- ① 機制模擬器：原版樣式（取自 /tools/seth-simulator/ 頁內 style，scope 在 #pane-pre）---- */
+#pane-pre .sim-warn{border:2px solid #f59e0b;background:#fffbeb;color:#78350f;border-radius:12px;padding:14px 18px;margin:18px 0;font-size:14.5px;line-height:1.8}
+#pane-pre .sim-warn b{color:#92400e}
+#pane-pre .sim-shell{border:1px solid var(--line,#e2e8f0);border-radius:16px;padding:16px;background:linear-gradient(160deg,#101828,#1d2939);color:#e8eaf0}
+#pane-pre .sim-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:12px 0}
+#pane-pre .cell{aspect-ratio:1;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;
+#pane-pre font-size:clamp(11px,2.6vw,15px);background:#233043;border:1px solid #2f3d52;transition:transform .12s,opacity .12s}
+#pane-pre .cell.win{outline:2px solid #fbbf24;transform:scale(1.04)}
+#pane-pre .cell.gone{opacity:.18}
+#pane-pre .cell.sc{background:#134e4a;border-color:#0d9488;color:#5eead4}
+#pane-pre .cell.mx{background:#4c1d95;border-color:#7c3aed;color:#ddd6fe}
+#pane-pre .cell.h{background:#3f2d12;border-color:#a16207;color:#fcd34d}
+#pane-pre .sim-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+#pane-pre .sim-bar button{border:0;border-radius:9px;padding:10px 16px;font-weight:800;cursor:pointer;font-size:14.5px}
+#pane-pre .b-spin{background:#fbbf24;color:#231a05}
+#pane-pre .b-auto{background:#334155;color:#e8eaf0}
+#pane-pre .b-buy{background:#7c3aed;color:#fff}
+#pane-pre .sim-bar button:disabled{opacity:.45;cursor:not-allowed}
+#pane-pre .sim-stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px;margin-top:12px}
+#pane-pre .sim-stat div{background:#1b2735;border:1px solid #2f3d52;border-radius:9px;padding:8px 10px}
+#pane-pre .sim-stat span{display:block;font-size:11.5px;opacity:.65}
+#pane-pre .sim-stat b{font-size:16px;font-variant-numeric:tabular-nums}
+#pane-pre .sim-msg{margin-top:10px;font-size:14px;min-height:22px;color:#fcd34d;font-weight:700}
+#pane-pre .batch-box{border:1px solid var(--line,#e2e8f0);border-radius:14px;padding:16px;margin-top:18px}
+#pane-pre .batch-box label{font-size:14px;font-weight:700;margin-right:8px}
+#pane-pre .batch-box select,.batch-box button{padding:9px 14px;border-radius:9px;font-size:14.5px}
+#pane-pre .batch-box button{border:0;background:#2563eb;color:#fff;font-weight:800;cursor:pointer}
+#pane-pre #batch-out{margin-top:14px;font-size:14.5px;line-height:1.9}
+#pane-pre </style>
+#pane-pre .sim-config{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin-bottom:12px}
+#pane-pre .sim-config label{display:grid;gap:4px;font-size:.62rem;color:#9aa3b2}
+#pane-pre .sim-config input{width:120px;height:38px;padding:0 10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:#fff;font-family:inherit;font-size:.8rem}
+#pane-pre .sim-config input:focus{outline:none;border-color:#f4cf78}
+#pane-pre .sim-config button{height:38px;padding:0 14px;border:1px solid #f4cf78;background:rgba(244,207,120,.12);color:#f4cf78;font-family:inherit;font-size:.7rem;cursor:pointer}
+/* 原頁面是淺色底，這些按鈕帶著 inline style 過來會變白底白字，必須用 !important 蓋掉 */
+#pane-pick #add-room{background:transparent!important;border:1px solid rgba(244,207,120,.55)!important;color:#f4cf78!important;font-weight:700!important}
+#pane-pick #add-room:hover{background:rgba(244,207,120,.1)!important}
+#pane-pick #calc-all{background:linear-gradient(135deg,#f4cf78,#a97b2c)!important;border:1px solid #f4cf78!important;color:#15100a!important;font-weight:900!important}
+#pane-pick .room-remove{color:#d9a0a0!important}
+/* 閘門那塊帶著原站的 var(--blue) / var(--ink-mute) 過來，這頁沒有這些變數 → 按鈕變隱形 */
+#pane-pick #claim-submit{background:linear-gradient(135deg,#f4cf78,#a97b2c)!important;border:1px solid #f4cf78!important;color:#15100a!important;font-weight:900!important}
+#pane-pick #claim-code{background:rgba(255,255,255,.04)!important;border:1px solid rgba(255,255,255,.2)!important;color:#fff!important}
+#pane-pick #claim-code::placeholder{color:#8a8279}
+#pane-pick #claim-gate p{color:#b9b2aa!important}
+#pane-pick #claim-gate h3{color:#f0e7d8}
+#pane-pick #claim-msg{color:#ffc0c9!important}
