@@ -12,8 +12,8 @@
   gtag('js', new Date());
   gtag('config', 'G-XCBKJTBVTL');
 </script>
-<title>戰神賽特機制模擬器｜自己跑一萬轉，看高波動長什麼樣｜電子遊戲觀測所</title>
-<meta name="description" content="非官方的戰神賽特機制模擬器：依公開賠率表自製，可即時轉、也可一次跑一萬轉看分布。附我們跑 800 萬轉的實測數據——免費遊戲平均每 192 轉才進一次、86.7% 的轉完全沒中、買免遊有 31% 完全沒回收。">
+<title>戰神賽特機制模擬器｜800 萬轉實測數據、乾旱期與買免遊划算嗎｜電子遊戲觀測所</title>
+<meta name="description" content="戰神賽特機制模擬器的 800 萬轉實測統計：86.74% 的轉完全沒中、免費遊戲平均 192 轉觸發一次、最長乾旱期 2,472 轉、76.5% 的買免遊是虧的。完整公開公式、資料來源與已知差異。互動模擬已移至工具台。">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://tsaishen888.com/tools/seth-simulator/">
 <meta property="og:type" content="article">
@@ -30,6 +30,9 @@
 { "@context": "https://schema.org", "@type": "SoftwareApplication", "name": "戰神賽特機制模擬器", "applicationCategory": "EducationalApplication", "operatingSystem": "Web", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" }, "publisher": { "@type": "Organization", "name": "電子遊戲觀測所" }, "description": "依公開賠率表自製的非官方老虎機機制模擬器，用於理解無賠付線、消除掉落與倍數累積的運作方式。不涉及真實金錢。" }
 </script>
 <style>
+  .hub-cta-inline{border:1px solid #bfdbfe;border-left:4px solid #2563eb;border-radius:12px;padding:18px 20px;margin:18px 0;background:linear-gradient(135deg,#eff6ff,#fff)}
+  .hub-cta-inline strong{display:block;margin-bottom:6px;font-size:17px;color:#172554}
+  .hub-cta-inline p{margin:0 0 14px;font-size:14.5px;line-height:1.8;color:#475569}
   .hub-promo{border:1px solid var(--line,#e2e8f0);border-radius:16px;padding:20px;margin:26px 0;background:linear-gradient(160deg,#101828,#1d2939);color:#e8eaf0}
   .hub-promo h3{margin:0 0 6px;font-size:19px}
   .hub-promo p{margin:0 0 16px;font-size:14.5px;line-height:1.8;opacity:.85}
@@ -106,41 +109,10 @@
         3. <b>這裡不涉及任何真實金錢</b>，也不能拿來預測你在真錢版的結果。它的用途只有一個：<b>讓你看懂機制、看清楚「高波動」到底是什麼意思</b>。
       </div>
 
-      <div class="sim-shell">
-        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;opacity:.75">
-          <span>6×5・同符號 8 個以上得分・消除掉落</span>
-          <span id="sim-mode">主遊戲</span>
-        </div>
-        <div class="sim-grid" id="grid"></div>
-        <div class="sim-stat">
-          <div><span>點數</span><b id="s-bal">2000</b></div>
-          <div><span>單注</span><b id="s-bet">10</b></div>
-          <div><span>本轉贏分</span><b id="s-win">0</b></div>
-          <div><span>總倍數</span><b id="s-mult">—</b></div>
-          <div><span>已轉</span><b id="s-spins">0</b></div>
-          <div><span>目前回收率</span><b id="s-rtp">—</b></div>
-        </div>
-        <div class="sim-msg" id="msg">按「旋轉」開始。倍數球是紫色的，聖甲蟲是綠色的。</div>
-        <div class="sim-bar">
-          <button class="b-spin" id="btn-spin">旋轉</button>
-          <button class="b-auto" id="btn-auto">自動 50 轉</button>
-          <button class="b-buy" id="btn-buy">買免費遊戲（模擬 88 注）</button>
-          <button class="b-auto" id="btn-reset">重設點數</button>
-        </div>
-      </div>
-
-      <div class="batch-box">
-        <div style="font-weight:800;font-size:16.5px;margin-bottom:6px;">批次模擬：一次跑完，看真正的分布</div>
-        <p style="font-size:14px;color:var(--ink-soft);margin-bottom:12px;">一轉一轉玩看不出高波動，因為樣本太小。跑一萬轉以上，數字才會開始說實話。</p>
-        <label for="batch-n">轉數</label>
-        <select id="batch-n">
-          <option value="1000">1,000 轉</option>
-          <option value="10000" selected>10,000 轉</option>
-          <option value="50000">50,000 轉</option>
-          <option value="200000">200,000 轉</option>
-        </select>
-        <button id="btn-batch">開始模擬</button>
-        <div id="batch-out"></div>
+      <div class="hub-cta-inline">
+        <strong>模擬器已經移到工具台</strong>
+        <p>這一頁保留完整的機制說明、800 萬轉實測統計與資料來源。想自己按旋轉、跑一萬轉看分布，請到工具台——那裡還可以自訂起始點數與單注，並和戰局計算、多台比較共用同一組數字。</p>
+        <a href="/tools/storm-of-seth-session/" class="btn btn-primary">打開三合一工具台 →</a>
       </div>
 
       <article class="prose" style="max-width:none;margin-top:26px;">
@@ -216,7 +188,7 @@
         <ul>
           <li><strong>RTP 96.89%、最高 51,000 倍、高波動、3～6 個寶藏符號觸發免費遊戲、支援重觸發、可直接購買進入</strong>：ATG 官方遊戲頁（atg-gaming.com 戰神賽特頁，2026-07-29 查閱）</li>
           <li><strong>符號賠率完整對照表、贏分公式、6×5 盤面、8 個同符號得分</strong>：第三方攻略站 atg-slots.com（2026-07-29 查閱），官方未逐項公開</li>
-          <li><strong>本頁所有統計數字</strong>：以本頁載入的同一份模擬程式（<code>/assets/seth-sim.js</code>）跑出，8 個種子各 100 萬轉；買免遊為單獨 15 萬次。你可以在上面的批次模擬自己重跑</li>
+          <li><strong>本頁所有統計數字</strong>：以工具台使用的同一份模擬程式（<code>/assets/seth-sim.js</code>）跑出，8 個種子各 100 萬轉；買免遊為單獨 15 萬次。你可以到工具台的批次模擬自己重跑</li>
         </ul>
         <p style="font-size:14px;color:var(--ink-mute);">最後更新：2026-07-29。</p>
       </article>
@@ -280,150 +252,6 @@
   </div>
 </footer>
 
-<script src="/assets/seth-sim.js?v=20260729"></script>
-<script>
-(function(){
-  var S = window.SethSim;
-  var LABEL = { H1:'眼', H2:'杖', H3:'弓', H4:'刀', L1:'黃', L2:'紅', L3:'紫', L4:'藍', L5:'綠', SC:'甲', MX:'' };
-  var HIGH = { H1:1, H2:1, H3:1, H4:1 };
-  var gridEl = document.getElementById('grid');
-  var bal = 2000, bet = 10, spins = 0, staked = 0, returned = 0, busy = false;
-  var rnd = Math.random;
-
-  function cellHtml(c){
-    var cls = 'cell';
-    if (c.key === 'SC') cls += ' sc';
-    else if (c.key === 'MX') cls += ' mx';
-    else if (HIGH[c.key]) cls += ' h';
-    var txt = c.key === 'MX' ? ('×' + c.mult) : LABEL[c.key];
-    return '<div class="' + cls + '">' + txt + '</div>';
-  }
-  function draw(grid, winners){
-    var w = {}; (winners||[]).forEach(function(k){ w[k]=1; });
-    gridEl.innerHTML = grid.map(function(c){
-      var h = cellHtml(c);
-      if (w[c.key]) h = h.replace('class="cell', 'class="cell win');
-      return h;
-    }).join('');
-  }
-  function blank(){
-    var g = [], i;
-    for (i=0;i<30;i++) g.push({key:'L'+(1+i%5)});
-    draw(g, []);
-  }
-  function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
-  function sync(){
-    document.getElementById('s-bal').textContent = fmt(bal);
-    document.getElementById('s-bet').textContent = bet;
-    document.getElementById('s-spins').textContent = fmt(spins);
-    document.getElementById('s-rtp').textContent = staked ? (returned/staked*100).toFixed(1)+'%' : '—';
-  }
-  function setMsg(t){ document.getElementById('msg').textContent = t; }
-
-  function animate(steps, done){
-    var i = 0;
-    (function next(){
-      if (i >= steps.length){ done(); return; }
-      var st = steps[i];
-      draw(st.grid, st.winners);
-      i++;
-      setTimeout(next, st.winners.length ? 340 : 120);
-    })();
-  }
-
-  function playOne(isBuy, quiet, after){
-    var cost = isBuy ? bet * S.BUY_COST : bet;
-    if (bal < cost){ setMsg('點數不夠了，按「重設點數」再來。'); if(after) after(); return; }
-    busy = true;
-    bal -= cost; staked += cost; spins++;
-    document.getElementById('sim-mode').textContent = isBuy ? '購買免費遊戲' : '主遊戲';
-
-    if (isBuy){
-      var r = S.playRound(bet, rnd, { buy:true });
-      bal += r.win; returned += r.win;
-      document.getElementById('s-win').textContent = fmt(r.win);
-      document.getElementById('s-mult').textContent = '—';
-      setMsg('買了免費遊戲（' + r.freeSpins + ' 回合）：回收 ' + fmt(r.win) + ' 點，成本 ' + fmt(cost) + ' 點。' + (r.win >= cost ? '這次賺了。' : '這次虧了——76.5% 的購買都是這樣。'));
-      sync(); busy = false; if(after) after(); return;
-    }
-
-    var main = S.spinOnce(bet, false, rnd, true);
-    animate(main.steps, function(){
-      var win = main.win, note = '';
-      document.getElementById('s-mult').textContent = main.multSum ? '×' + main.multSum : '—';
-      if (main.scatters >= 3){
-        document.getElementById('sim-mode').textContent = '免費遊戲';
-        var spinsN = S.FG_SPINS[Math.min(main.scatters,6)] || S.FG_SPINS[3];
-        var acc = 0, fw = 0, played = 0, remaining = spinsN;
-        while (remaining > 0 && played < 300){
-          remaining--; played++;
-          var f = S.spinOnce(bet, true, rnd, false, acc);
-          acc += f.multSum; fw += f.win;
-          if (f.scatters >= 3) remaining += 5;
-        }
-        win += fw;
-        note = ' 觸發免費遊戲！' + played + ' 回合、累積倍數 ×' + acc + '，共 ' + fmt(fw) + ' 點。';
-      }
-      bal += win; returned += win;
-      document.getElementById('s-win').textContent = fmt(win);
-      if (!quiet) setMsg(win > 0 ? ('贏 ' + fmt(win) + ' 點。' + note) : '沒中。約 86.7% 的轉都是這樣。');
-      sync(); busy = false; if(after) after();
-    });
-  }
-
-  document.getElementById('btn-spin').onclick = function(){ if(!busy) playOne(false,false); };
-  document.getElementById('btn-buy').onclick = function(){ if(!busy) playOne(true,false); };
-  document.getElementById('btn-reset').onclick = function(){
-    bal = 2000; spins = 0; staked = 0; returned = 0;
-    document.getElementById('s-win').textContent = '0';
-    document.getElementById('s-mult').textContent = '—';
-    setMsg('點數已重設為 2,000。'); sync(); blank();
-  };
-  document.getElementById('btn-auto').onclick = function(){
-    if (busy) return;
-    var left = 50, free = 0, best = 0, start = bal;
-    (function loop(){
-      if (left <= 0 || bal < bet){
-        setMsg('自動 50 轉結束：淨' + (bal-start >= 0 ? '賺 ' : '虧 ') + fmt(Math.abs(bal-start)) + ' 點' + (free ? '，觸發 ' + free + ' 次免費遊戲。' : '，一次免費遊戲都沒進——平均要 192 轉才會進一次。'));
-        return;
-      }
-      left--;
-      var before = bal;
-      playOne(false, true, function(){
-        if (bal - before > bet * 20) free++;
-        setMsg('自動轉動中… 剩 ' + left + ' 轉');
-        setTimeout(loop, 60);
-      });
-    })();
-  };
-
-  document.getElementById('btn-batch').onclick = function(){
-    var n = +document.getElementById('batch-n').value;
-    var out = document.getElementById('batch-out');
-    out.innerHTML = '<span style="color:var(--ink-mute)">模擬中…' + (n >= 50000 ? '（' + n.toLocaleString('en-US') + ' 轉可能要幾秒）' : '') + '</span>';
-    setTimeout(function(){
-      var r = S.batch(n, {});
-      var pct = function(v){ return (v/n*100).toFixed(2) + '%'; };
-      out.innerHTML =
-        '<div class="t-scroll"><table><thead><tr><th>指標</th><th>這次 ' + n.toLocaleString('en-US') + ' 轉的結果</th></tr></thead><tbody>' +
-        '<tr><td>回收率</td><td class="num">' + r.rtp.toFixed(2) + '%</td></tr>' +
-        '<tr><td>完全沒中的轉</td><td class="num">' + pct(r.buckets['0']) + '</td></tr>' +
-        '<tr><td>贏 100 倍以上</td><td class="num">' + pct(r.buckets['100+']) + '</td></tr>' +
-        '<tr><td>免費遊戲觸發次數</td><td class="num">' + r.freeCount + ' 次</td></tr>' +
-        '<tr><td>平均觸發間隔</td><td class="num">' + (r.avgGap ? r.avgGap.toFixed(0) + ' 轉' : '這次一次都沒觸發') + '</td></tr>' +
-        '<tr><td>最長乾旱期</td><td class="num">' + (r.maxGap ? r.maxGap + ' 轉' : '—') + '</td></tr>' +
-        '<tr><td>免費遊戲佔總回報</td><td class="num">' + r.freeShare.toFixed(1) + '%</td></tr>' +
-        '<tr><td>單次最大贏分</td><td class="num">' + r.biggestX.toFixed(0) + ' 倍</td></tr>' +
-        '</tbody></table></div>' +
-        '<p style="margin-top:10px;font-size:13.5px;color:var(--ink-mute);">' +
-        (n < 50000 ? '轉數還太少，這個回收率的誤差很大——我們跑 100 萬轉，每次結果仍然會差 ±1.84 個百分點。多按幾次看看數字跳多兇。' : '轉數夠多了，回收率應該開始靠近 97% 上下。但注意最長乾旱期那一列——那才是真錢時會發生在你身上的事。') +
-        '</p>';
-    }, 30);
-  };
-
-  blank(); sync();
-})();
-</script>
 <script src="/assets/main.js?v=2"></script>
 </body>
 </html>
