@@ -42,7 +42,38 @@
   function updateBalance(){if(!session)return;var next=num('balance-draft'),delta=next-session.currentBalance;if(!delta){announce('餘額沒有變化');return}session.currentBalance=next;session.lowestBalance=Math.min(session.lowestBalance,next);session.events.unshift(makeEvent('balance',(delta>0?'回收 ':'損失 ')+'$'+money(delta),next,delta));save();renderActive();announce('已記錄目前餘額 $'+money(next));track('balance_update',{direction:delta>0?'up':'down'})}
   function updateBet(){if(!session)return;var next=num('bet-draft');if(next<=0||next===session.currentBet){announce('注額沒有變化');return}var previous=session.currentBet;session.currentBet=next;session.events.unshift(makeEvent('bet','注額 '+money(previous)+' → '+money(next),session.currentBalance));el('compare-bet').value=next;save();renderActive();announce('已更新注額 $'+money(next));track('bet_update')}
   function recordFeature(){if(!session)return;var cost=num('feature-cost'),returned=num('feature-return');if(cost<=0){announce('請輸入買免遊成本');return}var delta=returned-cost,balance=Math.max(0,session.currentBalance+delta);session.currentBalance=balance;session.lowestBalance=Math.min(session.lowestBalance,balance);session.events.unshift(makeEvent('feature','買免遊 '+money(cost)+'／回收 '+money(returned),balance,delta));el('balance-draft').value=balance;el('feature-return').value=0;save();renderActive();announce('已加入買免遊紀錄');track('feature_record',{result:delta>=0?'profit':'loss'})}
-  function endSession(){if(!session)return;session.status='ended';session.endedAt=Date.now();session.events.unshift(makeEvent('end','結束本場',session.currentBalance));save();clearInterval(timer);toggleState('ended');renderSummary();track('session_end',{net_result:metrics().net})}
+  function endSession(){if(!session)return;session.status='ended';session.endedAt=Date.now();session.events.unshift(makeEvent('end','結束本場',session.currentBalance));save();clearInterval(timer);toggleState('ended');renderSummary();track('session_end',endPayload())}
+  /* 本場結算摘要。
+     🔴 為什麼要送這些：這個工具的紀錄全部存在使用者自己的 localStorage，
+     一行都沒回到我們手上（2026-08-10 查證：整份程式 fetch／sendBeacon 各 0 次）。
+     有人真的在用（近 28 天 31 次開啟／5 人／15 次買免遊紀錄），但那些數字
+     用完就消失，等於守著一座沒開採的礦。
+     累積之後可以回答一個 AI 生不出來的問題：「根據 N 場真實紀錄，
+     買免費遊戲的實際回收率是多少」——那種數字只有我們有。
+     走 GA4 而不是自建端點：這站的 GA4 是獨立的 G-XCBKJTBVTL，
+     資料不會跟其他站混，也不會多一個跨站請求留下足跡。
+     ⚠️ 這些自訂參數要在 GA4 後台註冊成自訂指標，Data API 才查得到。 */
+  function endPayload(){
+    var m=metrics(),
+        mins=Math.max(0,Math.round(((session.endedAt||Date.now())-session.startedAt)/60000)),
+        feats=session.events.filter(function(e){return e.type==='feature'}),
+        featNet=feats.reduce(function(a,e){return a+(e.delta||0)},0);
+    return{
+      net_result:m.net,
+      net_percent:Math.round(m.netPercent*10)/10,
+      duration_min:mins,
+      starting_bankroll:session.config.startingBankroll,
+      ending_balance:session.currentBalance,
+      max_drawdown_pct:Math.round(m.drawdown*10)/10,
+      feature_buys:feats.length,
+      feature_net:featNet,
+      event_count:Math.max(0,session.events.length-2),
+      // 分桶欄位：GA4 的探索報表用維度切比用數字方便，這兩個直接當維度用
+      result_bucket:m.net>0?'win':(m.net<0?'loss':'flat'),
+      bankroll_bucket:session.config.startingBankroll<2000?'lt2k':
+                      (session.config.startingBankroll<10000?'2k_10k':'gte10k')
+    };
+  }
   function resetSession(){session=null;save();['starting-bankroll','starting-bet','loss-limit','profit-target'].forEach(function(id,index){el(id).value=[2000,6,1000,500][index]});renderSetup();toggleState('setup');announce('已清除上一場記錄')}
   function restore(){try{session=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')}catch(error){session=null}if(!session){toggleState('setup');renderSetup();track('session_tool_open');return}el('balance-draft').value=session.currentBalance;el('bet-draft').value=session.currentBet;el('compare-bet').value=session.currentBet;if(session.status==='ended'){toggleState('ended');renderSummary()}else{toggleState('active');renderActive();startTimer()}track('session_tool_open',{restored_session:true})}
 
