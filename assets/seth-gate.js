@@ -81,7 +81,9 @@
   var css =
     '.seth-gate{border:1px solid rgba(221,176,88,.28);border-left:3px solid ' + GOLD + ';' +
         /* 背景要不透明。半透明會讓底下的 h1／盤面透出來跟文字疊在一起。 */
-    'border-radius:12px;padding:20px 22px;margin:14px 0;background:#0f1420}' +
+    /* text-align 要自己指定：結算畫面是置中的，繼承下來會讓整段文字置中，
+       多行內文置中很難讀。 */
+    'border-radius:12px;padding:20px 22px;margin:14px 0;background:#0f1420;text-align:left}' +
     '.seth-gate[hidden]{display:none}' +
     '.seth-gate h4{margin:0 0 7px;font-size:16px;font-weight:800;line-height:1.4;color:' + CREAM + '}' +
     '.seth-gate p{margin:0 0 14px;font-size:14px;line-height:1.8;color:rgba(242,234,220,.72)}' +
@@ -91,10 +93,8 @@
     'color:#1a1206;font-weight:800;text-decoration:none;font-size:14.5px}' +
     '.seth-gate-line{display:inline-block;padding:11px 18px;border-radius:9px;background:#06c755;' +
     'color:#fff;font-weight:700;text-decoration:none;font-size:14px}' +
-    '.seth-gate-have{background:none;border:0;padding:0;font-size:13.5px;color:rgba(242,234,220,.62);' +
-    'text-decoration:underline;cursor:pointer;font-family:inherit}' +
-    '.seth-gate-code{display:none;gap:8px;margin-top:13px;flex-wrap:wrap}' +
-    '.seth-gate-code.on{display:flex}' +
+    '.seth-gate-have{display:block;margin:16px 0 7px;font-size:13px;color:rgba(242,234,220,.62)}' +
+    '.seth-gate-code{display:flex;gap:8px;flex-wrap:wrap}' +
     '.seth-gate-code input{height:40px;padding:0 13px;border:1px solid rgba(221,176,88,.35);' +
     'border-radius:8px;font-size:15px;min-width:170px;background:rgba(0,0,0,.35);color:' + CREAM + '}' +
     '.seth-gate-code input::placeholder{color:rgba(242,234,220,.4)}' +
@@ -119,8 +119,12 @@
         '<a class="seth-gate-go" href="' + REG_BASE + '&utm_content=' + cfg.slug + '" ' +
           'data-cta="play" target="_blank" rel="nofollow sponsored noopener">' + cfg.cta + ' →</a>' +
         (cfg.line ? '<a class="seth-gate-line" href="' + LINE_URL + '" target="_blank" rel="noopener">加 LINE 拿解鎖碼</a>' : '') +
-        '<button type="button" class="seth-gate-have">已經有解鎖碼</button>' +
       '</div>' +
+      /* 🔴 輸入框一定要常駐，不要藏在「已經有解鎖碼」的切換後面。
+         第一版藏起來了，結果是：使用者去加 LINE、拿到碼、回到頁面，
+         畫面上找不到任何可以輸入的地方——整條轉化在最後一步斷掉，
+         而且完全沒有錯誤訊息，我們也不會知道有人卡在這裡。 */
+      '<span class="seth-gate-have">拿到解鎖碼了？貼在這裡</span>' +
       '<div class="seth-gate-code">' +
         '<input type="text" autocomplete="off" placeholder="輸入解鎖碼">' +
         '<button type="button">解鎖</button>' +
@@ -132,10 +136,6 @@
     var input = codeRow.querySelector('input');
     var msg = box.querySelector('.seth-gate-msg');
 
-    box.querySelector('.seth-gate-have').addEventListener('click', function () {
-      codeRow.classList.add('on');
-      input.focus();
-    });
     function submit() {
       var v = input.value.trim().toLowerCase();
       if (v === CODES.dep) { grant('dep', cfg.tool); return; }
@@ -231,7 +231,47 @@
   /* ── ② 戰局計算：1 場 ─────────────────────────────
      計次點在「開始記錄這一場」的送出，不在結束。
      擋結束會讓人記到一半突然被鎖，資料還在畫面上卻動不了——
-     那是最容易被罵詐騙的做法。第一場一定讓他完整跑完。 */
+     那是最容易被罵詐騙的做法。第一場一定讓他完整跑完，含結算。
+
+     ── 為什麼閘門主要放在結算畫面 ──────────────────
+     這個工具跟模擬器不一樣：使用者是「正在真的玩」的時候在用它。
+     價值最高的一秒是按下「結束本場」、螢幕出現「本場淨虧 $500、
+     最大回撤 35%」的那一刻——那個數字是他自己輸入的，不是我們講的。
+     所以 CTA 放在那裡，而不是等他隔幾天回來、填完一整張表才擋。
+
+     舊做法（只擋送出）的實際動線是：按「開始新的場次」→ 回到表單 →
+     把本金注額重填一次 → 按送出 → 才被告知不能用。
+     填完表才被擋是最讓人火大的順序，所以改成按下去當場擋。
+     送出那道攔截保留當後備，處理直接重整或還原場次的情況。 */
+  var SUMMARY_COPY = {
+    loss: {
+      title: '這場的錢已經花掉了，下一場之前先把上限寫下來',
+      copy: '工具能做的只有把數字算清楚：這場的最大回撤與停損使用率都在上面。' +
+            '下一場開局前先決定輸到多少就停，並選擇有公開標示 RTP、出金流程透明的平台。'
+    },
+    win: {
+      title: '要不要見好就收，是你的決定',
+      copy: '這場的淨利是把回收扣掉本金與買免遊成本之後的真實數字，不是單次回收。' +
+            '要繼續的話，記得下一場一樣先設好停損——上一場賺不會讓下一場比較容易。'
+    },
+    flat: {
+      title: '打平也是結果，下一場記得先設停損',
+      copy: '選擇有公開標示 RTP、出金流程透明的平台，並在開局前就把預算上限寫下來。'
+    }
+  };
+
+  /* 依本場結果改寫結算卡片的文案。
+     接著使用者剛看到的數字講，比通用廣告詞有說服力得多。 */
+  function personalizeSummary() {
+    var t = $('summary-cta-title'), c = $('summary-cta-copy'), r = $('summary-result');
+    if (!t || !c || !r) return;
+    var txt = r.textContent || '';
+    var key = txt.indexOf('−') === 0 ? 'loss' : (/^\+\$?0(\.0+)?$/.test(txt) ? 'flat' : 'win');
+    t.textContent = SUMMARY_COPY[key].title;
+    c.textContent = SUMMARY_COPY[key].copy;
+    track('session_summary_cta', { result_bucket: key });
+  }
+
   function bindSession() {
     var form = $('setup-form');
     if (!form) return;
@@ -264,6 +304,35 @@
         return;
       }
       spend('session');
+    }, true);
+
+    /* 結算畫面：本場結果一出來就把 CTA 文案換成貼著這場數字講的版本，
+       並在「開始新的場次」那顆鈕上擋——不要讓他回表單重填一次才被擋。 */
+    gates.summary = panel({
+      tool: 'session', scope: 'reg', slug: 'gate-session-summary',
+      title: '這一場是免費完整記錄的那一場',
+      copy: '上面這場的數字會留在你這台裝置上，隨時回來都看得到。' +
+            '要開始記錄新的一場，在合作平台完成註冊後跟我們拿解鎖碼。',
+      cta: '前往平台註冊', line: true
+    });
+    var reset = $('reset-session');
+    reset.parentNode.insertBefore(gates.summary, reset);
+
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('button');
+      if (!b) return;
+      if (b.id === 'end-session') {
+        // 結算畫面是 endSession 同步畫好的，但保險起見等一個 tick 再讀
+        setTimeout(personalizeSummary, 30);
+        return;
+      }
+      if (b.id !== 'reset-session') return;
+      if (isUnlocked('reg')) return;
+      if (used('session') >= LIMITS.session) {
+        e.preventDefault();
+        e.stopPropagation();
+        show('summary');
+      }
     }, true);
   }
 
