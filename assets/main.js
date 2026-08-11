@@ -33,7 +33,13 @@
      都在裡面，之後才分得出是哪一篇文章導出去的。
 
      用 pointerdown 而不是 click：按下去到瀏覽器跳走只有幾十毫秒，
-     click 常常來不及把 beacon 送出去。 */
+     click 常常來不及把 beacon 送出去。
+
+     🔴 2026-08-11 改成事件委派（原本是載入時 querySelectorAll 逐個綁）。
+     原因：工具閘門的 CTA 是點下去才生成的，載入時還不存在，
+     逐個綁的寫法對它們完全失明——按鈕會動、事件不會送，
+     儀表板照樣顯示「未追蹤」，而且不會有任何錯誤訊息提醒你。
+     委派到 document 之後，之後任何動態插入的 ys89.bet 連結都自動涵蓋。 */
   var sentLinks = [];
   function reportOutbound(a) {
     var url = a.href || '';
@@ -47,8 +53,10 @@
       cta_position: m ? decodeURIComponent(m[1]) : 'unknown'
     });
   }
-  document.querySelectorAll('a[href*="ys89.bet"]').forEach(function (a) {
-    a.addEventListener('pointerdown', function () { reportOutbound(a); });
-    a.addEventListener('click', function () { reportOutbound(a); });
-  });
+  function delegate(e) {
+    var a = e.target.closest && e.target.closest('a[href*="ys89.bet"]');
+    if (a) reportOutbound(a);
+  }
+  document.addEventListener('pointerdown', delegate);
+  document.addEventListener('click', delegate);
 })();

@@ -309,31 +309,14 @@
   }
 
   /* ---------- ③ AI 選房：解鎖閘門 ---------- */
-  // 軟鎖：會翻原始碼的人繞得過去，但那種人本來就不會儲值。
-  // 它的工作是製造一個非去 LINE 不可的理由。換碼改下面這一行、重新部署即可。
-  var CLAIM_CODE = 'seth-unlock-2608';
-  var CLAIM_KEY = 'seth-room-unlocked';
-
-  function bindGate() {
-    var gate = $('claim-gate'), body = $('tool-body');
-    if (!gate || !body) return;
-    function open_() { gate.hidden = true; body.hidden = false; }
-    try { if (localStorage.getItem(CLAIM_KEY) === '1') open_(); } catch (e) {}
-    var btn = $('claim-submit'), inp = $('claim-code'), msg = $('claim-msg');
-    if (!btn || !inp) return;
-    btn.onclick = function () {
-      if (inp.value.trim().toLowerCase() === CLAIM_CODE) {
-        try { localStorage.setItem(CLAIM_KEY, '1'); } catch (e) {}
-        open_();
-      } else if (msg) {
-        msg.textContent = '解鎖碼不對。加 LINE 傳「領取工具」就會給你。';
-      }
-    };
-    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') btn.click(); });
-  }
+  // 🔴 2026-08-11 移走：三個工具的閘門全部改由 /assets/seth-gate.js 管。
+  // 這裡原本有一份 bindGate()，用舊碼 seth-unlock-2608 解鎖 #claim-gate。
+  // 它跟新模組會搶同一個 #claim-submit：兩邊都綁得上去，後綁的那份
+  // 覆寫 .onclick，結果是舊碼照樣能解、新的首儲門檻形同虛設，
+  // 而且畫面完全正常，看不出任何異常——所以是刪掉而不是留著備用。
+  // 已經用舊碼解鎖過的人不會被鎖回去：新模組會認舊的 seth-room-unlocked 旗標。
 
   document.addEventListener('DOMContentLoaded', function () {
-    bindGate();
     bindReport();
     loadRank();
   });
