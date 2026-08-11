@@ -169,11 +169,17 @@
   }
 
   /* ── ① 機制模擬器：3 次 ───────────────────────────
-     什麼算「一次」：批次模擬與自動 50 轉。
-     單轉、買免遊、重設不計次——那是看懂機制必要的操作，
-     鎖掉的話這頁就從教學工具變成純廣告，反而留不住人。
-     要改成連單轉也計次，把 id 加進下面這個陣列即可。 */
-  var SIM_HEAVY = ['btn-batch', 'btn-auto'];
+     計次的是批次模擬與自動 50 轉這兩個「一次跑很多轉」的動作。
+     單轉與買免遊不計次，但這不代表它們永遠免費——
+
+     🔴 2026-08-11 修正：次數用完之後，模擬器的每一顆按鈕都要鎖。
+     第一版只擋 SIM_HEAVY，結果閘門已經跳出來了，旋轉跟買免遊還能按，
+     使用者一路轉到 103 轉——畫面上寫著「試用已用完」，手上卻還在用，
+     那不是寬容，那是文案在說謊。
+     所以計次範圍（SIM_HEAVY）跟封鎖範圍（SIM_ALL）是兩件事，分開列。 */
+  var SIM_HEAVY = ['btn-batch', 'btn-auto'];                       // 這兩個會消耗次數
+  var SIM_ALL = ['btn-batch', 'btn-auto', 'btn-spin', 'btn-buy',   // 用完後這些全鎖
+                 'btn-reset', 'btn-apply'];
 
   function bindSim() {
     var host = document.querySelector('#pane-pre .batch-box');
@@ -181,16 +187,15 @@
     gates.sim = panel({
       tool: 'sim', scope: 'reg', slug: 'gate-simulator',
       title: '模擬器免費試用已用完（' + LIMITS.sim + ' 次）',
-      copy: '批次模擬與自動 50 轉是免費試用的部分，你已經用完 ' + LIMITS.sim + ' 次。' +
-            '單轉、買免遊、以及下面的 800 萬轉實測統計不受影響，照常可以用。' +
-            '在合作平台完成註冊後跟我們拿解鎖碼，就不再有次數限制。',
+      copy: '模擬器已經停用。下面的 800 萬轉實測統計、機制說明與常見問題不受影響，' +
+            '照常看得到。在合作平台完成註冊後跟我們拿解鎖碼，就不再有次數限制。',
       cta: '前往平台註冊', line: true
     });
     host.parentNode.insertBefore(gates.sim, host);
 
     document.addEventListener('click', function (e) {
       var b = e.target.closest && e.target.closest('button');
-      if (!b || SIM_HEAVY.indexOf(b.id) === -1) return;
+      if (!b || SIM_ALL.indexOf(b.id) === -1) return;
       if (isUnlocked('reg')) return;
       if (used('sim') >= LIMITS.sim) {
         // 攔在捕獲階段，seth-hub.js 綁在按鈕上的 onclick 才不會跑掉
@@ -199,9 +204,28 @@
         show('sim');
         return;
       }
+      if (SIM_HEAVY.indexOf(b.id) === -1) return;   // 單轉與買免遊放行，但不計次
       spend('sim');
+      lockSim();
       hint('sim');
     }, true);
+  }
+
+  /* 次數用完就把按鈕變成停用的樣子。
+     只擋點擊、按鈕看起來卻還是能按，使用者會以為是工具壞了而不是被鎖。 */
+  function lockSim() {
+    var off = !isUnlocked('reg') && used('sim') >= LIMITS.sim;
+    SIM_ALL.forEach(function (id) {
+      var b = $(id);
+      if (!b) return;
+      b.style.opacity = off ? '.4' : '';
+      b.style.cursor = off ? 'not-allowed' : '';
+      if (off) b.setAttribute('title', '免費試用已用完，註冊後解鎖');
+      else b.removeAttribute('title');
+      b.setAttribute('aria-disabled', off ? 'true' : 'false');
+    });
+    var msg = $('msg');
+    if (off && msg) msg.textContent = '免費試用已用完，模擬器已停用。註冊後輸入解鎖碼即可繼續。';
   }
 
   /* ── ② 戰局計算：1 場 ─────────────────────────────
@@ -301,7 +325,8 @@
       host.appendChild(tag);
     }
     tag.textContent = isUnlocked('reg') ? '' :
-      (left > 0 ? '免費試用還剩 ' + left + ' 次（單轉與買免遊不計次）' : '免費試用已用完');
+      (left > 0 ? '免費試用還剩 ' + left + ' 次（批次模擬與自動 50 轉計次，用完後模擬器會停用）'
+                : '免費試用已用完，模擬器已停用');
   }
 
   function refresh() {
@@ -311,6 +336,7 @@
     });
     var gate = $('claim-gate'), body = $('tool-body');
     if (gate && body && isUnlocked('dep')) { gate.hidden = true; body.hidden = false; }
+    lockSim();
     hint('sim');
   }
 
