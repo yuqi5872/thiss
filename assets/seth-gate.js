@@ -2,10 +2,12 @@
  * 賽特工具台 — 試用次數閘門
  * 2026-08-11 建立
  *
- * 三個工具三種門檻：
- *   ① 機制模擬器      免費 3 次 → 註冊後解鎖
- *   ② 戰局計算        免費 1 場 → 註冊後解鎖
- *   ③ AI 選房數據助手  首儲 2,000 後開啟
+ * 三個工具三級門檻（2026-08-11 改為階梯制）：
+ *   ① 機制模擬器      免費 3 次 → 完成註冊解鎖        （L1）
+ *   ② 戰局計算        免費 1 場 → 累計儲值 2,000 解鎖  （L2）
+ *   ③ AI 選房數據助手  一開始就鎖 → 累計儲值 3,000 解鎖 （L3）
+ *
+ * 階梯是往下相容的：拿到 L3 的碼等於 ①②③ 全開，不用再給前兩組。
  *
  * ── 這是軟鎖，不是防盜 ────────────────────────────
  * 次數存在 localStorage，清掉就重來，會看原始碼的人一秒繞過。
@@ -23,19 +25,27 @@
  *
  * ── 解鎖碼怎麼發 ──────────────────────────────────
  * 站是純靜態的，沒有後端可以查對方到底有沒有註冊或儲值。
- * 所以流程是人工的：使用者加 LINE → 你在 ys89.bet 後台用代理碼
- * dvjhkv 查到這個人 → 把對應的碼給他。碼要換就改下面 CODES，
- * 重新部署即可（舊碼會立刻失效，已解鎖的人不受影響）。
+ * 發碼由 LINE bot 負責：使用者加 LINE 傳截圖 → bot 跑 OCR 判定 →
+ * 自動回覆對應等級的碼。程式在 /Users/user/Desktop/YS89-專案整理/seth-unlock-bot/。
+ *
+ * 🔴 下面的 CODES 跟那支 bot 的 wrangler.toml 是同一組碼，改了要兩邊一起改。
+ * 只改一邊的後果：bot 照樣發碼、使用者照樣貼上、前端就是不認，
+ * 而且兩邊都不會報錯——你只會看到轉化莫名其妙掉到零。
  */
 (function () {
   'use strict';
 
   /* ── 可調參數：要改就改這一段 ───────────────────── */
   var LIMITS = { sim: 3, session: 1 };          // 免費次數
+  /* 等級對照。每一級的碼只解開「該級以下」的工具，L3 全開。
+     🔴 這三組字串必須跟 seth-unlock-bot 的 wrangler.toml 一字不差。 */
   var CODES = {
-    reg: 'seth-vip-2608',                        // 註冊後給 → 解鎖 ①②
-    dep: 'seth-pro-2608'                         // 首儲 2,000 後給 → 解鎖 ③
+    1: 'seth-open-4k9m',   // 完成註冊       → ① 機制模擬器
+    2: 'seth-live-7qx3',   // 累計儲值 2,000 → ①②
+    3: 'seth-room-2vt8'    // 累計儲值 3,000 → ①②③
   };
+  var NEED = { sim: 1, session: 2, summary: 2, ai: 3 };   // 各工具需要的等級
+  var LEVEL_NAME = { 1: '完成註冊', 2: '累計儲值 2,000', 3: '累計儲值 3,000' };
   var LINE_URL = 'https://line.me/R/ti/p/@128zirab';
   var REG_BASE = 'https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD' +
                  '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate&utm_campaign=ys368';
@@ -59,13 +69,15 @@
 
   var uses = read(USE_KEY, {});
   var unlocked = read(UNLOCK_KEY, {});
-  // 舊版只鎖 AI，已經拿過碼的人不能因為這次改版被鎖回去
-  try { if (localStorage.getItem(LEGACY_AI_KEY) === '1') unlocked.dep = true; } catch (e) {}
+  /* 舊版的解鎖狀態要繼續認，已經拿過碼的人不能因為改版被鎖回去：
+     舊 seth-room-unlocked（AI 已解）→ 直接視為 L3
+     舊 {dep:true} → L3；舊 {reg:true} → L2（舊註冊碼本來就解得開①②） */
+  try { if (localStorage.getItem(LEGACY_AI_KEY) === '1') unlocked.level = 3; } catch (e) {}
+  if (unlocked.dep) unlocked.level = 3;
+  else if (unlocked.reg && !unlocked.level) unlocked.level = 2;
 
-  function isUnlocked(scope) {
-    // 首儲碼位階比註冊碼高，解了 ③ 等於 ①② 也解開
-    return scope === 'dep' ? !!unlocked.dep : !!(unlocked.reg || unlocked.dep);
-  }
+  function level() { return Number(unlocked.level || 0); }
+  function isUnlocked(tool) { return level() >= (NEED[tool] || 1); }
   function used(tool) { return Number(uses[tool] || 0); }
   function spend(tool) { uses[tool] = used(tool) + 1; write(USE_KEY, uses); }
 
@@ -138,11 +150,18 @@
 
     function submit() {
       var v = input.value.trim().toLowerCase();
-      if (v === CODES.dep) { grant('dep', cfg.tool); return; }
-      if (v === CODES.reg && cfg.scope === 'reg') { grant('reg', cfg.tool); return; }
-      msg.textContent = v === CODES.reg
-        ? '這是註冊解鎖碼，這一項需要首儲後才會給的那一組。'
-        : '解鎖碼不對。加 LINE 跟我們要。';
+      var got = 0;
+      for (var lv = 1; lv <= 3; lv++) if (v === CODES[lv]) got = lv;
+      if (!got) { msg.textContent = '解鎖碼不對。加 LINE 傳截圖就會自動給你。'; return; }
+      /* 等級不夠時要講清楚差在哪一級，不要只說「碼不對」——
+         碼是我們發的，講「不對」會讓人以為系統壞了而不是等級不夠。 */
+      if (got < NEED[cfg.tool]) {
+        msg.textContent = '這組是「' + LEVEL_NAME[got] + '」的解鎖碼，只能解開前面的工具。' +
+                          '這一項需要「' + LEVEL_NAME[NEED[cfg.tool]] + '」的那一組。';
+        grant(got, cfg.tool);      // 還是要收下，該解的前面那幾項照解
+        return;
+      }
+      grant(got, cfg.tool);
     }
     codeRow.querySelector('button').addEventListener('click', submit);
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
@@ -150,11 +169,12 @@
     return box;
   }
 
-  function grant(scope, tool) {
-    unlocked[scope] = true;
+  function grant(lv, tool) {
+    if (lv <= level()) { refresh(); return; }      // 不降級：已經 L3 的人貼 L1 的碼不該被降回去
+    unlocked.level = lv;
     write(UNLOCK_KEY, unlocked);
-    try { if (scope === 'dep') localStorage.setItem(LEGACY_AI_KEY, '1'); } catch (e) {}
-    track('tool_unlock', { tool_name: tool, unlock_scope: scope });
+    try { if (lv >= 3) localStorage.setItem(LEGACY_AI_KEY, '1'); } catch (e) {}
+    track('tool_unlock', { tool_name: tool, unlock_level: lv });
     refresh();
   }
 
@@ -185,7 +205,7 @@
     var host = document.querySelector('#pane-pre .batch-box');
     if (!host) return;
     gates.sim = panel({
-      tool: 'sim', scope: 'reg', slug: 'gate-simulator',
+      tool: 'sim', slug: 'gate-simulator',
       title: '模擬器免費試用已用完（' + LIMITS.sim + ' 次）',
       copy: '模擬器已經停用。下面的 800 萬轉實測統計、機制說明與常見問題不受影響，' +
             '照常看得到。在合作平台完成註冊後跟我們拿解鎖碼，就不再有次數限制。',
@@ -196,7 +216,7 @@
     document.addEventListener('click', function (e) {
       var b = e.target.closest && e.target.closest('button');
       if (!b || SIM_ALL.indexOf(b.id) === -1) return;
-      if (isUnlocked('reg')) return;
+      if (isUnlocked('sim')) return;
       if (used('sim') >= LIMITS.sim) {
         // 攔在捕獲階段，seth-hub.js 綁在按鈕上的 onclick 才不會跑掉
         e.preventDefault();
@@ -214,7 +234,7 @@
   /* 次數用完就把按鈕變成停用的樣子。
      只擋點擊、按鈕看起來卻還是能按，使用者會以為是工具壞了而不是被鎖。 */
   function lockSim() {
-    var off = !isUnlocked('reg') && used('sim') >= LIMITS.sim;
+    var off = !isUnlocked('sim') && used('sim') >= LIMITS.sim;
     SIM_ALL.forEach(function (id) {
       var b = $(id);
       if (!b) return;
@@ -276,9 +296,10 @@
     var form = $('setup-form');
     if (!form) return;
     gates.session = panel({
-      tool: 'session', scope: 'reg', slug: 'gate-session',
+      tool: 'session', slug: 'gate-session',
       title: '戰局計算的免費試用是一場',
-      copy: '你已經完整記錄過一場。想繼續記錄下一場，在合作平台完成註冊後跟我們拿解鎖碼。' +
+      copy: '你已經完整記錄過一場。想繼續記錄下一場，需要在合作平台<b>累計儲值滿 2,000</b>——' +
+            '加 LINE 傳一張後台截圖，系統核對後會自動給你解鎖碼。' +
             '已經記過的那一場資料還在你這台裝置上，不會消失。',
       cta: '前往平台註冊', line: true
     });
@@ -296,7 +317,7 @@
        綁在祖先節點才會進入真正的捕獲階段，stopPropagation 才擋得住。 */
     document.addEventListener('submit', function (e) {
       if (e.target !== form) return;
-      if (isUnlocked('reg')) return;
+      if (isUnlocked('session')) return;
       if (used('session') >= LIMITS.session) {
         e.preventDefault();
         e.stopPropagation();
@@ -309,10 +330,11 @@
     /* 結算畫面：本場結果一出來就把 CTA 文案換成貼著這場數字講的版本，
        並在「開始新的場次」那顆鈕上擋——不要讓他回表單重填一次才被擋。 */
     gates.summary = panel({
-      tool: 'session', scope: 'reg', slug: 'gate-session-summary',
+      tool: 'summary', slug: 'gate-session-summary',
       title: '這一場是免費完整記錄的那一場',
       copy: '上面這場的數字會留在你這台裝置上，隨時回來都看得到。' +
-            '要開始記錄新的一場，在合作平台完成註冊後跟我們拿解鎖碼。',
+            '要開始記錄新的一場，需要在合作平台<b>累計儲值滿 2,000</b>——' +
+            '加 LINE 傳一張後台截圖，系統核對後會自動給你解鎖碼。',
       cta: '前往平台註冊', line: true
     });
     var reset = $('reset-session');
@@ -327,7 +349,7 @@
         return;
       }
       if (b.id !== 'reset-session') return;
-      if (isUnlocked('reg')) return;
+      if (isUnlocked('session')) return;
       if (used('session') >= LIMITS.session) {
         e.preventDefault();
         e.stopPropagation();
@@ -347,10 +369,10 @@
 
     gate.innerHTML =
       '<div style="font-size:32px;line-height:1;margin-bottom:10px" aria-hidden="true">🔒</div>' +
-      '<h3 style="margin:0 0 10px;font-size:17px;color:' + CREAM + '">AI 選房數據助手・首儲會員功能</h3>' +
+      '<h3 style="margin:0 0 10px;font-size:17px;color:' + CREAM + '">AI 選房數據助手・累計儲值 3,000 開啟</h3>' +
       '<p style="margin:0 auto 16px;max-width:34em;font-size:14.5px;line-height:1.85;color:rgba(242,234,220,.72)">' +
-        '這一項需要在合作平台完成註冊、並首次儲值滿 <b>2,000</b> 之後開啟。' +
-        '加 LINE 報你的平台帳號，我們核對後給你解鎖碼。<br>' +
+        '這一項需要在合作平台完成註冊、且<b>累計儲值滿 3,000</b> 之後開啟。' +
+        '加 LINE 傳一張平台後台截圖，系統核對後會自動給你解鎖碼。<br>' +
         '上面的群體實測排行不需要解鎖，任何人都看得到。' +
       '</p>' +
       '<div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">' +
@@ -372,10 +394,14 @@
     var btn = $('claim-submit'), inp = $('claim-code'), msg = $('claim-msg');
     function submit() {
       var v = inp.value.trim().toLowerCase();
-      if (v === CODES.dep) { grant('dep', 'ai'); return; }
-      msg.textContent = v === CODES.reg
-        ? '這組是註冊解鎖碼，只能解開模擬器與戰局計算。這一項要首儲後的那一組。'
-        : '解鎖碼不對。加 LINE 傳「AI助手」跟我們要。';
+      var got = 0;
+      for (var lv = 1; lv <= 3; lv++) if (v === CODES[lv]) got = lv;
+      if (!got) { msg.textContent = '解鎖碼不對。加 LINE 傳截圖就會自動給你。'; return; }
+      if (got < NEED.ai) {
+        msg.textContent = '這組是「' + LEVEL_NAME[got] + '」的解鎖碼，只能解開前面的工具。' +
+                          '這一項需要「' + LEVEL_NAME[NEED.ai] + '」的那一組。';
+      }
+      grant(got, 'ai');
     }
     btn.addEventListener('click', submit);
     inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
@@ -393,18 +419,17 @@
       tag.className = 'seth-gate-left';
       host.appendChild(tag);
     }
-    tag.textContent = isUnlocked('reg') ? '' :
+    tag.textContent = isUnlocked('sim') ? '' :
       (left > 0 ? '免費試用還剩 ' + left + ' 次（批次模擬與自動 50 轉計次，用完後模擬器會停用）'
                 : '免費試用已用完，模擬器已停用');
   }
 
   function refresh() {
     Object.keys(gates).forEach(function (k) {
-      var scope = k === 'ai' ? 'dep' : 'reg';
-      if (isUnlocked(scope)) gates[k].hidden = true;
+      if (isUnlocked(k)) gates[k].hidden = true;
     });
     var gate = $('claim-gate'), body = $('tool-body');
-    if (gate && body && isUnlocked('dep')) { gate.hidden = true; body.hidden = false; }
+    if (gate && body && isUnlocked('ai')) { gate.hidden = true; body.hidden = false; }
     lockSim();
     hint('sim');
   }
@@ -416,7 +441,7 @@
     refresh();
     track('tool_gate_state', {
       sim_used: used('sim'), session_used: used('session'),
-      unlocked_scope: unlocked.dep ? 'deposit' : (unlocked.reg ? 'register' : 'none')
+      unlock_level: level()
     });
   });
 })();
