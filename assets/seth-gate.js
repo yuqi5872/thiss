@@ -4,8 +4,8 @@
  *
  * 三個工具三級門檻（2026-08-11 改為階梯制）：
  *   ① 機制模擬器      免費 3 次 → 完成註冊解鎖        （L1）
- *   ② 戰局計算        免費 1 場 → 累計儲值 2,000 解鎖  （L2）
- *   ③ AI 選房數據助手  一開始就鎖 → 累計儲值 3,000 解鎖 （L3）
+ *   ② 戰局計算        免費 1 場 → 當月累計存款 2,000 解鎖（L2）
+ *   ③ AI 選房數據助手  一開始就鎖 → 當月累計存款 3,000（L3）
  *
  * 階梯是往下相容的：拿到 L3 的碼等於 ①②③ 全開，不用再給前兩組。
  *
@@ -41,11 +41,11 @@
      🔴 這三組字串必須跟 seth-unlock-bot 的 wrangler.toml 一字不差。 */
   var CODES = {
     1: 'seth-open-4k9m',   // 完成註冊       → ① 機制模擬器
-    2: 'seth-live-7qx3',   // 累計儲值 2,000 → ①②
-    3: 'seth-room-2vt8'    // 累計儲值 3,000 → ①②③
+    2: 'seth-live-7qx3',   // 當月累計存款 2,000 → ①②
+    3: 'seth-room-2vt8'    // 當月累計存款 3,000 → ①②③
   };
   var NEED = { sim: 1, session: 2, summary: 2, ai: 3 };   // 各工具需要的等級
-  var LEVEL_NAME = { 1: '完成註冊', 2: '累計儲值 2,000', 3: '累計儲值 3,000' };
+  var LEVEL_NAME = { 1: '完成註冊', 2: '當月累計存款 2,000', 3: '當月累計存款 3,000' };
   var LINE_URL = 'https://line.me/R/ti/p/@128zirab';
   var REG_BASE = 'https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD' +
                  '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate&utm_campaign=ys368';
@@ -298,7 +298,7 @@
     gates.session = panel({
       tool: 'session', slug: 'gate-session',
       title: '戰局計算的免費試用是一場',
-      copy: '你已經完整記錄過一場。想繼續記錄下一場，需要在合作平台<b>累計儲值滿 2,000</b>——' +
+      copy: '你已經完整記錄過一場。想繼續記錄下一場，需要在合作平台<b>單月累計存款滿 2,000</b>——' +
             '加 LINE 傳一張後台截圖，系統核對後會自動給你解鎖碼。' +
             '已經記過的那一場資料還在你這台裝置上，不會消失。',
       cta: '前往平台註冊', line: true
@@ -333,7 +333,7 @@
       tool: 'summary', slug: 'gate-session-summary',
       title: '這一場是免費完整記錄的那一場',
       copy: '上面這場的數字會留在你這台裝置上，隨時回來都看得到。' +
-            '要開始記錄新的一場，需要在合作平台<b>累計儲值滿 2,000</b>——' +
+            '要開始記錄新的一場，需要在合作平台<b>單月累計存款滿 2,000</b>——' +
             '加 LINE 傳一張後台截圖，系統核對後會自動給你解鎖碼。',
       cta: '前往平台註冊', line: true
     });
@@ -369,9 +369,9 @@
 
     gate.innerHTML =
       '<div style="font-size:32px;line-height:1;margin-bottom:10px" aria-hidden="true">🔒</div>' +
-      '<h3 style="margin:0 0 10px;font-size:17px;color:' + CREAM + '">AI 選房數據助手・累計儲值 3,000 開啟</h3>' +
+      '<h3 style="margin:0 0 10px;font-size:17px;color:' + CREAM + '">AI 選房數據助手・單月存款 3,000 開啟</h3>' +
       '<p style="margin:0 auto 16px;max-width:34em;font-size:14.5px;line-height:1.85;color:rgba(242,234,220,.72)">' +
-        '這一項需要在合作平台完成註冊、且<b>累計儲值滿 3,000</b> 之後開啟。' +
+        '這一項需要在合作平台完成註冊、且<b>單月累計存款滿 3,000</b> 之後開啟。' +
         '加 LINE 傳一張平台後台截圖，系統核對後會自動給你解鎖碼。<br>' +
         '上面的群體實測排行不需要解鎖，任何人都看得到。' +
       '</p>' +
