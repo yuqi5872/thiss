@@ -111,7 +111,9 @@
      否則會把舊碼的 dash 位置切壞，明明碼是對的卻兌換失敗。 */
   function buildCodeBoxes() {
     var wrap = document.createElement('div');
-    wrap.className = 'seth-gate-codeboxes';
+    wrap.className = 'seth-gate-codewrap';
+    var boxRow = document.createElement('div');
+    boxRow.className = 'seth-gate-codeboxes';
     var override = null;
     var boxes = SEG_LENS.map(function (len) {
       var inp = document.createElement('input');
@@ -120,10 +122,41 @@
       inp.setAttribute('inputmode', 'text');
       inp.maxLength = len;
       inp.className = 'seth-gate-box';
-      wrap.appendChild(inp);
+      boxRow.appendChild(inp);
       return inp;
     });
     var total = SEG_LENS.reduce(function (a, b) { return a + b; }, 0);
+
+    /* 🔴 手動輸入的退路：三格是設計給「整串貼上」用的，靠手打把長度不固定的
+       舊碼拆成三段會被每格的 maxlength 卡住（打字打到滿就卡住，長碼永遠打不完）。
+       2026-08-12 兩位使用者都卡在這裡才發現——加一個能切換的單一欄位當備案。 */
+    var fallbackWrap = document.createElement('div');
+    fallbackWrap.className = 'seth-gate-fallback';
+    fallbackWrap.hidden = true;
+    var fallbackInput = document.createElement('input');
+    fallbackInput.type = 'text';
+    fallbackInput.autocomplete = 'off';
+    fallbackInput.placeholder = '貼上完整解鎖碼';
+    fallbackInput.className = 'seth-gate-fallback-input';
+    fallbackWrap.appendChild(fallbackInput);
+    fallbackInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') wrap.dispatchEvent(new CustomEvent('seth-submit'));
+    });
+
+    var usingFallback = false;
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'seth-gate-toggle';
+    var TOGGLE_TO_FALLBACK = '碼比較長、貼不進三格？點這裡改用單一欄位';
+    var TOGGLE_TO_BOXES = '改回三格輸入';
+    toggle.textContent = TOGGLE_TO_FALLBACK;
+    toggle.addEventListener('click', function () {
+      usingFallback = !usingFallback;
+      boxRow.hidden = usingFallback;
+      toggle.textContent = usingFallback ? TOGGLE_TO_BOXES : TOGGLE_TO_FALLBACK;
+      fallbackWrap.hidden = !usingFallback;
+      if (usingFallback) fallbackInput.focus(); else boxes[0].focus();
+    });
 
     boxes.forEach(function (inp, idx) {
       inp.addEventListener('input', function () {
@@ -152,10 +185,18 @@
       });
     });
 
-    wrap.getCode = function () { return override || boxes.map(function (b) { return b.value; }).join('-'); };
+    wrap.appendChild(boxRow);
+    wrap.appendChild(toggle);
+    wrap.appendChild(fallbackWrap);
+
+    wrap.getCode = function () {
+      if (usingFallback) return fallbackInput.value.trim().toLowerCase();
+      return override || boxes.map(function (b) { return b.value; }).join('-');
+    };
     wrap.reset = function () {
       override = null;
       boxes.forEach(function (b) { b.value = ''; b.readOnly = false; });
+      fallbackInput.value = '';
     };
     wrap.focusFirst = function () { boxes[0].focus(); };
     return wrap;
@@ -187,12 +228,19 @@
     'color:#fff;font-weight:700;text-decoration:none;font-size:14px}' +
     '.seth-gate-have{display:block;margin:16px 0 7px;font-size:13px;color:rgba(242,234,220,.62)}' +
     '.seth-gate-code{display:flex;gap:10px;flex-wrap:wrap;align-items:center}' +
+    '.seth-gate-codewrap{display:flex;flex-direction:column;gap:6px;flex:1;min-width:200px}' +
     '.seth-gate-codeboxes{display:flex;gap:7px;align-items:center}' +
     '.seth-gate-box{width:42px;height:40px;padding:0;text-align:center;' +
     'font-size:16px;font-weight:800;letter-spacing:.5px;text-transform:lowercase;' +
     'border:1px solid rgba(221,176,88,.35);border-radius:8px;' +
     'background:rgba(0,0,0,.35);color:' + CREAM + '}' +
     '.seth-gate-box:focus{outline:none;border-color:' + GOLD + '}' +
+    '.seth-gate-toggle{background:none;border:0;padding:0;margin:0;text-align:left;' +
+    'font-size:12px;color:rgba(242,234,220,.5);text-decoration:underline;' +
+    'cursor:pointer;width:fit-content;font-family:inherit}' +
+    '.seth-gate-fallback-input{height:40px;padding:0 13px;border:1px solid rgba(221,176,88,.35);' +
+    'border-radius:8px;font-size:15px;background:rgba(0,0,0,.35);color:' + CREAM + ';' +
+    'width:100%;max-width:260px}' +
     '.seth-gate-code button{height:40px;padding:0 20px;border-radius:8px;border:0;' +
     'background:' + GOLD + ';color:#1a1206;font-weight:800;cursor:pointer;font-size:14px}' +
     '.seth-gate-msg{margin:9px 0 0;font-size:13px;min-height:1.2em;color:#ff9c9c}' +
