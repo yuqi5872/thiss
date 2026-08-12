@@ -28,22 +28,18 @@
  * 發碼由 LINE bot 負責：使用者加 LINE 傳截圖 → bot 跑 OCR 判定 →
  * 自動回覆對應等級的碼。程式在 /Users/user/Desktop/YS89-專案整理/seth-unlock-bot/。
  *
- * 🔴 下面的 CODES 跟那支 bot 的 wrangler.toml 是同一組碼，改了要兩邊一起改。
- * 只改一邊的後果：bot 照樣發碼、使用者照樣貼上、前端就是不認，
- * 而且兩邊都不會報錯——你只會看到轉化莫名其妙掉到零。
+ * 🔴 2026-08-12：解鎖碼改成每人一組隨機碼，不再是這裡寫死的字串。
+ * 貼碼會打 REDEEM_API 去後端核對（seth-unlock-bot 的 /api/redeem），
+ * 通過才回傳等級。這是為了擋轉傳分享——固定字串一旦外流，
+ * 任何人貼上都能解鎖，跟後端無關；隨機碼＋伺服器核對＋兌換次數上限
+ * 才能讓「轉傳出去的碼」用滿次數就失效。
  */
 (function () {
   'use strict';
 
   /* ── 可調參數：要改就改這一段 ───────────────────── */
   var LIMITS = { sim: 3, session: 1 };          // 免費次數
-  /* 等級對照。每一級的碼只解開「該級以下」的工具，L3 全開。
-     🔴 這三組字串必須跟 seth-unlock-bot 的 wrangler.toml 一字不差。 */
-  var CODES = {
-    1: 'seth-open-4k9m',   // 完成註冊       → ① 機制模擬器
-    2: 'seth-live-7qx3',   // 當月累計存款 2,000 → ①②
-    3: 'seth-room-2vt8'    // 當月累計存款 3,000 → ①②③
-  };
+  var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
   var NEED = { sim: 1, session: 2, summary: 2, ai: 3 };   // 各工具需要的等級
   var LEVEL_NAME = { 1: '完成註冊', 2: '當月累計存款 2,000', 3: '當月累計存款 3,000' };
   var LINE_URL = 'https://line.me/R/ti/p/@128zirab';
@@ -80,6 +76,27 @@
   function isUnlocked(tool) { return level() >= (NEED[tool] || 1); }
   function used(tool) { return Number(uses[tool] || 0); }
   function spend(tool) { uses[tool] = used(tool) + 1; write(USE_KEY, uses); }
+
+  /* 向後端核對解鎖碼。回傳 {ok, level} 或 {ok:false, error}。
+     error: 'invalid'=碼不對、'limit'=用滿兌換次數上限、'network'=連不上。 */
+  function redeem(code) {
+    return fetch(REDEEM_API, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ code: code })
+    }).then(function (r) {
+      return r.json().then(function (data) { return { status: r.status, data: data }; });
+    }).then(function (res) {
+      if (res.data && res.data.ok) return { ok: true, level: Number(res.data.level) };
+      return { ok: false, error: (res.data && res.data.error) || 'invalid' };
+    }).catch(function () { return { ok: false, error: 'network' }; });
+  }
+
+  function redeemMsg(err) {
+    if (err === 'limit') return '這組碼已經用滿裝置數上限。如果是你自己換裝置，加 LINE 說一聲，我們人工看。';
+    if (err === 'network') return '連線失敗，稍後再試一次。';
+    return '解鎖碼不對。加 LINE 傳截圖就會自動給你。';
+  }
 
   /* ── 樣式 ─────────────────────────────────────────
      前綴 seth-gate 獨佔，不會跟站上既有 class 打架。
@@ -148,22 +165,25 @@
     var input = codeRow.querySelector('input');
     var msg = box.querySelector('.seth-gate-msg');
 
+    var btn = codeRow.querySelector('button');
     function submit() {
       var v = input.value.trim().toLowerCase();
-      var got = 0;
-      for (var lv = 1; lv <= 3; lv++) if (v === CODES[lv]) got = lv;
-      if (!got) { msg.textContent = '解鎖碼不對。加 LINE 傳截圖就會自動給你。'; return; }
-      /* 等級不夠時要講清楚差在哪一級，不要只說「碼不對」——
-         碼是我們發的，講「不對」會讓人以為系統壞了而不是等級不夠。 */
-      if (got < NEED[cfg.tool]) {
-        msg.textContent = '這組是「' + LEVEL_NAME[got] + '」的解鎖碼，只能解開前面的工具。' +
-                          '這一項需要「' + LEVEL_NAME[NEED[cfg.tool]] + '」的那一組。';
+      if (!v) return;
+      btn.disabled = true; btn.textContent = '核對中…';
+      redeem(v).then(function (res) {
+        btn.disabled = false; btn.textContent = '解鎖';
+        if (!res.ok) { msg.textContent = redeemMsg(res.error); return; }
+        var got = res.level;
+        /* 等級不夠時要講清楚差在哪一級，不要只說「碼不對」——
+           碼是我們發的，講「不對」會讓人以為系統壞了而不是等級不夠。 */
+        if (got < NEED[cfg.tool]) {
+          msg.textContent = '這組是「' + LEVEL_NAME[got] + '」的解鎖碼，只能解開前面的工具。' +
+                            '這一項需要「' + LEVEL_NAME[NEED[cfg.tool]] + '」的那一組。';
+        }
         grant(got, cfg.tool);      // 還是要收下，該解的前面那幾項照解
-        return;
-      }
-      grant(got, cfg.tool);
+      });
     }
-    codeRow.querySelector('button').addEventListener('click', submit);
+    btn.addEventListener('click', submit);
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
 
     return box;
@@ -394,14 +414,18 @@
     var btn = $('claim-submit'), inp = $('claim-code'), msg = $('claim-msg');
     function submit() {
       var v = inp.value.trim().toLowerCase();
-      var got = 0;
-      for (var lv = 1; lv <= 3; lv++) if (v === CODES[lv]) got = lv;
-      if (!got) { msg.textContent = '解鎖碼不對。加 LINE 傳截圖就會自動給你。'; return; }
-      if (got < NEED.ai) {
-        msg.textContent = '這組是「' + LEVEL_NAME[got] + '」的解鎖碼，只能解開前面的工具。' +
-                          '這一項需要「' + LEVEL_NAME[NEED.ai] + '」的那一組。';
-      }
-      grant(got, 'ai');
+      if (!v) return;
+      btn.disabled = true; btn.textContent = '核對中…';
+      redeem(v).then(function (res) {
+        btn.disabled = false; btn.textContent = '解鎖';
+        if (!res.ok) { msg.textContent = redeemMsg(res.error); return; }
+        var got = res.level;
+        if (got < NEED.ai) {
+          msg.textContent = '這組是「' + LEVEL_NAME[got] + '」的解鎖碼，只能解開前面的工具。' +
+                            '這一項需要「' + LEVEL_NAME[NEED.ai] + '」的那一組。';
+        }
+        grant(got, 'ai');
+      });
     }
     btn.addEventListener('click', submit);
     inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
