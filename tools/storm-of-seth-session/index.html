@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/seth-session.css?v=20260812-spincost">
+<link rel="stylesheet" href="/assets/seth-session.css?v=20260812-timelinedel">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -108,17 +108,16 @@
       <div class="quick-form">
         <label><span>目前餘額</span><div><b>$</b><input id="balance-draft" type="number" min="0" step="0.01" inputmode="decimal"><button type="button" id="update-balance">記錄</button></div></label>
         <label><span>目前注額</span><div><b>$</b><input id="bet-draft" type="number" min="0.01" step="0.01" inputmode="decimal"><button type="button" id="update-bet">更新</button></div></label>
-        <label><span>這段期間轉了幾次</span><div><b>#</b><input id="spin-draft" type="number" min="1" step="1" inputmode="numeric" placeholder="例：30"></div></label>
-        <label><span>這段期間贏了多少（沒有留空）</span><div><b>$</b><input id="spin-win-draft" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0"><button type="button" id="add-spins">加入</button></div></label>
+        <label><span>這段期間轉了幾次</span><div><b>#</b><input id="spin-draft" type="number" min="1" step="1" inputmode="numeric" placeholder="例：30"><button type="button" id="add-spins">加入</button></div></label>
       </div>
-      <div class="spin-quick" role="group" aria-label="快速加入轉數（用目前贏了多少欄位的金額）">
+      <div class="spin-quick" role="group" aria-label="快速加入轉數">
         <button type="button" class="spin-chip" data-spins="10">10</button>
         <button type="button" class="spin-chip" data-spins="50">50</button>
         <button type="button" class="spin-chip" data-spins="100">100</button>
         <button type="button" class="spin-chip" data-spins="200">200</button>
         <button type="button" class="spin-chip" data-spins="500">500</button>
       </div>
-      <p class="spin-hint">轉了幾次會自動扣「次數 × 目前注額」，贏了多少可以留空（當作0）也可以填。</p>
+      <p class="spin-hint">這裡只計次，不影響餘額或淨利。輸贏請看上面「目前餘額」——瞄一眼現在的點數填進去，工具自己算差額，不用自己心算。</p>
       <div class="feature-form">
         <span>記錄一次購買特色</span>
         <div class="feature-type" role="group" aria-label="購買類型">
@@ -371,10 +370,10 @@
   <div class="sr-only" aria-live="polite" id="status-announcer"></div>
 </main>
 <script src="/assets/main.js?v=4" defer></script>
-<script src="/assets/seth-session.js?v=20260812-spincost" defer></script>
+<script src="/assets/seth-session.js?v=20260812-timelinedel" defer></script>
 <script src="/assets/seth-sim.js?v=20260729" defer></script>
 <script src="/assets/seth-ai-assistant.js?v=20260803" defer></script>
-<script src="/assets/seth-hub.js?v=20260811-gate" defer></script>
+<script src="/assets/seth-hub.js?v=20260812-fastauto" defer></script>
 <script src="/assets/seth-gate.js?v=20260812-boxes" defer></script>
 <script src="/assets/seth-pwa.js?v=20260811-2" defer></script>
 

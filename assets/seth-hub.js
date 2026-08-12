@@ -78,7 +78,17 @@
     }
     function setMsg(t){ document.getElementById('msg').textContent = t; }
   
-    function animate(steps, done){
+    function animate(steps, done, fast){
+      // fast＝true 時（目前只有「自動 50 轉」在用）跳過逐格消除動畫，直接畫最終結果。
+      // 原本每個消除步驟間隔 340ms（有中獎）或 120ms（沒中），50 轉疊起來要等 40 秒，
+      // 跟旁邊「批次模擬」幾乎瞬間出結果的體感差太多——這裡只是不畫過程，
+      // 數值計算（S.spinOnce）本身完全沒變，中獎機率、免費遊戲判定都跟手動單轉一樣。
+      if (fast){
+        var last = steps[steps.length - 1];
+        draw(last.grid, last.winners);
+        done();
+        return;
+      }
       var i = 0;
       (function next(){
         if (i >= steps.length){ done(); return; }
@@ -126,7 +136,7 @@
         document.getElementById('s-win').textContent = fmt(win);
         if (!quiet) setMsg(win > 0 ? ('贏 ' + fmt(win) + ' 點。' + note) : '沒中。約 86.7% 的轉都是這樣。');
         sync(); busy = false; if(after) after();
-      });
+      }, quiet);
     }
   
     document.getElementById('btn-spin').onclick = function(){ if(!busy) playOne(false,false); };
