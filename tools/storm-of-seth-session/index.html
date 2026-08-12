@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/seth-session.css?v=20260812-featurecost">
+<link rel="stylesheet" href="/assets/seth-session.css?v=20260812-winback">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -125,7 +125,7 @@
           <button type="button" class="type-chip" data-type="immortal">不朽覺醒</button>
         </div>
         <label><small>成本</small><input id="feature-cost" type="number" min="0" value="300" inputmode="decimal"></label>
-        <label><small>回收</small><input id="feature-return" type="number" min="0" value="0" inputmode="decimal"></label>
+        <label><small>贏回</small><input id="feature-return" type="number" min="0" value="0" inputmode="decimal"></label>
         <button type="button" id="record-feature">加入紀錄</button>
       </div>
       <div class="timeline"><div class="timeline-title">本場時間線</div><div id="timeline-list"></div></div>
@@ -154,7 +154,7 @@
       <div class="compare-options">
         <article><span id="continue-label">維持 6 再轉 50 局</span><strong id="continue-cost">新增 $300</strong><small id="continue-after">若無回收，餘額剩 $1,700</small></article>
         <article id="change-option"><span id="change-label">改注 6 再轉 50 局</span><strong id="change-cost">新增 $300</strong><small id="change-diff">比原注額多 $0</small></article>
-        <article><span>買一次免費遊戲</span><strong id="feature-compare-cost">新增 $300</strong><small>至少回收同額才是打平</small></article>
+        <article><span>買一次免費遊戲</span><strong id="feature-compare-cost">新增 $300</strong><small>至少贏回同額才是打平</small></article>
         <article class="stop-option"><span>現在結束</span><strong id="stop-result">+$0</strong><small>這是目前可以確定的本場結果</small></article>
       </div>
     </aside>
@@ -369,7 +369,7 @@
   <div class="sr-only" aria-live="polite" id="status-announcer"></div>
 </main>
 <script src="/assets/main.js?v=4" defer></script>
-<script src="/assets/seth-session.js?v=20260812-featurecost" defer></script>
+<script src="/assets/seth-session.js?v=20260812-winback" defer></script>
 <script src="/assets/seth-sim.js?v=20260729" defer></script>
 <script src="/assets/seth-ai-assistant.js?v=20260803" defer></script>
 <script src="/assets/seth-hub.js?v=20260811-gate" defer></script>

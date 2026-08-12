@@ -20,7 +20,7 @@
   var GUIDE_STEPS=[
     {title:'先建立這一場的基準',copy:'輸入開場本金、目前注額、停損與獲利目標。後面所有淨利與回撤都會以這組數字計算。',example:'開場本金 $2,000・停損 $1,000'},
     {title:'餘額有變化時再記錄',copy:'不用每一轉都輸入。當你想確認戰況時，把當下餘額填入並按「記錄」，工具就會重算真實淨利。',example:'$2,000 → $1,500，真實淨利是 −$500'},
-    {title:'買免遊要同時記成本與回收',copy:'輸入這次買免遊花了多少、最後回收多少。系統會把差額直接納入本場餘額與時間線。',example:'成本 $300・回收 $180，本次結果 −$120'},
+    {title:'買特色要同時記成本與贏回',copy:'輸入這次購買特色花了多少、最後贏回多少。系統會把差額直接納入本場餘額與時間線。',example:'成本 $300・贏回 $180，本次結果 −$120'},
     {title:'最後看的是淨利，不是單次回收',copy:'中央會顯示回本距離、最大回撤與停損使用率；右側只比較下一步需要再投入多少，不預測結果。',example:'回收 $500 不等於獲利 $500，要先扣掉本金與成本'}
   ];
   var GUIDE_VISUALS=[
@@ -51,7 +51,7 @@
   function addSpinChip(event){var add=Number(event.currentTarget.dataset.spins)||0;addSpinAmount(add)}
   function applyFeatureCost(){if(!session)return;var mult=FEATURE_MULTIPLIER[featureType]||FEATURE_MULTIPLIER.free;el('feature-cost').value=Math.round(session.currentBet*mult*100)/100}
   function setFeatureType(event){featureType=event.currentTarget.dataset.type;document.querySelectorAll('.type-chip').forEach(function(chip){chip.classList.toggle('active',chip.dataset.type===featureType)});applyFeatureCost()}
-  function recordFeature(){if(!session)return;var cost=num('feature-cost'),returned=num('feature-return'),label=FEATURE_LABELS[featureType]||'免費遊戲';if(cost<=0){announce('請輸入'+label+'成本');return}var delta=returned-cost,balance=Math.max(0,session.currentBalance+delta);session.currentBalance=balance;session.lowestBalance=Math.min(session.lowestBalance,balance);session.events.unshift(makeEvent('feature',label+' '+money(cost)+'／回收 '+money(returned),balance,delta));el('balance-draft').value=balance;el('feature-return').value=0;save();renderActive();announce('已加入'+label+'紀錄');track('feature_record',{result:delta>=0?'profit':'loss',feature_type:featureType})}
+  function recordFeature(){if(!session)return;var cost=num('feature-cost'),returned=num('feature-return'),label=FEATURE_LABELS[featureType]||'免費遊戲';if(cost<=0){announce('請輸入'+label+'成本');return}var delta=returned-cost,balance=Math.max(0,session.currentBalance+delta);session.currentBalance=balance;session.lowestBalance=Math.min(session.lowestBalance,balance);session.events.unshift(makeEvent('feature',label+' '+money(cost)+'／贏回 '+money(returned),balance,delta));el('balance-draft').value=balance;el('feature-return').value=0;save();renderActive();announce('已加入'+label+'紀錄');track('feature_record',{result:delta>=0?'profit':'loss',feature_type:featureType})}
   function endSession(){if(!session)return;session.status='ended';session.endedAt=Date.now();session.events.unshift(makeEvent('end','結束本場',session.currentBalance));save();clearInterval(timer);toggleState('ended');renderSummary();track('session_end',endPayload())}
   /* 本場結算摘要。
      🔴 為什麼要送這些：這個工具的紀錄全部存在使用者自己的 localStorage，
