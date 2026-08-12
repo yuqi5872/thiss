@@ -40,6 +40,10 @@
   /* ── 可調參數：要改就改這一段 ───────────────────── */
   var LIMITS = { sim: 3, session: 1 };          // 免費次數
   var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
+  /* 解鎖碼分三段輸入，不用打「-」。
+     🔴 這個長度必須跟 seth-unlock-bot 的 worker.js 的 SEG_LENS 一字不差，
+     否則貼碼自動分配到三格時會切錯位置，兌換一定失敗。 */
+  var SEG_LENS = [3, 3, 2];
   var NEED = { sim: 1, session: 2, summary: 2, ai: 3 };   // 各工具需要的等級
   var LEVEL_NAME = { 1: '完成註冊', 2: '當月累計存款 2,000', 3: '當月累計存款 3,000' };
   var LINE_URL = 'https://line.me/R/ti/p/@128zirab';
@@ -98,6 +102,65 @@
     return '解鎖碼不對。加 LINE 傳截圖就會自動給你。';
   }
 
+  /* ── 三格解鎖碼輸入 ────────────────────────────────
+     碼是 3-3-2 分段（例：vh4-2pk-9c），不要求使用者自己打「-」：
+     打完一格自動跳下一格，backspace 在空格會跳回上一格，
+     整串貼上（含或不含 -）也會自動拆進三格。
+     🔴 貼上的東西如果長度對不上標準格式（例如舊版固定碼
+     seth-open-4k9m 這種較長字串），就整串原樣送出、不拆格——
+     否則會把舊碼的 dash 位置切壞，明明碼是對的卻兌換失敗。 */
+  function buildCodeBoxes() {
+    var wrap = document.createElement('div');
+    wrap.className = 'seth-gate-codeboxes';
+    var override = null;
+    var boxes = SEG_LENS.map(function (len) {
+      var inp = document.createElement('input');
+      inp.type = 'text';
+      inp.autocomplete = 'off';
+      inp.setAttribute('inputmode', 'text');
+      inp.maxLength = len;
+      inp.className = 'seth-gate-box';
+      wrap.appendChild(inp);
+      return inp;
+    });
+    var total = SEG_LENS.reduce(function (a, b) { return a + b; }, 0);
+
+    boxes.forEach(function (inp, idx) {
+      inp.addEventListener('input', function () {
+        override = null;
+        inp.value = inp.value.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, SEG_LENS[idx]);
+        if (inp.value.length >= SEG_LENS[idx] && boxes[idx + 1]) boxes[idx + 1].focus();
+      });
+      inp.addEventListener('keydown', function (e) {
+        if (e.key === 'Backspace' && !inp.value && boxes[idx - 1]) boxes[idx - 1].focus();
+        if (e.key === 'Enter') wrap.dispatchEvent(new CustomEvent('seth-submit'));
+      });
+      inp.addEventListener('paste', function (e) {
+        var raw = (e.clipboardData || window.clipboardData).getData('text').trim().toLowerCase();
+        var clean = raw.replace(/[^a-z0-9]/g, '');
+        e.preventDefault();
+        if (clean.length === total) {
+          var pos = 0;
+          boxes.forEach(function (b, i) { b.value = clean.slice(pos, pos + SEG_LENS[i]); pos += SEG_LENS[i]; });
+          override = null;
+          boxes[boxes.length - 1].focus();
+        } else {
+          // 長度對不上標準格式：當作一組完整的碼直接用，不拆格
+          override = raw;
+          boxes.forEach(function (b, i) { b.value = i === 0 ? '✓' : ''; b.readOnly = i !== 0; });
+        }
+      });
+    });
+
+    wrap.getCode = function () { return override || boxes.map(function (b) { return b.value; }).join('-'); };
+    wrap.reset = function () {
+      override = null;
+      boxes.forEach(function (b) { b.value = ''; b.readOnly = false; });
+    };
+    wrap.focusFirst = function () { boxes[0].focus(); };
+    return wrap;
+  }
+
   /* ── 樣式 ─────────────────────────────────────────
      前綴 seth-gate 獨佔，不會跟站上既有 class 打架。
 
@@ -123,10 +186,13 @@
     '.seth-gate-line{display:inline-block;padding:11px 18px;border-radius:9px;background:#06c755;' +
     'color:#fff;font-weight:700;text-decoration:none;font-size:14px}' +
     '.seth-gate-have{display:block;margin:16px 0 7px;font-size:13px;color:rgba(242,234,220,.62)}' +
-    '.seth-gate-code{display:flex;gap:8px;flex-wrap:wrap}' +
-    '.seth-gate-code input{height:40px;padding:0 13px;border:1px solid rgba(221,176,88,.35);' +
-    'border-radius:8px;font-size:15px;min-width:170px;background:rgba(0,0,0,.35);color:' + CREAM + '}' +
-    '.seth-gate-code input::placeholder{color:rgba(242,234,220,.4)}' +
+    '.seth-gate-code{display:flex;gap:10px;flex-wrap:wrap;align-items:center}' +
+    '.seth-gate-codeboxes{display:flex;gap:7px;align-items:center}' +
+    '.seth-gate-box{width:42px;height:40px;padding:0;text-align:center;' +
+    'font-size:16px;font-weight:800;letter-spacing:.5px;text-transform:lowercase;' +
+    'border:1px solid rgba(221,176,88,.35);border-radius:8px;' +
+    'background:rgba(0,0,0,.35);color:' + CREAM + '}' +
+    '.seth-gate-box:focus{outline:none;border-color:' + GOLD + '}' +
     '.seth-gate-code button{height:40px;padding:0 20px;border-radius:8px;border:0;' +
     'background:' + GOLD + ';color:#1a1206;font-weight:800;cursor:pointer;font-size:14px}' +
     '.seth-gate-msg{margin:9px 0 0;font-size:13px;min-height:1.2em;color:#ff9c9c}' +
@@ -155,19 +221,20 @@
          而且完全沒有錯誤訊息，我們也不會知道有人卡在這裡。 */
       '<span class="seth-gate-have">拿到解鎖碼了？貼在這裡</span>' +
       '<div class="seth-gate-code">' +
-        '<input type="text" autocomplete="off" placeholder="輸入解鎖碼">' +
+        '<span class="seth-gate-boxslot"></span>' +
         '<button type="button">解鎖</button>' +
       '</div>' +
       '<p class="seth-gate-msg" role="status"></p>' +
       '<p class="seth-gate-fine">本頁含合作連結。工具的計算結果不受此影響，也不會因為你有沒有註冊而改變。18 歲以上適用。</p>';
 
     var codeRow = box.querySelector('.seth-gate-code');
-    var input = codeRow.querySelector('input');
+    var boxes = buildCodeBoxes();
+    codeRow.querySelector('.seth-gate-boxslot').replaceWith(boxes);
     var msg = box.querySelector('.seth-gate-msg');
 
     var btn = codeRow.querySelector('button');
     function submit() {
-      var v = input.value.trim().toLowerCase();
+      var v = boxes.getCode();
       if (!v) return;
       btn.disabled = true; btn.textContent = '核對中…';
       redeem(v).then(function (res) {
@@ -180,11 +247,12 @@
           msg.textContent = '這組是「' + LEVEL_NAME[got] + '」的解鎖碼，只能解開前面的工具。' +
                             '這一項需要「' + LEVEL_NAME[NEED[cfg.tool]] + '」的那一組。';
         }
+        boxes.reset();
         grant(got, cfg.tool);      // 還是要收下，該解的前面那幾項照解
       });
     }
     btn.addEventListener('click', submit);
-    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+    boxes.addEventListener('seth-submit', submit);
 
     return box;
   }
@@ -400,10 +468,7 @@
           'data-cta="play" target="_blank" rel="nofollow sponsored noopener">前往平台註冊 →</a>' +
         '<a class="seth-gate-line" href="' + LINE_URL + '" target="_blank" rel="noopener">加 LINE 拿解鎖碼</a>' +
       '</div>' +
-      '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:15px">' +
-        '<input id="claim-code" class="seth-gate-input" type="text" autocomplete="off" placeholder="輸入解鎖碼" ' +
-          'style="height:42px;padding:0 14px;border:1px solid rgba(221,176,88,.35);border-radius:8px;' +
-          'font-size:15px;min-width:180px;background:rgba(0,0,0,.35);color:' + CREAM + '">' +
+      '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:15px" id="claim-boxslot">' +
         '<button type="button" id="claim-submit" ' +
           'style="height:42px;padding:0 24px;border-radius:8px;border:0;background:' + GOLD + ';' +
           'color:#1a1206;font-weight:800;cursor:pointer">解鎖</button>' +
@@ -411,9 +476,11 @@
       '<p id="claim-msg" role="status" style="margin:11px 0 0;font-size:13.5px;min-height:1.2em;color:#ff9c9c"></p>' +
       '<p class="seth-gate-fine" style="text-align:center">本頁含合作連結。工具的計算結果不受此影響。18 歲以上適用。</p>';
 
-    var btn = $('claim-submit'), inp = $('claim-code'), msg = $('claim-msg');
+    var btn = $('claim-submit'), msg = $('claim-msg');
+    var boxes = buildCodeBoxes();
+    $('claim-boxslot').insertBefore(boxes, btn);
     function submit() {
-      var v = inp.value.trim().toLowerCase();
+      var v = boxes.getCode();
       if (!v) return;
       btn.disabled = true; btn.textContent = '核對中…';
       redeem(v).then(function (res) {
@@ -424,11 +491,12 @@
           msg.textContent = '這組是「' + LEVEL_NAME[got] + '」的解鎖碼，只能解開前面的工具。' +
                             '這一項需要「' + LEVEL_NAME[NEED.ai] + '」的那一組。';
         }
+        boxes.reset();
         grant(got, 'ai');
       });
     }
     btn.addEventListener('click', submit);
-    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+    boxes.addEventListener('seth-submit', submit);
   }
 
   /* 剩幾次的提示。放在按鈕旁邊，不另外跳訊息——
