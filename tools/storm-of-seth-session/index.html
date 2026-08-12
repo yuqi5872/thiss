@@ -92,7 +92,7 @@
     <form class="setup-panel" id="setup-form">
       <div class="panel-title"><span>建立本場基準</span><small>資料只存在這台裝置・首場免費完整記錄</small></div>
       <div class="setup-fields">
-        <label><span>開場本金</span><div><b>$</b><input id="starting-bankroll" type="number" min="1" step="1" value="2000" inputmode="decimal" required></div></label>
+        <label><span>開場本金</span><div><b>$</b><input id="starting-bankroll" type="number" min="1" step="0.01" value="2000" inputmode="decimal" required></div></label>
         <label><span>目前每轉注額</span><div><b>$</b><input id="starting-bet" type="number" min="0.01" step="0.01" value="6" inputmode="decimal" required></div></label>
         <label><span>本場停損</span><div><b>−</b><input id="loss-limit" type="number" min="0" step="1" value="1000" inputmode="decimal"></div></label>
         <label><span>想淨賺多少</span><div><b>＋</b><input id="profit-target" type="number" min="0" step="1" value="500" inputmode="decimal"></div></label>
@@ -106,7 +106,7 @@
     <aside class="control-panel tool-panel">
       <div class="panel-title"><span>快速更新</span><small>只記變化，不用逐局輸入</small></div>
       <div class="quick-form">
-        <label><span>目前餘額</span><div><b>$</b><input id="balance-draft" type="number" min="0" inputmode="decimal"><button type="button" id="update-balance">記錄</button></div></label>
+        <label><span>目前餘額</span><div><b>$</b><input id="balance-draft" type="number" min="0" step="0.01" inputmode="decimal"><button type="button" id="update-balance">記錄</button></div></label>
         <label><span>目前注額</span><div><b>$</b><input id="bet-draft" type="number" min="0.01" step="0.01" inputmode="decimal"><button type="button" id="update-bet">更新</button></div></label>
       </div>
       <div class="feature-form">
