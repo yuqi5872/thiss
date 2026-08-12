@@ -108,6 +108,7 @@
       <div class="quick-form">
         <label><span>目前餘額</span><div><b>$</b><input id="balance-draft" type="number" min="0" step="0.01" inputmode="decimal"><button type="button" id="update-balance">記錄</button></div></label>
         <label><span>目前注額</span><div><b>$</b><input id="bet-draft" type="number" min="0.01" step="0.01" inputmode="decimal"><button type="button" id="update-bet">更新</button></div></label>
+        <label><span>這段期間轉了幾次</span><div><b>#</b><input id="spin-draft" type="number" min="1" step="1" inputmode="numeric" placeholder="例：30"><button type="button" id="add-spins">加入</button></div></label>
       </div>
       <div class="feature-form">
         <span>記錄一次買免遊</span>
@@ -125,6 +126,7 @@
         <article><span>距離獲利目標</span><strong id="target-gap">$500</strong><small id="target-copy">目標餘額 2,500</small></article>
         <article><span>最大回撤</span><strong id="drawdown">0.0%</strong><small id="lowest-balance">最低餘額 2,000</small></article>
         <article><span>停損額度已用</span><strong id="loss-used">0%</strong><small id="loss-copy">設定 −1,000</small></article>
+        <article><span>已轉次數</span><strong id="spin-count">0</strong><small id="spin-copy">尚未輸入</small></article>
       </div>
       <div class="limit-track"><i id="limit-fill"></i><span>0</span><b>停損線</b></div>
       <p class="live-message" id="live-message">畫面只反映你已輸入的真實數字，不把回收誤認成獲利。</p>
