@@ -32,15 +32,108 @@
 
   function duration(start,end){var seconds=Math.max(0,Math.floor((end-start)/1000)),hours=Math.floor(seconds/3600),minutes=Math.floor((seconds%3600)/60),rest=seconds%60;return[hours,minutes,rest].map(function(part){return String(part).padStart(2,'0')}).join(':')}
   function metrics(){var start=session.config.startingBankroll,net=session.currentBalance-start,loss=Math.max(0,-net),target=start+session.config.profitTarget;return{net:net,netPercent:ratio(net,start),breakEvenGap:Math.max(0,start-session.currentBalance),targetBalance:target,targetGap:Math.max(0,target-session.currentBalance),drawdown:ratio(Math.max(0,start-session.lowestBalance),start),lossLimitUsed:session.config.lossLimit>0?ratio(loss,session.config.lossLimit):0}}
-  function makeEvent(type,label,balance,delta,spins){return{id:eventId(),type:type,timestamp:Date.now(),label:label,balance:balance,delta:delta,spins:spins}}
+  function makeEvent(type,label,balance,extra){var e={id:eventId(),type:type,timestamp:Date.now(),label:label,balance:balance};if(extra) for(var k in extra) e[k]=extra[k];return e}
+  function featureLabel(cost,returned,name){return(name||'免費遊戲')+' '+money(cost)+'／贏回 '+money(returned)}
+  function spinsLabel(add){return'轉了 '+add+' 次（僅計次，未動餘額）'}
   function save(){if(session)localStorage.setItem(STORAGE_KEY,JSON.stringify(session));else localStorage.removeItem(STORAGE_KEY)}
   function setScene(name){var source=el('scene-source'),video=el('scene-video'),src=SCENES[name];if(source.getAttribute('src')===src)return;source.setAttribute('src',src);video.load();var play=video.play();if(play&&play.catch)play.catch(function(){})}
   function signed(value){return(value>=0?'+$':'−$')+money(value)}
   function toggleState(state){el('session-app').className='session-stage session-'+state+'-state';el('setup-view').hidden=state!=='setup';el('cockpit-view').hidden=state!=='active';el('summary-view').hidden=state!=='ended';el('truth-mark').hidden=state==='active';el('live-status').hidden=state!=='active';setScene(state)}
   function renderSetup(){el('target-balance').textContent='$'+money(num('starting-bankroll')+num('profit-target'));el('stop-balance').textContent='停損餘額 $'+money(Math.max(0,num('starting-bankroll')-num('loss-limit')))}
-  function renderTimeline(){el('timeline-list').innerHTML=session.events.slice(0,5).map(function(item){var time=new Date(item.timestamp).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});return'<div class="timeline-row"><time>'+time+'</time><span>'+item.label+'</span><b>$'+money(item.balance)+'</b><button type="button" class="timeline-del" data-id="'+item.id+'" title="記錯了？刪掉這筆重記" aria-label="刪除這筆紀錄">✕</button></div>'}).join('')}
-  // 記錯了直接刪掉重記，比逐格編輯每個欄位簡單可靠：從開場本金開始，
-  // 依刪除後剩下的事件（照時間正序）重新推導目前餘額、最低餘額、已轉次數，
+  var editingEventId=null;
+  var EDITABLE_TYPES=['balance','feature','spins'];
+
+  // 共用重算：不管是刪除還是編輯改了數字，都從開場本金開始、依剩下的事件照時間正序重新走一次。
+  // 「開場」「目前餘額」是使用者回報的絕對數字，直接採用；「購買特色」是接在前一個狀態後面的相對差額，
+  // 要用當下重算出來的餘額去加減，並把算出來的結果重新蓋回那筆事件自己的餘額欄位——
+  // 這樣改動一筆的成本／贏回，後面（時間上更晚）所有紀錄顯示的餘額才會跟著正確串連，不會停在舊數字。
+  function recomputeFromEvents(){
+    var bal=session.config.startingBankroll,lowest=bal,spins=0;
+    session.events.slice().reverse().forEach(function(e){
+      if(e.type==='start'||e.type==='balance'){ bal=e.balance; }
+      else if(e.type==='feature'){ bal=Math.max(0,bal+(e.delta||0)); e.balance=bal; }
+      else { e.balance=bal; }
+      lowest=Math.min(lowest,bal);
+      if(e.type==='spins'&&e.spins) spins+=e.spins;
+    });
+    session.currentBalance=bal;session.lowestBalance=lowest;session.totalSpins=spins;
+    el('balance-draft').value=bal;
+  }
+
+  function renderTimeline(){
+    el('timeline-list').innerHTML=session.events.slice(0,5).map(function(item){
+      if(item.id===editingEventId) return renderEditRow(item);
+      var time=new Date(item.timestamp).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+      var editable=EDITABLE_TYPES.indexOf(item.type)>-1;
+      return '<div class="timeline-row"><time>'+time+'</time><span>'+item.label+'</span><b>$'+money(item.balance)+'</b>'
+        +(editable?'<button type="button" class="timeline-edit" data-id="'+item.id+'" title="改這筆的數字" aria-label="編輯這筆紀錄">✎</button>':'<span></span>')
+        +'<button type="button" class="timeline-del" data-id="'+item.id+'" title="記錯了？刪掉這筆重記" aria-label="刪除這筆紀錄">✕</button></div>';
+    }).join('');
+  }
+
+  function renderEditRow(item){
+    if(item.type==='spins'){
+      return '<div class="timeline-row timeline-editing"><span class="tl-edit-label">轉了</span>'
+        +'<input type="number" min="1" step="1" class="tl-edit-input" id="tl-e-spins">'
+        +'<span class="tl-edit-label">次</span>'
+        +'<button type="button" class="timeline-save" data-id="'+item.id+'" title="儲存">✓</button>'
+        +'<button type="button" class="timeline-cancel" title="取消">✕</button></div>';
+    }
+    if(item.type==='feature'){
+      return '<div class="timeline-row timeline-editing"><span class="tl-edit-label">成本</span>'
+        +'<input type="number" min="0" step="0.01" class="tl-edit-input" id="tl-e-cost">'
+        +'<span class="tl-edit-label">贏回</span>'
+        +'<input type="number" min="0" step="0.01" class="tl-edit-input" id="tl-e-returned">'
+        +'<button type="button" class="timeline-save" data-id="'+item.id+'" title="儲存">✓</button>'
+        +'<button type="button" class="timeline-cancel" title="取消">✕</button></div>';
+    }
+    // balance 型
+    return '<div class="timeline-row timeline-editing"><span class="tl-edit-label">餘額</span>'
+      +'<input type="number" min="0" step="0.01" class="tl-edit-input" id="tl-e-balance">'
+      +'<button type="button" class="timeline-save" data-id="'+item.id+'" title="儲存">✓</button>'
+      +'<button type="button" class="timeline-cancel" title="取消">✕</button></div>';
+  }
+
+  function startEditEvent(id){
+    if(!session) return;
+    editingEventId=id;
+    renderTimeline();
+    var item=session.events.find(function(e){return e.id===id});
+    if(!item) return;
+    if(item.type==='spins'){ el('tl-e-spins').value=item.spins||0; el('tl-e-spins').focus(); }
+    else if(item.type==='feature'){ el('tl-e-cost').value=item.cost||0; el('tl-e-returned').value=item.returned||0; el('tl-e-cost').focus(); }
+    else { el('tl-e-balance').value=item.balance; el('tl-e-balance').focus(); }
+  }
+
+  function cancelEditEvent(){ editingEventId=null; renderTimeline(); }
+
+  function saveEditEvent(id){
+    if(!session) return;
+    var item=session.events.find(function(e){return e.id===id});
+    if(!item) return;
+    if(item.type==='spins'){
+      var n=Math.round(Number(el('tl-e-spins').value)||0);
+      if(n<=0){ announce('轉數要大於零'); return; }
+      item.spins=n; item.label=spinsLabel(n);
+    } else if(item.type==='feature'){
+      var cost=Math.max(0,Number(el('tl-e-cost').value)||0),returned=Math.max(0,Number(el('tl-e-returned').value)||0);
+      if(cost<=0){ announce('成本要大於零'); return; }
+      item.cost=cost; item.returned=returned; item.delta=returned-cost;
+      item.label=featureLabel(cost,returned,item.featureName);
+      // 這筆之後（時間上更早、events陣列裡排在後面）的每一筆balance都是接在這筆之後累加的，
+      // 要整條往回補上差額，不能只改這一筆自己的balance。
+    } else {
+      var bal=Math.max(0,Number(el('tl-e-balance').value)||0);
+      item.balance=bal;
+    }
+    // feature/spins改動不直接動balance欄位本身（balance是快照，由重算流程從頭接回去），
+    // 用recomputeFromEvents統一從開場本金重新走一次，不用分別處理進位。
+    recomputeFromEvents();
+    editingEventId=null;
+    save();renderActive();announce('已更新這筆紀錄');track('event_edit',{type:item.type});
+  }
+
+  // 記錯了可以刪掉重記：從開場本金開始，依剩下的事件重新推導目前餘額、最低餘額、已轉次數，
   // 不管刪的是哪一筆，重算出來的狀態都是對的，不用另外處理特例。
   function deleteEvent(id){
     if(!session) return;
@@ -48,13 +141,7 @@
     if(idx===-1) return;
     var removed=session.events[idx];
     session.events.splice(idx,1);
-    var start=session.config.startingBankroll,bal=start,lowest=start,spins=0;
-    session.events.slice().reverse().forEach(function(e){
-      if(typeof e.balance==='number'){bal=e.balance;lowest=Math.min(lowest,bal)}
-      if(e.type==='spins'&&e.spins) spins+=e.spins;
-    });
-    session.currentBalance=bal;session.lowestBalance=lowest;session.totalSpins=spins;
-    el('balance-draft').value=bal;
+    recomputeFromEvents();
     save();renderActive();announce('已刪除一筆紀錄：'+removed.label);track('event_delete',{type:removed.type});
   }
   function renderCompare(m){var spins=Math.max(1,num('compare-spins')),newBet=Math.max(.01,num('compare-bet')),feature=num('compare-feature'),current=session.currentBet*spins,changed=newBet*spins,diff=changed-current;el('continue-label').textContent='維持 '+money(session.currentBet)+' 再轉 '+money(spins)+' 局';el('continue-cost').textContent='新增 $'+money(current);el('continue-after').textContent='若無回收，餘額剩 $'+money(Math.max(0,session.currentBalance-current));el('change-label').textContent='改注 '+money(newBet)+' 再轉 '+money(spins)+' 局';el('change-cost').textContent='新增 $'+money(changed);el('change-diff').textContent='比原注額'+(diff>=0?'多':'少')+' $'+money(diff);el('change-option').classList.toggle('cost-up',changed>current);el('feature-compare-cost').textContent='新增 $'+money(feature);el('stop-result').textContent=signed(m.net);el('stop-result').className=m.net>=0?'positive':'negative'}
@@ -62,17 +149,17 @@
   function renderSummary(){var m=metrics(),end=session.endedAt||Date.now();el('summary-result').textContent=signed(m.net);el('summary-result').className='summary-result '+(m.net>=0?'positive':'negative');el('summary-time').textContent=duration(session.startedAt,end);el('summary-balances').textContent='$'+money(session.config.startingBankroll)+' → $'+money(session.currentBalance);el('summary-drawdown').textContent=m.drawdown.toFixed(1)+'%';el('summary-events').textContent=Math.max(0,session.events.length-2)+' 次'}
   function startTimer(){clearInterval(timer);timer=setInterval(function(){if(session&&session.status==='active')el('elapsed').textContent=duration(session.startedAt,Date.now())},1000)}
   function startSession(event){event.preventDefault();var bankroll=num('starting-bankroll'),bet=num('starting-bet');if(bankroll<=0||bet<=0){announce('請輸入大於零的本金與注額');return}var now=Date.now();session={status:'active',config:{startingBankroll:bankroll,startingBet:bet,lossLimit:num('loss-limit'),profitTarget:num('profit-target')},currentBalance:bankroll,currentBet:bet,lowestBalance:bankroll,totalSpins:0,startedAt:now,events:[makeEvent('start','開場本金 $'+money(bankroll),bankroll)]};el('balance-draft').value=bankroll;el('bet-draft').value=bet;el('compare-bet').value=bet;el('spin-draft').value='';applyFeatureCost();save();toggleState('active');renderActive();startTimer();track('session_start',{tool_name:'storm_of_seth_session'})}
-  function updateBalance(){if(!session)return;var next=num('balance-draft'),delta=next-session.currentBalance;if(!delta){announce('餘額沒有變化');return}session.currentBalance=next;session.lowestBalance=Math.min(session.lowestBalance,next);session.events.unshift(makeEvent('balance',(delta>0?'回收 ':'損失 ')+'$'+money(delta),next,delta));save();renderActive();announce('已記錄目前餘額 $'+money(next));track('balance_update',{direction:delta>0?'up':'down'})}
+  function updateBalance(){if(!session)return;var next=num('balance-draft'),delta=next-session.currentBalance;if(!delta){announce('餘額沒有變化');return}session.currentBalance=next;session.lowestBalance=Math.min(session.lowestBalance,next);session.events.unshift(makeEvent('balance',(delta>0?'回收 ':'損失 ')+'$'+money(delta),next,{delta:delta}));save();renderActive();announce('已記錄目前餘額 $'+money(next));track('balance_update',{direction:delta>0?'up':'down'})}
   function updateBet(){if(!session)return;var next=num('bet-draft');if(next<=0||next===session.currentBet){announce('注額沒有變化');return}var previous=session.currentBet;session.currentBet=next;session.events.unshift(makeEvent('bet','注額 '+money(previous)+' → '+money(next),session.currentBalance));el('compare-bet').value=next;applyFeatureCost();save();renderActive();announce('已更新注額 $'+money(next));track('bet_update')}
   // 這裡只單純計次，故意不碰餘額／淨利。真人遊戲不會在轉完一批後告訴你「這批總共贏多少」，
   // 贏分是一把一把跳出來的，要求玩家自己心算加總違反這個工具存在的理由（不用逐局記、不用自己算）。
   // 錢的記錄永遠走「目前餘額」——玩家瞄一眼當下點數填進去，工具自己算差額，不用任何心算。
-  function addSpinAmount(add){if(!session||add<=0)return;session.totalSpins=(session.totalSpins||0)+add;session.events.unshift(makeEvent('spins','轉了 '+add+' 次（僅計次，未動餘額）',session.currentBalance,0,add));el('spin-draft').value='';save();renderActive();announce('已加入 '+add+' 轉，累計 '+session.totalSpins+' 轉。錢的變化請用上面「目前餘額」回報。');track('spin_count_add',{added:add})}
+  function addSpinAmount(add){if(!session||add<=0)return;session.totalSpins=(session.totalSpins||0)+add;session.events.unshift(makeEvent('spins',spinsLabel(add),session.currentBalance,{spins:add}));el('spin-draft').value='';save();renderActive();announce('已加入 '+add+' 轉，累計 '+session.totalSpins+' 轉。錢的變化請用上面「目前餘額」回報。');track('spin_count_add',{added:add})}
   function addSpins(){if(!session)return;var add=Math.round(num('spin-draft'));if(add<=0){announce('請輸入大於零的轉數');return}addSpinAmount(add)}
   function addSpinChip(event){var add=Number(event.currentTarget.dataset.spins)||0;addSpinAmount(add)}
   function applyFeatureCost(){if(!session)return;var mult=FEATURE_MULTIPLIER[featureType]||FEATURE_MULTIPLIER.free;el('feature-cost').value=Math.round(session.currentBet*mult*100)/100}
   function setFeatureType(event){featureType=event.currentTarget.dataset.type;document.querySelectorAll('.type-chip').forEach(function(chip){chip.classList.toggle('active',chip.dataset.type===featureType)});applyFeatureCost()}
-  function recordFeature(){if(!session)return;var cost=num('feature-cost'),returned=num('feature-return'),label=FEATURE_LABELS[featureType]||'免費遊戲';if(cost<=0){announce('請輸入'+label+'成本');return}var delta=returned-cost,balance=Math.max(0,session.currentBalance+delta);session.currentBalance=balance;session.lowestBalance=Math.min(session.lowestBalance,balance);session.events.unshift(makeEvent('feature',label+' '+money(cost)+'／贏回 '+money(returned),balance,delta));el('balance-draft').value=balance;el('feature-return').value=0;save();renderActive();announce('已加入'+label+'紀錄');track('feature_record',{result:delta>=0?'profit':'loss',feature_type:featureType})}
+  function recordFeature(){if(!session)return;var cost=num('feature-cost'),returned=num('feature-return'),label=FEATURE_LABELS[featureType]||'免費遊戲';if(cost<=0){announce('請輸入'+label+'成本');return}var delta=returned-cost,balance=Math.max(0,session.currentBalance+delta);session.currentBalance=balance;session.lowestBalance=Math.min(session.lowestBalance,balance);session.events.unshift(makeEvent('feature',featureLabel(cost,returned,label),balance,{delta:delta,cost:cost,returned:returned,featureName:label}));el('balance-draft').value=balance;el('feature-return').value=0;save();renderActive();announce('已加入'+label+'紀錄');track('feature_record',{result:delta>=0?'profit':'loss',feature_type:featureType})}
   function endSession(){if(!session)return;session.status='ended';session.endedAt=Date.now();session.events.unshift(makeEvent('end','結束本場',session.currentBalance));save();clearInterval(timer);toggleState('ended');renderSummary();track('session_end',endPayload())}
   /* 本場結算摘要。
      🔴 為什麼要送這些：這個工具的紀錄全部存在使用者自己的 localStorage，
@@ -116,5 +203,5 @@
   function previousGuide(){if(guideStep>0){guideStep-=1;renderGuide()}}
   function guideKeyboard(event){if(el('guide-overlay').hidden)return;if(event.key==='Escape')closeGuide(false);if(event.key==='ArrowRight')nextGuide();if(event.key==='ArrowLeft')previousGuide()}
 
-  el('setup-form').addEventListener('submit',startSession);['starting-bankroll','starting-bet','loss-limit','profit-target'].forEach(function(id){el(id).addEventListener('input',renderSetup)});el('update-balance').addEventListener('click',updateBalance);el('update-bet').addEventListener('click',updateBet);el('timeline-list').addEventListener('click',function(e){var b=e.target.closest('.timeline-del');if(b) deleteEvent(b.dataset.id)});el('add-spins').addEventListener('click',addSpins);document.querySelectorAll('.spin-chip').forEach(function(chip){chip.addEventListener('click',addSpinChip)});document.querySelectorAll('.type-chip').forEach(function(chip){chip.addEventListener('click',setFeatureType)});el('record-feature').addEventListener('click',recordFeature);el('end-session').addEventListener('click',endSession);el('reset-session').addEventListener('click',resetSession);['compare-spins','compare-bet','compare-feature'].forEach(function(id){el(id).addEventListener('input',function(){if(session)renderCompare(metrics())})});el('open-guide').addEventListener('click',openGuide);el('guide-close').addEventListener('click',function(){closeGuide(false)});el('guide-skip').addEventListener('click',function(){closeGuide(false)});el('guide-next').addEventListener('click',nextGuide);el('guide-back').addEventListener('click',previousGuide);document.addEventListener('keydown',guideKeyboard);restore();if(!localStorage.getItem(GUIDE_KEY))setTimeout(openGuide,450);
+  el('setup-form').addEventListener('submit',startSession);['starting-bankroll','starting-bet','loss-limit','profit-target'].forEach(function(id){el(id).addEventListener('input',renderSetup)});el('update-balance').addEventListener('click',updateBalance);el('update-bet').addEventListener('click',updateBet);el('timeline-list').addEventListener('click',function(e){var d=e.target.closest('.timeline-del');if(d){deleteEvent(d.dataset.id);return}var ed=e.target.closest('.timeline-edit');if(ed){startEditEvent(ed.dataset.id);return}var sv=e.target.closest('.timeline-save');if(sv){saveEditEvent(sv.dataset.id);return}var cc=e.target.closest('.timeline-cancel');if(cc){cancelEditEvent();return}});el('add-spins').addEventListener('click',addSpins);document.querySelectorAll('.spin-chip').forEach(function(chip){chip.addEventListener('click',addSpinChip)});document.querySelectorAll('.type-chip').forEach(function(chip){chip.addEventListener('click',setFeatureType)});el('record-feature').addEventListener('click',recordFeature);el('end-session').addEventListener('click',endSession);el('reset-session').addEventListener('click',resetSession);['compare-spins','compare-bet','compare-feature'].forEach(function(id){el(id).addEventListener('input',function(){if(session)renderCompare(metrics())})});el('open-guide').addEventListener('click',openGuide);el('guide-close').addEventListener('click',function(){closeGuide(false)});el('guide-skip').addEventListener('click',function(){closeGuide(false)});el('guide-next').addEventListener('click',nextGuide);el('guide-back').addEventListener('click',previousGuide);document.addEventListener('keydown',guideKeyboard);restore();if(!localStorage.getItem(GUIDE_KEY))setTimeout(openGuide,450);
 })();
