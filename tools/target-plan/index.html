@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XCBKJTBVTL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XCBKJTBVTL');
+</script>
+<title>分注打法產生器｜戰神賽特目標達成率打法｜電子遊戲觀測所</title>
+<meta name="description" content="同樣 1,000 元想翻倍，押 2 元的達標率 30.8%，押 50 元只有 14.4%——差 2.1 倍。輸入你的本金和目標，直接給你該押多少、打多久、什麼時候收。">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tsaishen888.com/tools/target-plan/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="分注打法產生器">
+<meta property="og:description" content="1,000 想翻倍：押 2 元達標率 30.8%，押 50 元只有 14.4%。差 2.1 倍。輸入你的數字拿打法卡。">
+<meta property="og:url" content="https://tsaishen888.com/tools/target-plan/">
+<meta property="og:image" content="https://tsaishen888.com/assets/img/storm-of-seth-og.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=20260625-1">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"分注打法產生器","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"TWD"},"publisher":{"@type":"Organization","name":"電子遊戲觀測所"},"description":"依本金與目標金額產生押注配置、預估轉數與停利停損點，並比較不同押注大小的目標達成率。"}
+</script>
+<style>
+  .tp{max-width:660px;margin:0 auto}
+  .tp-in{background:#0f1729;border-radius:18px;padding:20px 18px;color:#e8eaf0}
+  .tp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tp-f label{display:block;font-size:12.5px;color:#8fa0bd;font-weight:700;margin-bottom:6px}
+  .tp-f{min-width:0}
+  .tp-f .box{display:flex;align-items:center;min-width:0;background:rgba(255,255,255,.07);
+             border:1px solid rgba(255,255,255,.13);border-radius:11px;padding:0 12px}
+  .tp-f input{flex:1;min-width:0;background:none;border:0;color:#fff;font-size:23px;font-weight:900;
+              padding:13px 0;font-variant-numeric:tabular-nums;outline:none;-moz-appearance:textfield}
+  .tp-f input::-webkit-outer-spin-button,.tp-f input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .tp-f .u{color:#7b8aa8;font-size:14px;font-weight:700;padding-left:6px}
+  .tp-mult{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+  .tp-mult button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#c6d0e2;
+                  border-radius:999px;padding:8px 15px;font-size:13.5px;font-weight:800;cursor:pointer}
+  .tp-mult button.on{background:#d4af37;border-color:#d4af37;color:#1a1206}
+
+  .tp-card{margin-top:14px;border:3px solid #d4af37;border-radius:18px;overflow:hidden;background:#fff}
+  .tp-card-hd{background:#0f1729;color:#f2c14e;padding:12px 18px;font-weight:900;font-size:15px;
+              display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .tp-card-hd span:last-child{color:#8fa0bd;font-size:12.5px;font-weight:700}
+  .tp-body{padding:18px}
+  .tp-hero{text-align:center;padding:6px 0 16px;border-bottom:1px dashed #e2e8f0;margin-bottom:16px}
+  .tp-hero .k{font-size:13px;color:var(--ink-mute,#5b6472);font-weight:800}
+  .tp-hero .v{font-size:clamp(40px,11vw,56px);font-weight:900;line-height:1.05;color:#0f1729;
+              font-variant-numeric:tabular-nums;margin-top:4px}
+  .tp-hero .v small{font-size:.45em;font-weight:800;color:#5b6472}
+  .tp-rate{margin-top:10px;display:inline-block;background:#f0fdf4;border:1px solid #16a34a;color:#15803d;
+           border-radius:999px;padding:7px 17px;font-size:16px;font-weight:900}
+  .tp-rows{display:grid;gap:0}
+  .tp-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+          padding:11px 0;border-bottom:1px solid #f0f3f7;font-size:15px}
+  .tp-row:last-child{border-bottom:0}
+  .tp-row .k{color:var(--ink-mute,#5b6472);font-weight:700;flex:0 0 auto}
+  .tp-row .v{font-weight:900;font-size:18px;font-variant-numeric:tabular-nums;text-align:right}
+  .tp-row.stop .v{color:#b91c1c}
+  .tp-row.take .v{color:#15803d}
+
+  .tp-slider{margin-top:16px;background:#f8fafc;border:1px solid var(--line,#e2e8f0);border-radius:14px;padding:15px 16px}
+  .tp-slider .hd{display:flex;justify-content:space-between;font-size:13.5px;font-weight:800;margin-bottom:10px}
+  .tp-slider .hd b{font-size:16px}
+  .tp-slider input[type=range]{width:100%;accent-color:#d4af37;height:26px}
+  .tp-scale{display:flex;justify-content:space-between;font-size:11.5px;color:#8b95a3;margin-top:2px}
+  .tp-warn{margin-top:11px;font-size:14.5px;line-height:1.75;padding:11px 13px;border-radius:10px;
+           background:#fffbeb;border-left:4px solid #f59e0b;color:#78350f}
+  .tp-warn.ok{background:#f0fdf4;border-left-color:#16a34a;color:#14532d}
+
+  .tp-cmp table{width:100%;border-collapse:collapse;font-size:14.2px;margin-top:10px}
+  .tp-cmp th{background:#0f1729;color:#fff;text-align:left;padding:9px 11px;font-size:12.5px}
+  .tp-cmp td{padding:9px 11px;border-bottom:1px solid #eef2f6;font-variant-numeric:tabular-nums}
+  .tp-cmp tr.me td{background:#fffbeb;font-weight:800}
+  .tp-cta{margin-top:16px;text-align:center}
+  .tp-cta a{display:inline-block;padding:13px 26px;border-radius:999px;background:#06c755;color:#fff;
+            font-weight:800;font-size:15px;text-decoration:none}
+  @media(max-width:520px){ .tp-grid{grid-template-columns:1fr} }
+  /* 🔴 斷點設 640 不是 520：站上全域 table{min-width:560px} 會撐破 560~640 這一段，
+     每次做新表格都踩一次，所以這裡一定要連 min-width:0 一起寫。 */
+  @media(max-width:640px){
+    .tp-cmp table{min-width:0;width:100%}
+    .tp-cmp thead{display:none}
+    .tp-cmp tr{display:block;border:1px solid #e5e7eb;border-radius:10px;padding:9px 12px;margin-bottom:9px}
+    .tp-cmp td{display:flex;justify-content:space-between;border:0;padding:4px 0;background:none!important}
+    .tp-cmp td:before{content:attr(data-l);color:#6b7280;font-weight:700}
+    .tp-cmp td:first-child{font-weight:900;border-bottom:1px solid #e5e7eb;margin-bottom:3px;padding-bottom:7px}
+    .tp-cmp td:first-child:before{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="/" class="brand"><img src="/assets/img/logo-header.webp" alt="電子遊戲觀測所 — 獨立老虎機數據評測" class="brand-logo"></a>
+    <button class="nav-toggle" aria-label="選單" onclick="document.getElementById('nav').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="nav">
+      <a href="/">首頁</a>
+      <a href="/storm-of-seth/">戰神賽特評測</a>
+      <a href="/rtp-ranking/">RTP 排行榜</a>
+      <a href="/guides/">老虎機攻略</a>
+      <a href="/about/">關於我們</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="crumb"><a href="/">首頁</a> ／ <span>分注打法</span></nav>
+</div>
+
+<div class="wrap">
+  <div class="layout">
+    <main>
+      <div class="tp">
+        <h1 style="font-size:clamp(24px,5vw,33px);font-weight:900;line-height:1.28;margin:14px 0 8px">
+          分注打法產生器</h1>
+        <p style="font-size:15.5px;color:var(--ink,#1f2733);line-height:1.85;margin-bottom:16px">
+          同樣 1,000 元想翻倍，<b>押 2 元的達標率 30.8%，押 50 元只有 14.4%</b>——差 2.1 倍。
+          輸入你的本金和目標，直接告訴你該押多少。</p>
+
+        <div class="tp-in">
+          <div class="tp-grid">
+            <div class="tp-f">
+              <label for="tp-bank">我的本金</label>
+              <div class="box"><input id="tp-bank" type="number" inputmode="decimal" value="1000" min="1" step="100"><span class="u">元</span></div>
+            </div>
+            <div class="tp-f">
+              <label for="tp-goal">我想打到</label>
+              <div class="box"><input id="tp-goal" type="number" inputmode="decimal" value="2000" min="1" step="100"><span class="u">元</span></div>
+            </div>
+          </div>
+          <div class="tp-mult" id="tp-mult">
+            <button type="button" data-m="1.5">1.5 倍</button>
+            <button type="button" data-m="2" class="on">翻倍</button>
+            <button type="button" data-m="3">3 倍</button>
+            <button type="button" data-m="5">5 倍</button>
+          </div>
+        </div>
+
+        <div class="tp-card">
+          <div class="tp-card-hd"><span>你的打法卡</span><span id="tp-tag">分注打法</span></div>
+          <div class="tp-body">
+            <div class="tp-hero">
+              <div class="k">建議押注</div>
+              <div class="v" id="tp-bet">—</div>
+              <div class="tp-rate" id="tp-rate">—</div>
+            </div>
+            <div class="tp-rows">
+              <div class="tp-row"><span class="k">預計要打</span><span class="v" id="tp-spins">—</span></div>
+              <div class="tp-row take"><span class="k">停利　打到就收</span><span class="v" id="tp-take">—</span></div>
+              <div class="tp-row stop"><span class="k">停損　剩這個數就停</span><span class="v" id="tp-stop">—</span></div>
+            </div>
+            <div class="tp-warn" id="tp-alt" style="display:none"></div>
+          </div>
+        </div>
+
+        <div class="tp-slider">
+          <div class="hd"><span>如果我押大一點？</span><span>押 <b id="tp-sl-bet">—</b> 元</span></div>
+          <input type="range" id="tp-slider" min="0" max="5" step="1" value="0">
+          <div class="tp-scale"><span>本金 1/1000</span><span>1/500</span><span>1/200</span><span>1/100</span><span>1/50</span><span>1/20</span></div>
+          <div class="tp-warn" id="tp-warn">—</div>
+        </div>
+
+        <h2 style="font-size:19px;font-weight:900;margin:26px 0 4px">押注大小怎麼影響達標率</h2>
+        <p style="font-size:14.5px;color:var(--ink-mute,#5b6472);margin-bottom:4px" id="tp-cmp-sub">—</p>
+        <div class="tp-cmp"><table>
+          <thead><tr><th>押注</th><th>把本金切成幾份</th><th>達標率</th><th>中位數轉數</th></tr></thead>
+          <tbody id="tp-cmp"></tbody>
+        </table></div>
+
+        <div class="tp-cta" id="tp-cta"></div>
+
+        <details style="margin-top:22px;border:1px solid var(--line,#e2e8f0);border-radius:12px;padding:14px 16px">
+          <summary style="font-weight:800;font-size:15px;cursor:pointer">這些數字怎麼算出來的</summary>
+          <div style="font-size:14.3px;line-height:1.85;margin-top:11px">
+            <p style="margin:0 0 9px">用本站<a href="/tools/seth-simulator/">機制模擬器</a>的同一份引擎跑蒙地卡羅。
+            每一格放 <b>1,500 個模擬玩家</b>，從滿本金開始，固定押注一直打，
+            直到<b>達到目標金額</b>或<b>本金用完</b>為止。達標率就是達到目標的比例。</p>
+            <p style="margin:0 0 9px"><b>為什麼小注達標率比較高：</b>這款機台的大分集中在少數幾轉。
+            押小注可以撐到更多轉數，等於買到更多次摸到大分的機會；押大注則是在摸到之前就先把本金用完。</p>
+            <p style="margin:0 0 9px"><b>關鍵是比例不是金額。</b>本金 1,000 押 2 元，跟本金 10,000 押 20 元，
+            結果完全一樣——兩個都是把本金切成 500 份。</p>
+            <p style="margin:0 0 9px"><b>停損那一格是紀律建議，不是模擬算出來的。</b>設在本金的 20%，
+            用意是讓你在還有錢的時候離開，下一場才有本金按這套打法重來。你可以自己調整。</p>
+            <p style="margin:0"><b>限制：</b>這是模型不是 ATG 官方數字。官方從未公開符號權重，
+            模型是回推校準到接近官方標示的 96.89%（800 萬轉實測 97.28%）。
+            實際遊戲的最低押注限制可能讓你切不到那麼細。</p>
+          </div>
+        </details>
+
+        <aside class="aside-box" style="margin-top:22px">
+          <h4>配著用</h4>
+          <a href="/tools/bankroll-check/" style="display:block;margin-bottom:6px">本金試算：你這筆錢撐不撐得到免費遊戲</a>
+          <a href="/tools/storm-of-seth-session/" style="display:block;margin-bottom:6px">戰局計算：開打之後即時記錄淨利與回本距離</a>
+          <a href="/tools/seth-simulator/">機制模擬器：先跑一萬轉看分布</a>
+        </aside>
+
+        <div style="margin-top:20px;padding:16px;border:1px solid var(--line,#dfe4ea);border-radius:12px;text-align:center">
+          <a href="https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=cta_band&utm_campaign=ys368&utm_content=target-plan" data-cta="play" target="_blank" rel="nofollow sponsored noopener" style="display:inline-block;padding:10px 17px;border-radius:9px;background:#d4af37;color:#1a1206;font-weight:800;text-decoration:none;font-size:14.5px;">前往可遊玩平台 →</a>
+          <span style="display:block;margin-top:11px;font-size:12.5px;line-height:1.65;opacity:.6;">本頁含合作連結。計算結果不受此影響。</span>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><a href="/" class="brand" style="margin-bottom:12px;"><img src="/assets/img/logo-header.webp" alt="電子遊戲觀測所" class="brand-logo"></a></div>
+      <div><h4>評測</h4><a href="/storm-of-seth/">戰神賽特評測</a><a href="/rtp-ranking/">RTP 排行榜</a><a href="/guides/">老虎機攻略</a></div>
+      <div><h4>關於</h4><a href="/about/">關於我們</a><a href="/about/#method">評測方法論</a></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 電子遊戲觀測所・獨立數據評測</span>
+      <span>本工具為非官方教學工具，與 ATG 電子無任何關聯，未使用其任何素材</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/target-grid.js?v=20260813-1"></script>
+<script>
+(function () {
+  'use strict';
+  var G = window.TARGET_GRID;                 // { 倍數: { 分注份數: {p, med} } }
+  var RATIOS = [1000, 500, 200, 100, 50, 20]; // 滑桿由細到粗
+  var MULTS = [1.5, 2, 3, 5];
+  var SAVE = 'seth-target-plan-v1';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var money = function (n) { return Math.round(n).toLocaleString('en-US'); };
+  var betText = function (n) { return n >= 10 ? money(n) : (Math.round(n * 10) / 10).toString(); };
+
+  /* 在兩個相鄰倍數之間內插；超出 1.5～5 倍就夾住不外推 */
+  function cell(mult, ratio) {
+    var lo = MULTS[0], hi = MULTS[MULTS.length - 1];
+    if (mult <= lo) return G[lo][ratio];
+    if (mult >= hi) return G[hi][ratio];
+    for (var i = 0; i < MULTS.length - 1; i++) {
+      var a = MULTS[i], b = MULTS[i + 1];
+      if (mult >= a && mult <= b) {
+        var f = (mult - a) / (b - a);
+        return { p: G[a][ratio].p + (G[b][ratio].p - G[a][ratio].p) * f,
+                 med: Math.round(G[a][ratio].med + (G[b][ratio].med - G[a][ratio].med) * f) };
+      }
+    }
+    return G[hi][ratio];
+  }
+
+  var META = window.TARGET_META;
+
+  /* 🔴 最佳分注份數會隨目標倍數移動，不能寫死。
+     實測：打 5 倍時切 1000 份（11.9%）反而輸給切 500 份（12.6%），
+     因為分太細會在還沒摸到大分之前就把轉數耗光。所以要按目標挑。 */
+  function pickPlan(mult) {
+    var rows = RATIOS.map(function (r) {
+      var c = cell(mult, r); return { ratio: r, p: c.p, med: c.med };
+    });
+    var best = rows.slice().sort(function (a, b) { return b.p - a.p; })[0];
+    // 「兼顧時間」：在一場打得完的轉數內，達標率最高的那個
+    var fits = rows.filter(function (x) { return x.med <= META.practicalSpins; })
+                   .sort(function (a, b) { return b.p - a.p; });
+    var quick = fits.length ? fits[0] : null;
+    if (quick && quick.ratio === best.ratio) quick = null;
+    return { best: best, quick: quick, rows: rows };
+  }
+
+  function render() {
+    var bank = parseFloat($('tp-bank').value);
+    var goal = parseFloat($('tp-goal').value);
+    if (!(bank > 0) || !(goal > bank)) {
+      $('tp-bet').textContent = '—'; $('tp-rate').textContent = '目標要大於本金';
+      $('tp-spins').textContent = '—'; $('tp-take').textContent = '—'; $('tp-stop').textContent = '—';
+      $('tp-cmp').innerHTML = ''; $('tp-cta').innerHTML = ''; return;
+    }
+    var mult = goal / bank;
+    var multClamped = Math.min(5, Math.max(1.5, mult));
+
+    /* ── 打法卡：按目標挑最佳分注 ── */
+    var plan = pickPlan(multClamped);
+    var BEST = plan.best.ratio;
+    var bet = bank / BEST;
+    var c = { p: plan.best.p, med: plan.best.med };
+    $('tp-bet').innerHTML = betText(bet) + ' <small>元／轉</small>';
+    $('tp-rate').textContent = '達標率 ' + (c.p * 100).toFixed(1) + '%';
+    $('tp-spins').innerHTML = '約 ' + money(c.med) + ' 轉'
+      + (c.med >= 1000 ? '<br><span style="font-size:12.5px;font-weight:700;color:#b45309">這是一場長仗，撐住不加注就是打法本身</span>' : '');
+    $('tp-take').textContent = money(goal) + ' 元';
+    $('tp-stop').textContent = money(bank * 0.2) + ' 元';
+    $('tp-tag').textContent = '本金切 ' + BEST + ' 份';
+
+    var alt = $('tp-alt');
+    if (plan.quick) {
+      alt.style.display = '';
+      alt.innerHTML = '<b>沒那麼多時間？</b>改押 <b>' + betText(bank / plan.quick.ratio) + ' 元</b>'
+        + '（切 ' + plan.quick.ratio + ' 份），約 ' + money(plan.quick.med) + ' 轉就會分出結果，'
+        + '達標率 <b>' + (plan.quick.p * 100).toFixed(1) + '%</b>。';
+    } else { alt.style.display = 'none'; }
+
+    /* ── 滑桿：換分注份數看達標率怎麼變 ── */
+    var si = parseInt($('tp-slider').value, 10);
+    var sr = RATIOS[si];
+    var sb = bank / sr;
+    var sc = cell(multClamped, sr);
+    $('tp-sl-bet').textContent = betText(sb);
+    var w = $('tp-warn');
+    if (sr >= BEST) {
+      w.className = 'tp-warn ok';
+      w.innerHTML = '押 <b>' + betText(sb) + ' 元</b>（本金切 ' + sr + ' 份）→ 達標率 <b>'
+        + (sc.p * 100).toFixed(1) + '%</b>。這是最好的那一區。';
+    } else {
+      var drop = ((c.p - sc.p) / c.p * 100);
+      w.className = 'tp-warn';
+      w.innerHTML = '押 <b>' + betText(sb) + ' 元</b>（本金切 ' + sr + ' 份）→ 達標率掉到 <b>'
+        + (sc.p * 100).toFixed(1) + '%</b>，比建議押注<b>少 ' + drop.toFixed(0) + '%</b>。';
+    }
+
+    /* ── 對照表 ── */
+    $('tp-cmp-sub').textContent = '本金 ' + money(bank) + ' 元，目標 ' + money(goal)
+      + ' 元（' + (Math.round(mult * 10) / 10) + ' 倍）'
+      + (mult > 5 ? '　※ 超過 5 倍的部分用 5 倍的模擬值' : mult < 1.5 ? '　※ 低於 1.5 倍的部分用 1.5 倍的模擬值' : '');
+    $('tp-cmp').innerHTML = RATIOS.map(function (r) {
+      var x = cell(multClamped, r);
+      var me = (r === BEST) ? ' class="me"' : '';
+      return '<tr' + me + '><td>' + betText(bank / r) + ' 元</td>'
+        + '<td data-l="切幾份">' + r + ' 份</td>'
+        + '<td data-l="達標率">' + (x.p * 100).toFixed(1) + '%</td>'
+        + '<td data-l="中位數轉數">' + money(x.med) + ' 轉</td></tr>';
+    }).join('');
+
+    /* ── 本金切不到 500 份就提醒（真實遊戲有最低押注） ── */
+    if (bet < 1) {
+      $('tp-cta').innerHTML = '<div class="tp-warn" style="text-align:left">'
+        + '你的本金切成 500 份是每注 <b>' + betText(bet) + ' 元</b>，可能低於遊戲的最低押注。'
+        + '要用到建議的分注份數，本金至少要 <b>' + money(BEST) + ' 元</b>。</div>'
+        + '<a href="/line/?ch=plan&at=tool" data-cta="line-tp" style="margin-top:12px">加 LINE 拿完整打法對照表</a>';
+      var a = $('tp-cta').querySelector('a');
+      if (a) a.addEventListener('click', function () {
+        if (typeof gtag === 'function') gtag('event', 'line_intent', { source: 'target_plan' });
+      });
+    } else { $('tp-cta').innerHTML = ''; }
+
+    try { localStorage.setItem(SAVE, JSON.stringify({ bank: bank, goal: goal })); } catch (e) {}
+    if (typeof gtag === 'function') gtag('event', 'target_plan_calc', { mult: Math.round(mult * 10) / 10, bank: bank });
+  }
+
+  /* 倍數快捷鍵 */
+  $('tp-mult').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var bank = parseFloat($('tp-bank').value) || 1000;
+    $('tp-goal').value = Math.round(bank * parseFloat(b.getAttribute('data-m')));
+    syncMult(); render();
+  });
+  function syncMult() {
+    var bank = parseFloat($('tp-bank').value), goal = parseFloat($('tp-goal').value);
+    var m = (bank > 0) ? goal / bank : 0;
+    document.querySelectorAll('#tp-mult button').forEach(function (b) {
+      b.classList.toggle('on', Math.abs(parseFloat(b.getAttribute('data-m')) - m) < 0.01);
+    });
+  }
+  ['tp-bank', 'tp-goal'].forEach(function (id) {
+    $(id).addEventListener('input', function () { syncMult(); render(); });
+  });
+  $('tp-slider').addEventListener('input', render);
+
+  try {
+    var s = JSON.parse(localStorage.getItem(SAVE));
+    if (s && s.bank > 0 && s.goal > s.bank) { $('tp-bank').value = s.bank; $('tp-goal').value = s.goal; }
+  } catch (e) {}
+  syncMult(); render();
+})();
+</script>
+<script src="/assets/main.js?v=4"></script>
+</body>
+</html>
