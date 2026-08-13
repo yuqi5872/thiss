@@ -145,7 +145,38 @@
     save();renderActive();announce('已刪除一筆紀錄：'+removed.label);track('event_delete',{type:removed.type});
   }
   function renderCompare(m){var spins=Math.max(1,num('compare-spins')),newBet=Math.max(.01,num('compare-bet')),feature=num('compare-feature'),current=session.currentBet*spins,changed=newBet*spins,diff=changed-current;el('continue-label').textContent='維持 '+money(session.currentBet)+' 再轉 '+money(spins)+' 局';el('continue-cost').textContent='新增 $'+money(current);el('continue-after').textContent='若無回收，餘額剩 $'+money(Math.max(0,session.currentBalance-current));el('change-label').textContent='改注 '+money(newBet)+' 再轉 '+money(spins)+' 局';el('change-cost').textContent='新增 $'+money(changed);el('change-diff').textContent='比原注額'+(diff>=0?'多':'少')+' $'+money(diff);el('change-option').classList.toggle('cost-up',changed>current);el('feature-compare-cost').textContent='新增 $'+money(feature);el('stop-result').textContent=signed(m.net);el('stop-result').className=m.net>=0?'positive':'negative'}
-  function renderActive(){var m=metrics(),netClass=m.net>=0?'positive':'negative';el('net-result').textContent=signed(m.net);el('net-result').className=netClass;el('net-copy').textContent=m.net>0?'已超過開場本金 '+m.netPercent.toFixed(1)+'%':m.net<0?'距離回本還差 $'+money(m.breakEvenGap):'目前剛好打平';el('current-balance').textContent='$'+money(session.currentBalance);el('opening-balance').textContent='開場 '+money(session.config.startingBankroll);el('target-gap').textContent='$'+money(m.targetGap);el('target-copy').textContent='目標餘額 '+money(m.targetBalance);el('drawdown').textContent=m.drawdown.toFixed(1)+'%';el('lowest-balance').textContent='最低餘額 '+money(session.lowestBalance);el('loss-used').textContent=Math.min(999,m.lossLimitUsed).toFixed(0)+'%';el('loss-copy').textContent='設定 −'+money(session.config.lossLimit);el('limit-fill').style.width=Math.min(100,m.lossLimitUsed)+'%';var spins=session.totalSpins||0;el('spin-count').textContent=spins;el('spin-copy').textContent=spins>0?'手動加總，非自動偵測':'尚未輸入';el('live-message').textContent=m.lossLimitUsed>=100?'已超過你開場前設定的停損金額。':'畫面只反映你已輸入的真實數字，不把回收誤認成獲利。';el('live-message').classList.toggle('danger',m.lossLimitUsed>=100);setScene(m.drawdown>=35||m.lossLimitUsed>=75?'danger':'active');renderTimeline();renderCompare(m);el('elapsed').textContent=duration(session.startedAt,Date.now())}
+
+  /* 現在的達標率 —— 由 ⓪ 分注打法（window.SethPlan）算。
+     🔴 刻意用「目前餘額 ＋ 目前注額」重算，不是用開場的那組數字：
+        使用者中途把注拉大，這個數字就要當場掉下去。
+        用開場數字算的話，畫面不會動，這一格就白做了。
+     分注打法沒載入或還沒設目標時顯示「—」，不要瞎猜一個數字。 */
+  function renderHitRate(m){
+    var box=el('hit-rate'),copy=el('hit-rate-copy');
+    if(!box) return;
+    var P=window.SethPlan;
+    /* 🔴 一定要用 currentBet（會隨「更新注額」變動），不是 config.startingBet。
+       用開場注額算的話，使用者中途把注拉大畫面數字不會動，這一格就白做了。 */
+    var bet=Number(session.currentBet)||Number(session.config.startingBet)||0;
+    var goal=m.targetBalance;
+    var odds=P&&P.liveOdds?P.liveOdds(session.currentBalance,goal,bet):null;
+    if(!odds){
+      box.textContent='—';
+      copy.textContent=P?'設好獲利目標與注額才算得出來':'在 ⓪ 分注打法設好目標後才會算';
+      box.className='';
+      return;
+    }
+    var pct=odds.p*100;
+    box.textContent=pct.toFixed(1)+'%';
+    box.className=pct>=25?'positive':pct<12?'negative':'';
+    /* 同時給一個「照建議押注會是幾 %」的對照，讓加注的代價看得見 */
+    var ideal=P.liveOdds(session.currentBalance,goal,Math.max(P.MIN_BET,session.config.startingBankroll/500));
+    copy.textContent=(ideal&&ideal.p-odds.p>0.005)
+      ? '押小一點會是 '+(ideal.p*100).toFixed(1)+'%'
+      : '還要約 '+money(odds.med)+' 轉';
+  }
+
+  function renderActive(){var m=metrics(),netClass=m.net>=0?'positive':'negative';el('net-result').textContent=signed(m.net);el('net-result').className=netClass;el('net-copy').textContent=m.net>0?'已超過開場本金 '+m.netPercent.toFixed(1)+'%':m.net<0?'距離回本還差 $'+money(m.breakEvenGap):'目前剛好打平';el('current-balance').textContent='$'+money(session.currentBalance);el('opening-balance').textContent='開場 '+money(session.config.startingBankroll);el('target-gap').textContent='$'+money(m.targetGap);el('target-copy').textContent='目標餘額 '+money(m.targetBalance);el('drawdown').textContent=m.drawdown.toFixed(1)+'%';el('lowest-balance').textContent='最低餘額 '+money(session.lowestBalance);el('loss-used').textContent=Math.min(999,m.lossLimitUsed).toFixed(0)+'%';el('loss-copy').textContent='設定 −'+money(session.config.lossLimit);el('limit-fill').style.width=Math.min(100,m.lossLimitUsed)+'%';var spins=session.totalSpins||0;el('spin-count').textContent=spins;el('spin-copy').textContent=spins>0?'手動加總，非自動偵測':'尚未輸入';renderHitRate(m);el('live-message').textContent=m.lossLimitUsed>=100?'已超過你開場前設定的停損金額。':'畫面只反映你已輸入的真實數字，不把回收誤認成獲利。';el('live-message').classList.toggle('danger',m.lossLimitUsed>=100);setScene(m.drawdown>=35||m.lossLimitUsed>=75?'danger':'active');renderTimeline();renderCompare(m);el('elapsed').textContent=duration(session.startedAt,Date.now())}
   function renderSummary(){var m=metrics(),end=session.endedAt||Date.now();el('summary-result').textContent=signed(m.net);el('summary-result').className='summary-result '+(m.net>=0?'positive':'negative');el('summary-time').textContent=duration(session.startedAt,end);el('summary-balances').textContent='$'+money(session.config.startingBankroll)+' → $'+money(session.currentBalance);el('summary-drawdown').textContent=m.drawdown.toFixed(1)+'%';el('summary-events').textContent=Math.max(0,session.events.length-2)+' 次'}
   function startTimer(){clearInterval(timer);timer=setInterval(function(){if(session&&session.status==='active')el('elapsed').textContent=duration(session.startedAt,Date.now())},1000)}
   function startSession(event){event.preventDefault();var bankroll=num('starting-bankroll'),bet=num('starting-bet');if(bankroll<=0||bet<=0){announce('請輸入大於零的本金與注額');return}var now=Date.now();session={status:'active',config:{startingBankroll:bankroll,startingBet:bet,lossLimit:num('loss-limit'),profitTarget:num('profit-target')},currentBalance:bankroll,currentBet:bet,lowestBalance:bankroll,totalSpins:0,startedAt:now,events:[makeEvent('start','開場本金 $'+money(bankroll),bankroll)]};el('balance-draft').value=bankroll;el('bet-draft').value=bet;el('compare-bet').value=bet;el('spin-draft').value='';applyFeatureCost();save();toggleState('active');renderActive();startTimer();track('session_start',{tool_name:'storm_of_seth_session'})}

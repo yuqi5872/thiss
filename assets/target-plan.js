@@ -126,44 +126,17 @@
   }
 
 
-  /* ══════════ 照打法追蹤（儲值 2,000 解鎖）══════════
-     這一段跟前面的打法卡最大的差別：卡片是「開打前算一次」，
-     追蹤是「開打之後每次更新餘額都重算」。
-     核心價值是那個會動的達標率——它從你「現在的餘額」重算，
-     所以打到一半你會看到自己的機率是漲還是掉，這是靜態卡片給不了的。
 
-     🔴 達標率的算法跟卡片完全一樣，只是把 (本金, 目標) 換成
-        (目前餘額, 目標)。不要另外發明一套算法，兩邊給不同數字最傷信任。 */
-  var TRACK_LEVEL = 2;                       // 當月累計存款 2,000
-  var SESS_KEY = 'seth-plan-session-v1';
-  var HIST_KEY = 'seth-plan-history-v1';
+  /* ── 給戰局計算用的達標率 ───────────────────────────
+     🔴 分注打法算完之後，把「本金／目標／建議押注」交給戰局計算，
+        讓它在使用者更新餘額時即時重算達標率。
+        算法跟打法卡完全一樣，只是把 (本金, 目標) 換成 (目前餘額, 目標)——
+        不要另外發明一套，兩邊給不同數字最傷信任。
 
-  function loadJSON(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } }
-  function saveJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-
-  var sess = loadJSON(SESS_KEY, null);
-  var hist = loadJSON(HIST_KEY, []);
-
-  function trackOpen() { return lvl() >= TRACK_LEVEL; }
-
-  function ensureTracker() {
-    var host = document.querySelector('.tp');
-    if (!host || document.getElementById('tp-track')) return;
-    var box = document.createElement('div');
-    box.className = 'tk';
-    box.id = 'tp-track';
-    var cmp = host.querySelector('.tp-cmp');
-    if (cmp && cmp.nextSibling) host.insertBefore(box, cmp.nextSibling);
-    else host.appendChild(box);
-  }
-
-  /* 🔴 cell() 只在「倍數」那一軸內插，分注份數必須剛好是表上的鍵
-     （20/50/100/200/500/1000）。打法卡沒問題，因為卡片用的份數就是表上挑的；
-     但追蹤時的份數是「目前餘額 ÷ 押注」，是任意數字——直接丟給 cell()
-     會拿到 undefined，整個 render 當場拋錯，狀態存了但畫面不動。
-     所以這裡要在份數那一軸也做內插。 */
+     cell() 只在倍數那一軸內插，分注份數必須是表上的鍵。
+     戰局計算傳進來的是「餘額÷押注」的任意數字，所以要二維內插。 */
   function cellAt(mult, ratio) {
-    var R = RATIOS.slice().sort(function (a, b) { return a - b; });   // 由小到大
+    var R = RATIOS.slice().sort(function (a, b) { return a - b; });
     if (ratio <= R[0]) return cell(mult, R[0]);
     if (ratio >= R[R.length - 1]) return cell(mult, R[R.length - 1]);
     for (var i = 0; i < R.length - 1; i++) {
@@ -176,154 +149,23 @@
     return cell(mult, R[R.length - 1]);
   }
 
-  /* 從「目前餘額」重算達標率與剩餘轉數 */
-  function liveStats(bal, goal, bet) {
-    if (!(bal > 0) || !(bet > 0) || !(goal > 0)) return null;
-    if (bal >= goal) return { done: true, p: 1, med: 0, ratio: bal / bet };
-    var mult = Math.min(5, Math.max(1.5, goal / bal));
-    var c = cellAt(mult, bal / bet);
-    if (!c) return null;
-    return { done: false, p: c.p, med: c.med, ratio: bal / bet, mult: goal / bal };
-  }
-
-  function renderTracker() {
-    ensureTracker();
-    var box = document.getElementById('tp-track');
-    if (!box) return;
-
-    if (!trackOpen()) {
-      box.innerHTML =
-        '<div class="tk-hd"><span>照打法追蹤</span><span>當月累計存款 2,000</span></div>'
-      + '<div class="tk-body"><div class="tk-start">'
-      + '<p>打法卡是<b>開打前算一次</b>。追蹤是<b>開打之後每次更新餘額都重算</b>——'
-      + '你會看到自己的達標率是漲還是掉、押注有沒有偏離、還要打幾轉。<br>'
-      + '打完存起來，下次可以比對哪一場打得最好。</p>'
-      + '<a class="tk-btn" href="' + LINE_URL + '" target="_blank" rel="noopener" data-cta="line-track">加 LINE 拿解鎖碼</a>'
-      + '</div></div>';
-      var a = box.querySelector('[data-cta="line-track"]');
-      if (a) a.addEventListener('click', function () {
-        if (typeof gtag === 'function') gtag('event', 'line_intent', { source: 'plan_tracker' });
-      });
-      return;
-    }
-
-    if (!sess) {
+  window.SethPlan = {
+    MIN_BET: MIN_BET,
+    /* 目前餘額 bal、目標 goal、實際押注 bet → { p, med }；算不出來回 null */
+    liveOdds: function (bal, goal, bet) {
+      if (!(bal > 0) || !(bet > 0) || !(goal > bal)) return null;
+      var c = cellAt(Math.min(5, Math.max(1.5, goal / bal)), bal / bet);
+      return c ? { p: c.p, med: c.med } : null;
+    },
+    /* 打法卡目前算出來的配置，給戰局計算當預設值 */
+    current: function () {
       var bank = parseFloat($('tp-bank').value), goal = parseFloat($('tp-goal').value);
-      var okStart = bank > 0 && goal > bank;
-      box.innerHTML =
-        '<div class="tk-hd"><span>照打法追蹤</span><span>已解鎖</span></div>'
-      + '<div class="tk-body"><div class="tk-start">'
-      + '<p>按下去之後，每打一段就回來更新餘額。'
-      + '工具會用<b>你現在的餘額</b>重算達標率，讓你知道自己還在不在軌道上。</p>'
-      + (okStart
-          ? '<button type="button" class="tk-btn" id="tk-begin">開始這一場</button>'
-          : '<p style="color:#b45309"><b>先在上面填好本金與目標</b>，才能開始。</p>')
-      + '</div>' + histHtml() + '</div>';
-      var b = $('tk-begin');
-      if (b) b.addEventListener('click', function () {
-        var plan = pickPlan(Math.min(5, Math.max(1.5, goal / bank)), bank);
-        sess = { start: bank, goal: goal, bet: bank / plan.best.ratio, ratio: plan.best.ratio,
-                 bal: bank, spins: 0, startP: plan.best.p, log: [] };
-        saveJSON(SESS_KEY, sess);
-        if (typeof gtag === 'function') gtag('event', 'plan_track_start', { bank: bank, goal: goal });
-        renderTracker();
-      });
-      return;
+      if (!(bank > 0) || !(goal > bank)) return null;
+      var plan = pickPlan(Math.min(5, Math.max(1.5, goal / bank)), bank);
+      return { bank: bank, goal: goal, bet: Math.max(MIN_BET, bank / plan.best.ratio),
+               ratio: plan.best.ratio, p: plan.best.p };
     }
-
-    /* 進行中
-       🔴 達標率一定要用「使用者實際押的注」算，不是用建議押注。
-          用建議押注算的話，他把注拉大 20 倍畫面上的數字也不會動——
-          那整個追蹤就白做了，因為這個工具唯一要阻止的就是中途加注。 */
-    var actualNow = sess.actualBet || sess.bet;
-    var st = liveStats(sess.bal, sess.goal, actualNow);
-    var stIdeal = liveStats(sess.bal, sess.goal, sess.bet);
-    var pct = st ? Math.round(st.p * 100) : 0;
-    var delta = st ? (st.p - sess.startP) * 100 : 0;
-    var prog = Math.max(0, Math.min(100, (sess.bal - sess.start) / (sess.goal - sess.start) * 100));
-    var dCls = delta > 1 ? 'tk-up' : delta < -1 ? 'tk-dn' : 'tk-flat';
-    var dTxt = st && st.done ? '已達標'
-             : (delta > 0 ? '↑ 比開打時高 ' : delta < 0 ? '↓ 比開打時低 ' : '跟開打時一樣 ')
-               + (delta ? Math.abs(delta).toFixed(1) + ' 個百分點' : '');
-
-    /* 押注偏離：使用者實際押的 vs 打法建議的 */
-    var devHtml = '';
-    var actual = actualNow;
-    var times = actual / sess.bet;
-    var lost = (stIdeal && st) ? (stIdeal.p - st.p) * 100 : 0;
-    if (times >= 1.5) {
-      devHtml = '<div class="tk-warn">你實際押 <b>' + betText(actual) + ' 元</b>，是建議的 <b>'
-              + times.toFixed(1) + ' 倍</b>。'
-              + (lost > 0.5
-                  ? '照建議押 ' + betText(sess.bet) + ' 元會是 <b>' + Math.round(stIdeal.p * 100)
-                    + '%</b>，你現在是 <b>' + Math.round(st.p * 100) + '%</b>——'
-                    + '光是加注就少了 ' + lost.toFixed(1) + ' 個百分點。'
-                  : '押大會把達標率往下拉。')
-              + '這是這套打法最容易被自己毀掉的地方。</div>';
-    } else if (times <= 0.9) {
-      devHtml = '<div class="tk-warn ok">你押得比建議更小（' + betText(actual) + ' 元），'
-              + '達標率比建議的再高一點，代價是要打更久。</div>';
-    } else {
-      devHtml = '<div class="tk-warn ok">押注還在打法內，繼續。</div>';
-    }
-
-    box.innerHTML =
-      '<div class="tk-hd"><span>這一場・進行中</span><span>目標 ' + money(sess.goal) + ' 元</span></div>'
-    + '<div class="tk-body"><div class="tk-live">'
-    + '<div class="big"><div class="k">現在的達標率</div>'
-    +   '<div class="v ' + (st && st.done ? 'tk-up' : '') + '">' + (st && st.done ? '達標' : pct + '%') + '</div>'
-    +   '<div class="d ' + dCls + '">' + dTxt + '</div></div>'
-    + '<div class="tk-bar"><i style="width:' + prog.toFixed(1) + '%"></i></div>'
-    + '<div class="tk-barlab"><span>' + money(sess.start) + '</span>'
-    +   '<span>現在 ' + money(sess.bal) + '（進度 ' + prog.toFixed(0) + '%）</span>'
-    +   '<span>' + money(sess.goal) + '</span></div>'
-    + '<div class="tk-cells">'
-    +   '<div class="tk-cell"><div class="k">建議押注</div><div class="v">' + betText(sess.bet) + ' 元</div></div>'
-    +   '<div class="tk-cell"><div class="k">從現在起還要打</div><div class="v">'
-    +     (st && st.done ? '—' : '約 ' + money(st ? st.med : 0) + ' 轉') + '</div></div>'
-    + '</div>'
-    + devHtml
-    + '<div class="tk-form">'
-    +   '<div><label for="tk-bal">目前餘額</label><input id="tk-bal" type="number" inputmode="decimal" value="' + sess.bal + '"></div>'
-    +   '<div><label for="tk-bet">實際押注</label><input id="tk-bet" type="number" inputmode="decimal" value="' + actual + '"></div>'
-    +   '<button type="button" class="tk-btn" id="tk-update">更新</button>'
-    + '</div>'
-    + '<div class="tk-acts">'
-    +   '<button type="button" class="tk-btn ghost" id="tk-end">結束這一場</button>'
-    + '</div>'
-    + '</div>' + histHtml() + '</div>';
-
-    $('tk-update').addEventListener('click', function () {
-      var nb = parseFloat($('tk-bal').value), nbet = parseFloat($('tk-bet').value);
-      if (!(nb >= 0)) return;
-      sess.bal = nb;
-      if (nbet > 0) sess.actualBet = Math.max(MIN_BET, nbet);   // 低於最低押注是按不下去的數字
-      sess.log.push({ bal: nb, bet: sess.actualBet || sess.bet });
-      saveJSON(SESS_KEY, sess);
-      if (typeof gtag === 'function') gtag('event', 'plan_track_update', { pct: pct });
-      renderTracker();
-    });
-    $('tk-end').addEventListener('click', function () {
-      hist.unshift({ start: sess.start, goal: sess.goal, bet: sess.bet, end: sess.bal,
-                     hit: sess.bal >= sess.goal, updates: sess.log.length });
-      hist = hist.slice(0, 12);
-      saveJSON(HIST_KEY, hist);
-      sess = null; saveJSON(SESS_KEY, null);
-      if (typeof gtag === 'function') gtag('event', 'plan_track_end', {});
-      renderTracker();
-    });
-  }
-
-  function histHtml() {
-    if (!hist.length) return '';
-    return '<div class="tk-hist"><h4>過去的場次</h4>'
-      + hist.map(function (h) {
-          return '<div class="row"><span>' + money(h.start) + ' → ' + money(h.goal) + '　押 ' + betText(h.bet) + '</span>'
-               + '<span class="' + (h.hit ? 'ok' : 'no') + '">'
-               + (h.hit ? '達標' : '收在 ' + money(h.end)) + '</span></div>';
-        }).join('')
-      + '</div>';
-  }
+  };
 
   function applyGate() {
     var host = document.querySelector('.tp');
@@ -348,7 +190,6 @@
       b.style.display = '';
     } else if (b) { b.style.display = 'none'; }
 
-    renderTracker();
   }
 
   var $ = function (id) { return document.getElementById(id); };

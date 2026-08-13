@@ -118,69 +118,6 @@
                 font-size:.72rem;font-weight:900;cursor:pointer}
 .tp-gate .note{min-height:1.2em;margin:9px 0 0;color:#ffb0bb;font-size:.64rem}
 
-/* ── 照打法追蹤 ───────────────────────────── */
-.tk{margin-top:14px;border:1px solid var(--line);
-    background:linear-gradient(145deg,rgba(16,12,20,.96),rgba(7,6,10,.89))}
-.tk-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;
-       padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
-.tk-hd span:first-child{color:var(--cyan);font-size:.72rem;font-weight:900;letter-spacing:.06em}
-.tk-hd span:last-child{color:var(--muted);font-size:.6rem}
-.tk-body{padding:15px 14px}
-.tk-start{text-align:center}
-.tk-start p{margin:0 0 13px;color:#b9b2aa;font-size:.7rem;line-height:1.8}
-.tk-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;
-        padding:0 26px;border:1px solid var(--bright);
-        background:linear-gradient(135deg,#f4cf78,#a97b2c);color:#15100a;
-        font-size:.75rem;font-weight:900;cursor:pointer;text-decoration:none}
-.tk-btn.ghost{min-height:36px;padding:0 16px;border:1px solid rgba(255,255,255,.14);
-              background:transparent;color:var(--muted);font-size:.66rem}
-.tk-btn.ghost:hover{border-color:var(--red);color:#ffb0bb}
-
-.tk-live .big{padding-bottom:12px;margin-bottom:12px;text-align:center;
-              border-bottom:1px solid rgba(255,255,255,.07)}
-.tk-live .big .k{color:var(--muted);font-size:.62rem;letter-spacing:.14em}
-.tk-live .big .v{margin:4px 0 0;color:var(--sand);
-                 font:500 clamp(2.5rem,9vw,3.4rem)/1 Georgia,serif;font-variant-numeric:tabular-nums}
-.tk-live .big .d{margin-top:6px;font-size:.66rem;font-weight:900}
-.tk-up{color:var(--green)} .tk-dn{color:var(--red)} .tk-flat{color:var(--muted)}
-
-.tk-bar{height:7px;margin:10px 0 5px;background:rgba(255,255,255,.08)}
-.tk-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--bright));
-          box-shadow:0 0 12px rgba(244,207,120,.3)}
-.tk-barlab{display:flex;justify-content:space-between;color:#7f7974;font-size:.55rem;
-           font-variant-numeric:tabular-nums}
-
-.tk-cells{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
-.tk-cell{padding:11px 12px;border:1px solid rgba(255,255,255,.09);
-         background:rgba(255,255,255,.025);text-align:center}
-.tk-cell .k{color:var(--muted);font-size:.58rem}
-.tk-cell .v{margin-top:4px;color:var(--sand);font:500 1.15rem/1 Georgia,serif;
-            font-variant-numeric:tabular-nums}
-
-.tk-warn{margin-top:11px;padding:9px 12px;border-left:2px solid var(--gold);
-         background:rgba(217,170,79,.07);color:#e2d6bd;font-size:.68rem;line-height:1.75}
-.tk-warn b{color:var(--bright)}
-.tk-warn.ok{border-left-color:var(--green);background:rgba(116,211,164,.06);color:#c3e5d3}
-.tk-warn.ok b{color:var(--green)}
-
-.tk-form{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;margin-top:12px;align-items:end}
-.tk-form label{display:block;margin-bottom:5px;color:#bcb5ac;font-size:.6rem}
-.tk-form input{width:100%;height:42px;padding:0 10px;border:1px solid rgba(255,255,255,.14);
-               outline:none;background:#0b0910;color:#fff;
-               font:500 1.05rem/1 Georgia,serif;font-variant-numeric:tabular-nums}
-.tk-form input:focus{border-color:var(--gold)}
-.tk-form .tk-btn{min-height:42px;padding:0 18px}
-.tk-acts{display:flex;gap:7px;justify-content:center;margin-top:11px;flex-wrap:wrap}
-
-.tk-hist{margin-top:13px;padding-top:11px;border-top:1px solid rgba(255,255,255,.07)}
-.tk-hist h4{margin:0 0 7px;color:var(--muted);font-size:.6rem;letter-spacing:.1em}
-.tk-hist .row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;
-              border-bottom:1px solid rgba(255,255,255,.05);color:#b3ada5;font-size:.64rem;
-              font-variant-numeric:tabular-nums}
-.tk-hist .row:last-child{border-bottom:0}
-.tk-hist .ok{color:var(--green);font-weight:900}
-.tk-hist .no{color:#77716c}
-
 @media(max-width:640px){
   .tp-grid{grid-template-columns:1fr}
   .tp-cmp thead{display:none}
@@ -190,8 +127,6 @@
   .tp-cmp td:before{content:attr(data-l);color:var(--muted)}
   .tp-cmp td:first-child{margin-bottom:3px;color:var(--sand);font-weight:900}
   .tp-cmp td:first-child:before{display:none}
-  .tk-form{grid-template-columns:1fr 1fr}
-  .tk-form .tk-btn{grid-column:1/-1}
 }
 
 /* 分頁內的標題與說明文字（原本寫在 HTML 行內，改由這裡統一管） */
