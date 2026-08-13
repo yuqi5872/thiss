@@ -34,8 +34,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/seth-session.css?v=20260813-panetop">
-<link rel="stylesheet" href="/assets/target-plan.css?v=20260813-5">
-<link rel="stylesheet" href="/assets/jackpot-radar.css?v=20260813-1">
+<link rel="stylesheet" href="/assets/target-plan.css?v=20260813-dark">
+<link rel="stylesheet" href="/assets/jackpot-radar.css?v=20260813-dark">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -191,9 +191,8 @@
   <section class="tool-pane" id="pane-radar" hidden>
     <div class="jr-wrap">
       <p class="section-kicker">開打前・彩金水位判讀</p>
-      <h2 style="font-size:clamp(21px,4vw,27px);font-weight:900;line-height:1.3;margin:0 0 8px">
-        現在該不該打？</h2>
-      <p style="font-size:15px;line-height:1.85;margin-bottom:14px">
+      <h2>現在該不該打？</h2>
+      <p class="tp-lead">
         彩金水位是這個遊戲裡唯一會隨時間變、而且真的影響你拿多少的東西。
         打在高水位跟打在剛被人拿走之後，中同一個獎拿到的錢差很多。</p>
       <div class="jr-in">
@@ -274,7 +273,7 @@
         任何拿彩金水位來宣稱能預測下一轉的說法，都跟這一頁的資料無關。</div>
       </div>
 
-      <p style="margin-top:18px;font-size:13.5px;color:var(--ink-mute,#5b6472);line-height:1.8">
+      <p class="tp-foot">
         完整的觀測方法與重置紀錄寫在
         <a href="/guides/seth-jackpot-log/">30 小時實測全紀錄</a>。
       </p>
@@ -284,9 +283,8 @@
   <section class="tool-pane" id="pane-plan" hidden>
     <div class="tp">
       <p class="section-kicker">開打前・分注打法</p>
-      <h2 style="font-size:clamp(21px,4vw,27px);font-weight:900;line-height:1.3;margin:0 0 8px">
-        先決定押多少，再開打</h2>
-      <p style="font-size:15px;line-height:1.85;margin-bottom:14px">
+      <h2 class="tp-h2">先決定押多少，再開打</h2>
+      <p class="tp-lead">
         遊戲最低押注 10 元，所以<b>本金決定你能把錢切成幾份，而切幾份直接決定達標率</b>。
         1,000 元想翻倍，切 100 份（押 10 元）是 <b>22.6%</b>，切 20 份（押 50 元）只有 <b>14.5%</b>。
         輸入本金和目標，直接給你該押多少。</p>
@@ -359,7 +357,7 @@
             實際遊戲的最低押注限制可能讓你切不到那麼細。</p>
           </div>
         </details>
-      <p style="margin-top:16px;font-size:14px;color:var(--ink-mute,#5b6472)">
+      <p class="tp-foot">
         配好之後切到 <b>② 玩的時候</b> 開一場，工具會照這個押注幫你記錄。
       </p>
     </div>

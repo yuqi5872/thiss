@@ -1,145 +1,202 @@
-  .tp{max-width:660px;margin:0 auto}
-  .tp-in{background:#0f1729;border-radius:18px;padding:20px 18px;color:#e8eaf0}
-  .tp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .tp-f label{display:block;font-size:12.5px;color:#8fa0bd;font-weight:700;margin-bottom:6px}
-  .tp-f{min-width:0}
-  .tp-f .box{display:flex;align-items:center;min-width:0;background:rgba(255,255,255,.07);
-             border:1px solid rgba(255,255,255,.13);border-radius:11px;padding:0 12px}
-  .tp-f input{flex:1;min-width:0;background:none;border:0;color:#fff;font-size:23px;font-weight:900;
-              padding:13px 0;font-variant-numeric:tabular-nums;outline:none;-moz-appearance:textfield}
-  .tp-f input::-webkit-outer-spin-button,.tp-f input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-  .tp-f .u{color:#7b8aa8;font-size:14px;font-weight:700;padding-left:6px}
-  .tp-mult{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
-  .tp-mult button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#c6d0e2;
-                  border-radius:999px;padding:8px 15px;font-size:13.5px;font-weight:800;cursor:pointer}
-  .tp-mult button.on{background:#d4af37;border-color:#d4af37;color:#1a1206}
+/* 分注打法產生器 — 樣式
+ * ─────────────────────────────────────────────
+ * 🔴 這支只在工具台（/tools/storm-of-seth-session/）裡用，不再有獨立頁。
+ *    所以配色一律吃 seth-session.css 的深色設計語彙，不要再寫淺色卡片：
+ *      無圓角（整站都是直角）· 面板深色漸層 · 金色描邊
+ *      大數字用 Georgia 襯線體 · 字級走 rem 且偏小（.55–.85rem）
+ *      強調區塊用「左側 2px 色條」，不是圓角色塊
+ *    變數來自 seth-session.css 的 :root：
+ *      --gold #d9aa4f · --bright #f4cf78 · --sand #f2eadc
+ *      --muted #a8a198 · --cyan #43d8d3 · --green #74d3a4 · --red #ff6174
+ */
 
-  .tp-card{margin-top:14px;border:3px solid #d4af37;border-radius:18px;overflow:hidden;background:#fff}
-  .tp-card-hd{background:#0f1729;color:#f2c14e;padding:12px 18px;font-weight:900;font-size:15px;
-              display:flex;justify-content:space-between;align-items:center;gap:10px}
-  .tp-card-hd span:last-child{color:#8fa0bd;font-size:12.5px;font-weight:700}
-  .tp-body{padding:18px}
-  .tp-hero{text-align:center;padding:6px 0 16px;border-bottom:1px dashed #e2e8f0;margin-bottom:16px}
-  .tp-hero .k{font-size:13px;color:var(--ink-mute,#5b6472);font-weight:800}
-  .tp-hero .v{font-size:clamp(40px,11vw,56px);font-weight:900;line-height:1.05;color:#0f1729;
-              font-variant-numeric:tabular-nums;margin-top:4px}
-  .tp-hero .v small{font-size:.45em;font-weight:800;color:#5b6472}
-  .tp-rate{margin-top:10px;display:inline-block;background:#f0fdf4;border:1px solid #16a34a;color:#15803d;
-           border-radius:999px;padding:7px 17px;font-size:16px;font-weight:900}
-  .tp-rows{display:grid;gap:0}
-  .tp-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
-          padding:11px 0;border-bottom:1px solid #f0f3f7;font-size:15px}
-  .tp-row:last-child{border-bottom:0}
-  .tp-row .k{color:var(--ink-mute,#5b6472);font-weight:700;flex:0 0 auto}
-  .tp-row .v{font-weight:900;font-size:18px;font-variant-numeric:tabular-nums;text-align:right}
-  .tp-row.stop .v{color:#b91c1c}
-  .tp-row.take .v{color:#15803d}
+.tp{max-width:760px;margin:0 auto}
 
-  .tp-slider{margin-top:16px;background:#f8fafc;border:1px solid var(--line,#e2e8f0);border-radius:14px;padding:15px 16px}
-  .tp-slider .hd{display:flex;justify-content:space-between;font-size:13.5px;font-weight:800;margin-bottom:10px}
-  .tp-slider .hd b{font-size:16px}
-  .tp-slider input[type=range]{width:100%;accent-color:#d4af37;height:26px}
-  .tp-scale{display:flex;justify-content:space-between;font-size:11.5px;color:#8b95a3;margin-top:2px}
-  .tp-warn{margin-top:11px;font-size:14.5px;line-height:1.75;padding:11px 13px;border-radius:10px;
-           background:#fffbeb;border-left:4px solid #f59e0b;color:#78350f}
-  .tp-warn.ok{background:#f0fdf4;border-left-color:#16a34a;color:#14532d}
+/* ── 輸入區 ───────────────────────────────── */
+.tp-in{padding:14px;border:1px solid var(--line);
+       background:linear-gradient(145deg,rgba(16,12,20,.96),rgba(7,6,10,.89))}
+.tp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tp-f{min-width:0;display:grid;gap:6px}
+.tp-f label{display:block;color:#bcb5ac;font-size:.66rem}
+.tp-f .box{height:46px;min-width:0;display:flex;align-items:center;padding:0 11px;
+           border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.025)}
+.tp-f .box:focus-within{border-color:var(--gold);box-shadow:0 0 0 1px rgba(217,170,79,.18)}
+.tp-f input{flex:1;min-width:0;height:100%;padding:0;border:0;outline:none;background:transparent;
+            color:#fff;font:500 1.35rem/1 Georgia,"Noto Serif TC",serif;
+            font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.tp-f input::-webkit-outer-spin-button,.tp-f input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.tp-f .u{padding-left:7px;color:var(--muted);font-size:.62rem}
 
-  .tp-cmp table{width:100%;border-collapse:collapse;font-size:14.2px;margin-top:10px}
-  .tp-cmp th{background:#0f1729;color:#fff;text-align:left;padding:9px 11px;font-size:12.5px}
-  .tp-cmp td{padding:9px 11px;border-bottom:1px solid #eef2f6;font-variant-numeric:tabular-nums}
-  .tp-cmp tr.me td{background:#fffbeb;font-weight:800}
-  .tp-cta{margin-top:16px;text-align:center}
-  .tp-cta a{display:inline-block;padding:13px 26px;border-radius:999px;background:#06c755;color:#fff;
-            font-weight:800;font-size:15px;text-decoration:none}
-  @media(max-width:520px){ .tp-grid{grid-template-columns:1fr} }
-  /* 🔴 斷點設 640 不是 520：站上全域 table{min-width:560px} 會撐破 560~640 這一段，
-     每次做新表格都踩一次，所以這裡一定要連 min-width:0 一起寫。 */
-  @media(max-width:640px){
-    .tp-cmp table{min-width:0;width:100%}
-    .tp-cmp thead{display:none}
-    .tp-cmp tr{display:block;border:1px solid #e5e7eb;border-radius:10px;padding:9px 12px;margin-bottom:9px}
-    .tp-cmp td{display:flex;justify-content:space-between;border:0;padding:4px 0;background:none!important}
-    .tp-cmp td:before{content:attr(data-l);color:#6b7280;font-weight:700}
-    .tp-cmp td:first-child{font-weight:900;border-bottom:1px solid #e5e7eb;margin-bottom:3px;padding-bottom:7px}
-    .tp-cmp td:first-child:before{display:none}
-  }
-/* ── 深色宿主頁（三合一工具台）的顏色修正 ────────────────
-   工具台的 body 文字色是淺色（#f2eadc）。這些區塊自己是淺底，
-   不強制指定深色文字的話，白卡片上會出現淺色字＝看不見。
-   2026-08-13 實測踩過：打法卡的「約 5,939 轉」整行讀不到。 */
-.tp-card, .tp-slider, .tp-cmp table, .tp-cta{color:#1f2733}
-.tp-card .tp-hero .k{color:#5b6472}
-.tp-row .k{color:#5b6472}
-.tp-row .v{color:#0f1729}
-.tp-cmp td{color:#1f2733;background:#fff}
-.tp-cmp tr:nth-child(even) td{background:#f8fafc}
-.tp-cmp tr.me td{background:#fffbeb}
-.tp-slider .hd{color:#1f2733}
-.tp-scale span{color:#8b95a3}
+.tp-mult{display:flex;gap:5px;margin-top:11px}
+.tp-mult button{flex:1;min-height:32px;border:1px solid rgba(255,255,255,.13);
+                background:rgba(255,255,255,.025);color:var(--muted);font-size:.66rem;cursor:pointer}
+.tp-mult button:hover{border-color:var(--gold);color:var(--bright)}
+.tp-mult button.on{border-color:var(--bright);background:rgba(217,170,79,.14);
+                   color:var(--bright);font-weight:900}
 
-/* ── 註冊閘門 ────────────────────────────────────
-   免費看得到輸入框跟卡片的形狀，但數字要註冊才看得到。
-   刻意不整塊遮掉：看得到「這裡有東西」才會想解鎖，
-   整塊藏起來只會被當成壞掉的頁面關掉。 */
+/* ── 打法卡 ───────────────────────────────── */
+.tp-card{margin-top:11px;border:1px solid var(--line);
+         background:radial-gradient(circle at 50% 0,rgba(217,170,79,.12),transparent 42%),
+                    linear-gradient(145deg,rgba(16,12,20,.96),rgba(7,6,10,.9))}
+.tp-card-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;
+            padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.tp-card-hd span:first-child{color:var(--bright);font-size:.72rem;font-weight:900;letter-spacing:.06em}
+.tp-card-hd span:last-child{color:var(--muted);font-size:.6rem}
+.tp-body{padding:16px 14px}
+
+.tp-hero{padding-bottom:13px;margin-bottom:13px;text-align:center;
+         border-bottom:1px solid rgba(255,255,255,.07)}
+.tp-hero .k{color:var(--muted);font-size:.62rem;letter-spacing:.14em}
+.tp-hero .v{margin:5px 0 0;color:var(--sand);font:500 clamp(2.6rem,9vw,3.6rem)/1 Georgia,serif;
+            font-variant-numeric:tabular-nums}
+.tp-hero .v small{font:500 .32em/1 "Noto Sans TC",sans-serif;color:var(--muted)}
+.tp-rate{display:inline-block;margin-top:9px;padding:5px 14px;border:1px solid rgba(116,211,164,.4);
+         background:rgba(116,211,164,.08);color:var(--green);font-size:.78rem;font-weight:900}
+
+.tp-rows{display:grid}
+.tp-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+        padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.7rem}
+.tp-row:last-child{border-bottom:0}
+.tp-row .k{color:var(--muted);flex:0 0 auto}
+.tp-row .v{color:var(--sand);font:500 1.05rem/1.3 Georgia,serif;
+           font-variant-numeric:tabular-nums;text-align:right}
+.tp-row.take .v{color:var(--green)}
+.tp-row.stop .v{color:var(--red)}
+
+/* ── 滑桿 ─────────────────────────────────── */
+.tp-slider{margin-top:11px;padding:13px 14px;border:1px solid rgba(255,255,255,.09);
+           background:rgba(255,255,255,.025)}
+.tp-slider .hd{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px;
+               color:#bcb5ac;font-size:.66rem}
+.tp-slider .hd b{color:var(--bright);font:500 .95rem/1 Georgia,serif}
+.tp-slider input[type=range]{width:100%;height:24px;accent-color:var(--gold)}
+.tp-scale{display:flex;justify-content:space-between;margin-top:2px;color:#7f7974;font-size:.5rem}
+
+/* ── 提示條：一律左側色條，不用圓角色塊 ──────── */
+.tp-warn{margin-top:10px;padding:9px 12px;border-left:2px solid var(--gold);
+         background:rgba(217,170,79,.07);color:#e2d6bd;font-size:.68rem;line-height:1.75}
+.tp-warn b{color:var(--bright)}
+.tp-warn.ok{border-left-color:var(--green);background:rgba(116,211,164,.06);color:#c3e5d3}
+.tp-warn.ok b{color:var(--green)}
+
+/* ── 對照表 ───────────────────────────────── */
+.tp-cmp{margin-top:9px}
+.tp-cmp table{width:100%;min-width:0;border-collapse:collapse;font-size:.68rem}
+.tp-cmp th{padding:8px 10px;border-bottom:1px solid var(--line);
+           color:var(--muted);font-size:.58rem;font-weight:700;text-align:left;letter-spacing:.08em}
+.tp-cmp td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06);
+           color:#cdc6bd;font-variant-numeric:tabular-nums}
+.tp-cmp tr.me td{background:rgba(217,170,79,.09);color:var(--bright);font-weight:900}
+.tp-cmp tr.no td{color:#6d6862}
+
+.tp-cta{margin-top:11px}
+
+/* ── 閘門 ─────────────────────────────────── */
 .tp-locked .tp-hero .v,
 .tp-locked .tp-rate,
 .tp-locked .tp-rows,
 .tp-locked #tp-alt,
 .tp-locked .tp-cmp table,
 .tp-locked .tp-slider{filter:blur(7px);pointer-events:none;user-select:none}
-.tp-gate{border:2px solid #d4af37;border-radius:16px;padding:20px 18px;margin:14px 0;
-         background:#fffdf5;text-align:center}
-.tp-gate h3{margin:0 0 8px;font-size:18px;font-weight:900;color:#1f2733}
-.tp-gate p{margin:0 auto 14px;max-width:30em;font-size:14.5px;line-height:1.85;color:#5b6472}
-.tp-gate .btns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
-.tp-gate a.reg{display:inline-block;padding:12px 24px;border-radius:999px;background:#d4af37;
-               color:#1a1206;font-weight:800;font-size:15px;text-decoration:none}
-.tp-gate a.line{display:inline-block;padding:12px 24px;border-radius:999px;background:#06c755;
-                color:#fff;font-weight:800;font-size:15px;text-decoration:none}
-.tp-gate .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-.tp-gate input{height:42px;padding:0 13px;border:1px solid #cbd5e1;border-radius:9px;font-size:15px;min-width:180px}
-.tp-gate button{height:42px;padding:0 22px;border-radius:9px;border:1px solid #0f1729;
-                background:#0f1729;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
-.tp-gate .note{margin:10px 0 0;font-size:13px;color:#b45309;min-height:1.2em}
+.tp-gate{margin:11px 0;padding:18px 16px;border:1px solid var(--line);
+         background:linear-gradient(145deg,rgba(22,17,12,.96),rgba(7,6,10,.9));text-align:center}
+.tp-gate h3{margin:0 0 8px;color:var(--bright);font-size:.95rem;font-weight:900}
+.tp-gate p{max-width:34em;margin:0 auto 13px;color:#b9b2aa;font-size:.7rem;line-height:1.8}
+.tp-gate .btns{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.tp-gate a.reg{min-height:42px;display:inline-flex;align-items:center;padding:0 20px;
+               border:1px solid var(--bright);background:linear-gradient(135deg,#f4cf78,#a97b2c);
+               color:#15100a;font-size:.72rem;font-weight:900;text-decoration:none}
+.tp-gate a.line{min-height:42px;display:inline-flex;align-items:center;padding:0 20px;
+                border:1px solid rgba(116,211,164,.5);background:rgba(116,211,164,.09);
+                color:var(--green);font-size:.72rem;font-weight:900;text-decoration:none}
+.tp-gate .row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.tp-gate input{min-width:170px;height:40px;padding:0 11px;border:1px solid rgba(255,255,255,.14);
+               outline:none;background:#0b0910;color:#fff;font-size:.75rem}
+.tp-gate input:focus{border-color:var(--gold)}
+.tp-gate button{height:40px;padding:0 20px;border:1px solid var(--bright);
+                background:linear-gradient(135deg,#f4cf78,#a97b2c);color:#15100a;
+                font-size:.72rem;font-weight:900;cursor:pointer}
+.tp-gate .note{min-height:1.2em;margin:9px 0 0;color:#ffb0bb;font-size:.64rem}
 
-/* ── 照打法追蹤（儲值 2,000 解鎖）──────────────── */
-.tk{margin-top:18px;border:2px solid #0f1729;border-radius:16px;overflow:hidden;background:#fff;color:#1f2733}
-.tk-hd{background:#0f1729;color:#f2c14e;padding:12px 17px;font-weight:900;font-size:15px;
-       display:flex;justify-content:space-between;align-items:center;gap:10px}
-.tk-hd span:last-child{color:#8fa0bd;font-size:12.5px;font-weight:700}
-.tk-body{padding:17px}
-.tk-start{text-align:center;padding:6px 0}
-.tk-start p{margin:0 0 14px;font-size:14.5px;line-height:1.85;color:#5b6472}
-.tk-btn{display:inline-block;padding:13px 30px;border-radius:999px;background:#0f1729;color:#fff;
-        font-weight:800;font-size:15px;border:0;cursor:pointer}
-.tk-btn.ghost{background:#fff;color:#0f1729;border:1px solid #cbd5e1;font-size:13.5px;padding:9px 18px}
-.tk-live .big{text-align:center;padding:4px 0 14px;border-bottom:1px dashed #e2e8f0;margin-bottom:14px}
-.tk-live .big .k{font-size:13px;color:#5b6472;font-weight:800}
-.tk-live .big .v{font-size:clamp(38px,11vw,52px);font-weight:900;line-height:1.05;font-variant-numeric:tabular-nums}
-.tk-live .big .d{font-size:13.5px;font-weight:800;margin-top:6px}
-.tk-up{color:#15803d} .tk-dn{color:#b91c1c} .tk-flat{color:#5b6472}
-.tk-bar{height:9px;border-radius:99px;background:#e8ecf1;overflow:hidden;margin:12px 0 5px}
-.tk-bar i{display:block;height:100%;background:linear-gradient(90deg,#d4af37,#f2c14e)}
-.tk-barlab{display:flex;justify-content:space-between;font-size:12px;color:#8b95a3;font-variant-numeric:tabular-nums}
-.tk-cells{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.tk-cell{border:1px solid #e2e8f0;border-radius:11px;padding:12px;text-align:center}
-.tk-cell .k{font-size:12px;color:#5b6472;font-weight:700}
-.tk-cell .v{font-size:21px;font-weight:900;margin-top:4px;font-variant-numeric:tabular-nums}
-.tk-warn{margin-top:12px;padding:11px 13px;border-radius:10px;background:#fffbeb;
-         border-left:4px solid #f59e0b;color:#78350f;font-size:14.3px;line-height:1.75}
-.tk-warn.ok{background:#f0fdf4;border-left-color:#16a34a;color:#14532d}
-.tk-form{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:14px;align-items:end}
-.tk-form label{display:block;font-size:12px;color:#5b6472;font-weight:700;margin-bottom:5px}
-.tk-form input{width:100%;height:44px;padding:0 12px;border:1px solid #cbd5e1;border-radius:9px;
-               font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
-.tk-acts{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
-.tk-hist{margin-top:14px;border-top:1px solid #e8ecf1;padding-top:12px}
-.tk-hist h4{margin:0 0 8px;font-size:13.5px;font-weight:800;color:#5b6472}
-.tk-hist .row{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:6px 0;
-              border-bottom:1px solid #f2f5f8;font-variant-numeric:tabular-nums}
+/* ── 照打法追蹤 ───────────────────────────── */
+.tk{margin-top:14px;border:1px solid var(--line);
+    background:linear-gradient(145deg,rgba(16,12,20,.96),rgba(7,6,10,.89))}
+.tk-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;
+       padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.tk-hd span:first-child{color:var(--cyan);font-size:.72rem;font-weight:900;letter-spacing:.06em}
+.tk-hd span:last-child{color:var(--muted);font-size:.6rem}
+.tk-body{padding:15px 14px}
+.tk-start{text-align:center}
+.tk-start p{margin:0 0 13px;color:#b9b2aa;font-size:.7rem;line-height:1.8}
+.tk-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;
+        padding:0 26px;border:1px solid var(--bright);
+        background:linear-gradient(135deg,#f4cf78,#a97b2c);color:#15100a;
+        font-size:.75rem;font-weight:900;cursor:pointer;text-decoration:none}
+.tk-btn.ghost{min-height:36px;padding:0 16px;border:1px solid rgba(255,255,255,.14);
+              background:transparent;color:var(--muted);font-size:.66rem}
+.tk-btn.ghost:hover{border-color:var(--red);color:#ffb0bb}
+
+.tk-live .big{padding-bottom:12px;margin-bottom:12px;text-align:center;
+              border-bottom:1px solid rgba(255,255,255,.07)}
+.tk-live .big .k{color:var(--muted);font-size:.62rem;letter-spacing:.14em}
+.tk-live .big .v{margin:4px 0 0;color:var(--sand);
+                 font:500 clamp(2.5rem,9vw,3.4rem)/1 Georgia,serif;font-variant-numeric:tabular-nums}
+.tk-live .big .d{margin-top:6px;font-size:.66rem;font-weight:900}
+.tk-up{color:var(--green)} .tk-dn{color:var(--red)} .tk-flat{color:var(--muted)}
+
+.tk-bar{height:7px;margin:10px 0 5px;background:rgba(255,255,255,.08)}
+.tk-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--bright));
+          box-shadow:0 0 12px rgba(244,207,120,.3)}
+.tk-barlab{display:flex;justify-content:space-between;color:#7f7974;font-size:.55rem;
+           font-variant-numeric:tabular-nums}
+
+.tk-cells{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+.tk-cell{padding:11px 12px;border:1px solid rgba(255,255,255,.09);
+         background:rgba(255,255,255,.025);text-align:center}
+.tk-cell .k{color:var(--muted);font-size:.58rem}
+.tk-cell .v{margin-top:4px;color:var(--sand);font:500 1.15rem/1 Georgia,serif;
+            font-variant-numeric:tabular-nums}
+
+.tk-warn{margin-top:11px;padding:9px 12px;border-left:2px solid var(--gold);
+         background:rgba(217,170,79,.07);color:#e2d6bd;font-size:.68rem;line-height:1.75}
+.tk-warn b{color:var(--bright)}
+.tk-warn.ok{border-left-color:var(--green);background:rgba(116,211,164,.06);color:#c3e5d3}
+.tk-warn.ok b{color:var(--green)}
+
+.tk-form{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;margin-top:12px;align-items:end}
+.tk-form label{display:block;margin-bottom:5px;color:#bcb5ac;font-size:.6rem}
+.tk-form input{width:100%;height:42px;padding:0 10px;border:1px solid rgba(255,255,255,.14);
+               outline:none;background:#0b0910;color:#fff;
+               font:500 1.05rem/1 Georgia,serif;font-variant-numeric:tabular-nums}
+.tk-form input:focus{border-color:var(--gold)}
+.tk-form .tk-btn{min-height:42px;padding:0 18px}
+.tk-acts{display:flex;gap:7px;justify-content:center;margin-top:11px;flex-wrap:wrap}
+
+.tk-hist{margin-top:13px;padding-top:11px;border-top:1px solid rgba(255,255,255,.07)}
+.tk-hist h4{margin:0 0 7px;color:var(--muted);font-size:.6rem;letter-spacing:.1em}
+.tk-hist .row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;
+              border-bottom:1px solid rgba(255,255,255,.05);color:#b3ada5;font-size:.64rem;
+              font-variant-numeric:tabular-nums}
 .tk-hist .row:last-child{border-bottom:0}
-.tk-hist .ok{color:#15803d;font-weight:800} .tk-hist .no{color:#8b95a3}
-@media(max-width:520px){ .tk-form{grid-template-columns:1fr 1fr} .tk-form button{grid-column:1/-1} }
+.tk-hist .ok{color:var(--green);font-weight:900}
+.tk-hist .no{color:#77716c}
 
-/* 本金切不出來的分注份數：淡掉但不隱藏，讓人看到「這一格要更多本金」 */
-.tp-cmp tr.no td{background:#fafafa!important;color:#94a3b8}
+@media(max-width:640px){
+  .tp-grid{grid-template-columns:1fr}
+  .tp-cmp thead{display:none}
+  .tp-cmp tr{display:block;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+  .tp-cmp tr.me td{background:none}
+  .tp-cmp td{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border:0}
+  .tp-cmp td:before{content:attr(data-l);color:var(--muted)}
+  .tp-cmp td:first-child{margin-bottom:3px;color:var(--sand);font-weight:900}
+  .tp-cmp td:first-child:before{display:none}
+  .tk-form{grid-template-columns:1fr 1fr}
+  .tk-form .tk-btn{grid-column:1/-1}
+}
+
+/* 分頁內的標題與說明文字（原本寫在 HTML 行內，改由這裡統一管） */
+.tp-h2{margin:0 0 8px;color:var(--sand);font:500 clamp(1.25rem,4.5vw,1.7rem)/1.3 Georgia,"Noto Serif TC",serif}
+.tp-lead{margin:0 0 13px;color:#b9b2aa;font-size:.72rem;line-height:1.85}
+.tp-lead b{color:var(--bright)}
+.tp-foot{margin-top:14px;color:var(--muted);font-size:.64rem;line-height:1.8}
+.tp-foot a{color:var(--cyan)}
