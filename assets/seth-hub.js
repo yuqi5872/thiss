@@ -40,8 +40,13 @@
       // 記住上次看的那一格，回訪不用重選
       try { localStorage.setItem('sethHubPane', want); } catch (err) {}
     });
+    /* 網址帶 #plan 之類的 hash 就直接開那一格——
+       /tools/target-plan/ 已經 301 導到這裡，靠 hash 落在分注打法上。
+       hash 優先於「上次看的那一格」，不然從廣告點進來會落到別的分頁。 */
+    var wanted = (location.hash || '').replace('#', '');
+    if (!PANES.indexOf || PANES.indexOf(wanted) < 0) wanted = '';
     try {
-      var last = localStorage.getItem('sethHubPane');
+      var last = wanted || localStorage.getItem('sethHubPane');
       if (last && last !== 'live') {
         var btn = tabs.querySelector('button[data-pane="' + last + '"]');
         if (btn) btn.click();

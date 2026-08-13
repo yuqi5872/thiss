@@ -1,11 +1,10 @@
 /* 分注打法產生器 — 共用邏輯
  * ─────────────────────────────────────────────
  * 🔴 這支同時被兩個地方用：
- *      /tools/target-plan/            （獨立頁，吃搜尋流量與廣告落地）
- *      /tools/storm-of-seth-session/  （三合一工具台的第 ⓪ 分頁）
- *    兩邊的 HTML 結構、element id、class 必須完全一致。要改就改這一支，
- *    不要在任何一頁另外複製一份——複製出來的兩份一定會漂移，
- *    然後同一個工具在兩個頁面給出不同建議。
+ *      /tools/storm-of-seth-session/  （工具台的第 ⓪ 分頁，唯一的所在地）
+ *    2026-08-13：原本還有一個 /tools/target-plan/ 獨立頁，內容一模一樣。
+ *    同一個工具兩個網址沒有意義，已刪除並 301 導到工具台 #plan。
+ *    以後要加新的擺放位置之前先想清楚：多一個網址就多一份會漂移的東西。
  *
  * 依賴：assets/target-grid.js 先載入（TARGET_GRID / TARGET_META）
  *       assets/target-plan.css 提供 .tp-* 樣式
