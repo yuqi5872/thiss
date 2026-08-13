@@ -133,3 +133,8 @@
 /* 分頁標題（跟 .tp-h2 同一套） */
 .jr-wrap>h2:first-of-type{margin:0 0 8px;color:var(--sand);
   font:500 clamp(1.25rem,4.5vw,1.7rem)/1.3 Georgia,"Noto Serif TC",serif;font-weight:500}
+
+/* 試用提示條 */
+.jr-trialbar{margin-top:10px;padding:9px 12px;border-left:2px solid var(--gold);
+             background:rgba(217,170,79,.07);color:#e2d6bd;font-size:.68rem;line-height:1.75}
+.jr-trialbar b{color:var(--bright)}

@@ -41,7 +41,32 @@
   }
   var unlocked = readUnlock();
   function lvl() { return Number(unlocked.level || 0); }
-  function open_() { return lvl() >= NEED_LEVEL; }
+
+  /* ── 免費試用一次 ────────────────────────────────
+     跟 seth-gate.js 共用同一個計次 key，所以「用過幾次」是全站一致的。
+     計次時機＝第一次真的把打法卡算出來的那一刻（含重新整理都算用掉），
+     所以使用者會完整看到一次結果，下次再來才鎖。
+     🔴 這是軟鎖：清 localStorage 就重來。它的工作不是擋住所有人，
+        是在「已經看過一次覺得有用」的那一刻給一個去儲值的理由。 */
+  var USE_KEY = 'seth-gate-uses-v1';
+  var TRIAL = 1;
+  function uses() { try { return JSON.parse(localStorage.getItem(USE_KEY)) || {}; } catch (e) { return {}; } }
+  function usedCount() { return Number(uses().tp || 0); }
+  function spendTrial() {
+    var u = uses(); u.tp = (Number(u.tp) || 0) + 1;
+    try { localStorage.setItem(USE_KEY, JSON.stringify(u)); } catch (e) {}
+    if (typeof gtag === 'function') gtag('event', 'target_plan_trial', { used: u.tp });
+  }
+  var trialSpent = false;
+  function open_() {
+    if (lvl() >= NEED_LEVEL) return true;
+    if (usedCount() < TRIAL) {
+      if (!trialSpent) { trialSpent = true; spendTrial(); }
+      return true;                       // 試用中：完整顯示
+    }
+    return false;
+  }
+  function inTrial() { return lvl() < NEED_LEVEL; }
 
   function buildGate() {
     var host = document.querySelector('.tp');
@@ -308,6 +333,21 @@
     if (!ok) buildGate();
     var g = document.getElementById('tp-gate');
     if (g) g.style.display = ok ? 'none' : '';
+
+    /* 試用中就講清楚這是試用，不要讓人以為本來就免費、下次回來才發現被鎖 */
+    var b = document.getElementById('tp-trial');
+    if (ok && inTrial()) {
+      if (!b) {
+        b = document.createElement('div');
+        b.className = 'tp-warn'; b.id = 'tp-trial';
+        var card = host.querySelector('.tp-card');
+        if (card) host.insertBefore(b, card);
+      }
+      b.innerHTML = '<b>這是免費試用的一次。</b>離開這一頁之後就會鎖起來——'
+        + '要一直用得到，需要在合作平台<b>當月累計存款滿 2,000</b>（同一組碼一併解開賽特觀測手冊）。';
+      b.style.display = '';
+    } else if (b) { b.style.display = 'none'; }
+
     renderTracker();
   }
 

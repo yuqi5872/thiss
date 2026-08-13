@@ -83,7 +83,21 @@
     if (u.dep) u.level = 3; else if (u.reg && !u.level) u.level = 2;
     return u;
   })();
-  function opened() { return Number(unlocked.level || 0) >= NEED_LEVEL; }
+  /* ── 免費判讀一次 ────────────────────────────────
+     跟 seth-gate.js 共用同一個計次 key，全站的「用過幾次」一致。
+     按下「判讀」而且真的算出結果才算用掉一次，不是打開頁面就算。
+     🔴 軟鎖，清 localStorage 就重來——擋的是猶豫的人，不是決心繞過的人。 */
+  var USE_KEY = 'seth-gate-uses-v1';
+  var TRIAL = 1;
+  function uses() { try { return JSON.parse(localStorage.getItem(USE_KEY)) || {}; } catch (e) { return {}; } }
+  function usedCount() { return Number(uses().jr || 0); }
+  function spendTrial() {
+    var u = uses(); u.jr = (Number(u.jr) || 0) + 1;
+    try { localStorage.setItem(USE_KEY, JSON.stringify(u)); } catch (e) {}
+    if (typeof gtag === 'function') gtag('event', 'radar_trial', { used: u.jr });
+  }
+  function paid() { return Number(unlocked.level || 0) >= NEED_LEVEL; }
+  function opened() { return paid() || usedCount() < TRIAL; }
 
   function showGate() {
     if ($('jr-gate')) { $('jr-gate').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
@@ -215,6 +229,19 @@
       + '四個池子各自以每小時約 ' + L.ratePerHour.toLocaleString('en-US') + ' 元累積。';
 
     $('jr-out').hidden = false;
+
+    /* 試用中：算出結果才扣次數，並講清楚下次就鎖了 */
+    if (!paid()) {
+      spendTrial();
+      var t = $('jr-trial');
+      if (!t) {
+        t = document.createElement('div');
+        t.className = 'jr-trialbar'; t.id = 'jr-trial';
+        $('jr-out').parentNode.insertBefore(t, $('jr-out').nextSibling);
+      }
+      t.innerHTML = '<b>這是免費判讀的一次。</b>下次再按就會鎖起來——'
+        + '要一直用得到，需要在合作平台<b>當月累計存款滿 3,000</b>。';
+    }
 
     /* 把讀數留下來：本機記住＋送進 GA4，之後就有真實的水位分布可以算 */
     try { localStorage.setItem('seth-jp-last', JSON.stringify(vals)); } catch (e) {}
