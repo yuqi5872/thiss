@@ -43,6 +43,14 @@
   .jr-pool.g .nm{color:#f2c14e} .jr-pool.a .nm{color:#c9a0f0}
   .jr-pool.i .nm{color:#63c2ff} .jr-pool.m .nm{color:#5fd39a}
   .jr-note{margin:14px 0 0;font-size:12.5px;line-height:1.75;color:#93a3bf}
+  .jr-pool .st{margin-top:7px;font-size:10.5px;font-weight:800;border-radius:999px;padding:3px 7px;display:inline-block}
+  .jr-pool .st.hi{background:rgba(242,193,78,.18);color:#f2c14e}
+  .jr-pool .st.lo{background:rgba(255,255,255,.09);color:#93a3bf}
+  .jr-pool .st.up{background:rgba(95,211,154,.16);color:#5fd39a}
+  .jr-call{margin:16px 0 0;padding:13px 15px;border-radius:11px;background:rgba(242,193,78,.1);
+           border-left:3px solid #f2c14e;font-size:14.5px;line-height:1.85;color:#f0e6d2}
+  .jr-rate{margin:14px 0 0;border:1px solid var(--line,#e2e8f0);border-radius:13px;padding:14px 16px;
+           background:#f8fafc;font-size:14.5px;line-height:1.85}
   .jr-verdict{display:grid;gap:12px;margin:20px 0}
   .jr-card{border:1px solid var(--line,#e2e8f0);border-radius:13px;padding:15px 17px;background:#fff}
   .jr-card .lab{display:inline-block;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px;margin-bottom:8px}
@@ -96,19 +104,23 @@
     <main>
       <div class="tagrow"><span class="tag">第一手實測</span><span class="tag blue">彩金追蹤</span><span class="tag green">持續更新</span></div>
       <h1>戰神賽特彩金水位雷達</h1>
-      <p>四個彩金池的公開觀測紀錄。所有數字都是連續錄影逐格判讀出來的實測值，<b>沒有任何一個是推算或估計</b>。方法寫在下面，你可以自己驗證。</p>
+      <p>這一頁只回答一個問題：<b>四個彩金池現在是高水位還是剛被人拿走。</b>
+      彩金水位不影響你中的機率，但影響<b>中了拿多少</b>——同樣一筆錢，打在高水位的時候拿得比較多。</p>
 
       <div class="jr-live">
-        <h3>最新實測水位</h3>
+        <h3>現在的水位</h3>
         <p class="jr-stamp" id="jr-stamp">—</p>
         <div class="jr-pools" id="jr-pools"></div>
+        <p class="jr-call" id="jr-call"></p>
         <p class="jr-note">
           <b>這不是即時數字。</b>我們沒有官方 API，這是人工判讀截圖記錄的，上面標的就是那一刻的實際畫面。
           任何宣稱「即時」的第三方數據，你都該問一句它從哪裡來。
         </p>
       </div>
 
-      <h2>目前確認了什麼</h2>
+      <div class="jr-rate" id="jr-rate"></div>
+
+      <h2>這些水位是怎麼跑出來的</h2>
       <div class="jr-verdict">
         <div class="jr-card yes">
           <span class="lab">已證實</span>
@@ -197,7 +209,7 @@
   </div>
 </footer>
 
-<script src="/assets/jackpot-log.js?v=20260813-1"></script>
+<script src="/assets/jackpot-log.js?v=20260813-2"></script>
 <script>
 (function(){
   var L = window.JACKPOT_LOG; if (!L) return;
@@ -208,11 +220,44 @@
   var s = L.snapshots[0];
   document.getElementById('jr-stamp').textContent =
     '實測於 ' + s.t + '　·　資料來源：' + s.src + '　·　累計觀測 ' + L.observedHours + ' 小時';
-  document.getElementById('jr-pools').innerHTML =
-    [['g','GRAND',s.grand],['a','MAJOR',s.major],['i','MINOR',s.minor],['m','MINI',s.mini]]
-    .map(function(p){
-      return '<div class="jr-pool '+p[0]+'"><div class="nm">'+p[1]+'</div><div class="vl">'+n(p[2])+'</div></div>';
-    }).join('');
+
+  /* 每個池子的狀態：拿現在的值跟我們記錄過的所有值比。
+     這是「該不該打」唯一有資料支撐的答案——不是預測，是位置。 */
+  var POOLS = [['g','GRAND','grand'],['a','MAJOR','major'],['i','MINOR','minor'],['m','MINI','mini']];
+  function status(key){
+    var vals = L.snapshots.map(function(x){ return x[key]; }).filter(function(v){ return v != null; });
+    if (vals.length < 2) return { cls:'lo', txt:'紀錄不足' };
+    var cur = vals[0], max = Math.max.apply(null, vals), min = Math.min.apply(null, vals);
+    if (cur >= max) return { cls:'hi', txt:'紀錄以來最高' };
+    if (vals[1] > cur)  return { cls:'lo', txt:'剛被打掉' };
+    var pos = (max - min) ? (cur - min) / (max - min) : 1;
+    return pos >= 0.6 ? { cls:'up', txt:'累積中・偏高' } : { cls:'lo', txt:'累積中・偏低' };
+  }
+
+  document.getElementById('jr-pools').innerHTML = POOLS.map(function(p){
+    var st = status(p[2]);
+    return '<div class="jr-pool '+p[0]+'"><div class="nm">'+p[1]+'</div>'
+         + '<div class="vl">'+n(s[p[2]])+'</div>'
+         + '<div class="st '+st.cls+'">'+st.txt+'</div></div>';
+  }).join('');
+
+  /* 一句話結論：哪些池子現在划算、哪些剛被拿走 */
+  var high = POOLS.filter(function(p){ return status(p[2]).cls !== 'lo'; }).map(function(p){ return p[1]; });
+  var low  = POOLS.filter(function(p){ return status(p[2]).txt === '剛被打掉'; }).map(function(p){ return p[1]; });
+  var v = [];
+  if (high.length) v.push('<b>' + high.join('、') + '</b> 目前在我們記錄過的高檔區，中的話拿得比較多。');
+  if (low.length)  v.push('<b>' + low.join('、') + '</b> 剛被人拿走，正在從低點重新累積。');
+  if (!v.length)   v.push('四個池子都在中段，沒有特別高或特別低的。');
+  document.getElementById('jr-call').innerHTML = v.join(' ');
+
+  /* 累積速度：讓你自己推算現在的水位 */
+  var rate = L.ratePerHour;
+  document.getElementById('jr-rate').innerHTML =
+    '<b>四個池子各自以每小時約 ' + rate.toLocaleString('en-US') + ' 元的速度累積。</b>'
+    + '所以看到上面的時間戳之後，你可以自己往前推：'
+    + '距離 ' + s.t + ' 過了幾個小時，就再加幾個 ' + rate.toLocaleString('en-US') + '。'
+    + '<br><span style="font-size:13px;color:var(--ink-mute,#5b6472)">'
+    + '這個速度是從「四池都沒重置」的觀測區間實測出來的，跟全平台的總下注量有關，會隨時段變動。</span>';
 
   document.getElementById('jr-intervals').innerHTML = L.intervals.map(function(v){
     var period = v.from.slice(5).replace(' ',' ') + ' → ' + v.to.slice(5);
@@ -223,10 +268,12 @@
       + '<td data-l="MINI">'+sgn(v.mini)+'</td></tr>';
   }).join('');
 
-  document.getElementById('jr-resets').innerHTML = L.resets.map(function(r){
-    return '<b>已確認的重置事件：</b>' + r.pool + ' 於 ' + r.window
-         + ' 之間被打掉，掉落量 <b>' + n(r.drop) + '</b>（' + r.method + '）。';
-  }).join('<br>');
+  document.getElementById('jr-resets').innerHTML = '<b>已確認的重置事件：</b><br>'
+    + L.resets.map(function(r){
+        return '・' + r.pool + '　' + r.window
+             + (r.drop != null ? '　掉落 <b>' + n(r.drop) + '</b>' : '')
+             + '<br>　<span style="font-size:13px;opacity:.8">' + r.method + '</span>';
+      }).join('<br>');
 
   var a = document.querySelector('[data-cta="line-radar"]');
   if (a) a.addEventListener('click', function(){
