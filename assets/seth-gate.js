@@ -160,6 +160,17 @@
 
     boxes.forEach(function (inp, idx) {
       inp.addEventListener('input', function () {
+        /* 🔴 一旦使用者開始手打，就要把「長碼不拆格」那條路留下的狀態全部解掉。
+           下面 paste 的 else 分支會把第 2、3 格設成 readOnly；沒有這一行的話，
+           那個 readOnly 永遠不會被解除——使用者清掉第一格重打，
+           後面兩格就再也打不進去，只能重整頁面。
+           2026-08-13 實際卡住才發現。 */
+        if (override !== null || boxes.some(function (b) { return b.readOnly; })) {
+          boxes.forEach(function (b, i) {
+            b.readOnly = false;
+            if (i !== idx && b.value === '✓') b.value = '';
+          });
+        }
         override = null;
         inp.value = inp.value.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, SEG_LENS[idx]);
         if (inp.value.length >= SEG_LENS[idx] && boxes[idx + 1]) boxes[idx + 1].focus();
