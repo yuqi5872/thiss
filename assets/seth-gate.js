@@ -94,7 +94,11 @@
   else if (unlocked.reg && !unlocked.level) unlocked.level = 2;
 
   function level() { return Number(unlocked.level || 0); }
-  function isUnlocked(tool) { return level() >= (NEED[tool] || 1); }
+  /* 🔴 2026-08-13 修正：NEED[tool]||1 在 NEED.sim===0（「完全免費，不擋」）時
+     會被 JS 的 falsy-zero 吃掉變成 1，導致模擬器被當成需要 Level 1（完成註冊）
+     才算解鎖——跟自己的定案打架，且連續兩次 commit 都沒發現。
+     用 in 判斷有沒有設定，不要用 ||，0 才會真的當成 0。 */
+  function isUnlocked(tool) { return level() >= ((tool in NEED) ? NEED[tool] : 1); }
   function used(tool) { return Number(uses[tool] || 0); }
   function spend(tool) { uses[tool] = used(tool) + 1; write(USE_KEY, uses); }
 
