@@ -51,6 +51,42 @@
            border-left:3px solid #f2c14e;font-size:14.5px;line-height:1.85;color:#f0e6d2}
   .jr-rate{margin:14px 0 0;border:1px solid var(--line,#e2e8f0);border-radius:13px;padding:14px 16px;
            background:#f8fafc;font-size:14.5px;line-height:1.85}
+  /* ── 輸入判讀 ─────────────────────────────── */
+  .jr-in{border-radius:16px;padding:20px 18px;background:linear-gradient(180deg,#0f1729,#131d33);
+         color:#e8eaf0;margin:18px 0 0}
+  .jr-in h3{margin:0 0 5px;font-size:17px;font-weight:900;color:#f2c14e}
+  .jr-in-hint{margin:0 0 15px;font-size:13.5px;line-height:1.75;color:#93a3bf}
+  .jr-fields{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+  .jr-fields label{display:block}
+  .jr-fields span{display:block;font-size:11px;letter-spacing:.09em;font-weight:800;margin-bottom:5px}
+  .jr-fields .g span{color:#f2c14e} .jr-fields .a span{color:#c9a0f0}
+  .jr-fields .i span{color:#63c2ff} .jr-fields .m span{color:#5fd39a}
+  .jr-fields input{width:100%;height:46px;padding:0 11px;background:rgba(255,255,255,.07);
+                   border:1px solid rgba(255,255,255,.14);border-radius:10px;color:#fff;
+                   font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;
+                   -moz-appearance:textfield;outline:none}
+  .jr-fields input::-webkit-outer-spin-button,.jr-fields input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .jr-go{width:100%;margin-top:14px;height:50px;border:0;border-radius:12px;cursor:pointer;
+         background:linear-gradient(135deg,#f4cf78,#d4af37);color:#1a1206;font-size:17px;font-weight:900}
+  .jr-out{border:2px solid #d4af37;border-radius:16px;margin:14px 0 0;overflow:hidden;background:#fff}
+  .jr-call2{padding:20px 18px;text-align:center;border-bottom:1px solid #f0f3f7}
+  .jr-call2 .verdict{font-size:clamp(24px,6.5vw,32px);font-weight:900;line-height:1.25}
+  .jr-call2 .verdict.go{color:#15803d} .jr-call2 .verdict.wait{color:#b45309}
+  .jr-call2 .why{margin:12px 0 0;font-size:15px;line-height:1.9;color:#1f2733;text-align:left}
+  .jr-bars{padding:6px 18px 16px}
+  .jr-brow{padding:11px 0;border-bottom:1px solid #f2f5f8}
+  .jr-brow:last-child{border-bottom:0}
+  .jr-btop{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px}
+  .jr-btop b{font-size:15px;font-variant-numeric:tabular-nums;color:#0f1729}
+  .jr-btop .nm{font-weight:900;letter-spacing:.06em}
+  .jr-brow.g .nm{color:#b8860b} .jr-brow.a .nm{color:#7c3aed}
+  .jr-brow.i .nm{color:#0369a1} .jr-brow.m .nm{color:#15803d}
+  .jr-track{height:8px;border-radius:99px;background:#e8ecf1;margin-top:7px;overflow:hidden}
+  .jr-track i{display:block;height:100%;background:linear-gradient(90deg,#d4af37,#f2c14e)}
+  .jr-blab{font-size:12px;color:#8b95a3;margin-top:4px;font-variant-numeric:tabular-nums}
+  .jr-out-note{margin:0;padding:12px 18px 16px;font-size:12.5px;line-height:1.75;color:#8b95a3;
+               border-top:1px solid #f0f3f7;background:#fafbfc}
+  @media(max-width:640px){ .jr-fields{grid-template-columns:repeat(2,1fr)} }
   .jr-verdict{display:grid;gap:12px;margin:20px 0}
   .jr-card{border:1px solid var(--line,#e2e8f0);border-radius:13px;padding:15px 17px;background:#fff}
   .jr-card .lab{display:inline-block;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px;margin-bottom:8px}
@@ -104,23 +140,29 @@
     <main>
       <div class="tagrow"><span class="tag">第一手實測</span><span class="tag blue">彩金追蹤</span><span class="tag green">持續更新</span></div>
       <h1>戰神賽特彩金水位雷達</h1>
-      <p>這一頁只回答一個問題：<b>四個彩金池現在是高水位還是剛被人拿走。</b>
-      彩金水位不影響你中的機率，但影響<b>中了拿多少</b>——同樣一筆錢，打在高水位的時候拿得比較多。</p>
+      <p>這一頁只回答一個問題：<b>現在該不該打。</b><br>
+      彩金水位是這個遊戲裡唯一會隨時間變、而且真的影響你拿多少的東西。
+      打在高水位跟打在剛被人拿走之後，中同一個獎拿到的錢差很多。</p>
 
-      <div class="jr-live">
-        <h3>現在的水位</h3>
-        <p class="jr-stamp" id="jr-stamp">—</p>
-        <div class="jr-pools" id="jr-pools"></div>
-        <p class="jr-call" id="jr-call"></p>
-        <p class="jr-note">
-          <b>這不是即時數字。</b>我們沒有官方 API，這是人工判讀截圖記錄的，上面標的就是那一刻的實際畫面。
-          任何宣稱「即時」的第三方數據，你都該問一句它從哪裡來。
-        </p>
+      <div class="jr-in">
+        <h3>把你畫面上的四個數字打進來</h3>
+        <p class="jr-in-hint">遊戲最上面那排就是。輸入後告訴你現在該不該打，以及四個池子裡哪一個最值得追。</p>
+        <div class="jr-fields">
+          <label class="g"><span>GRAND</span><input id="in-grand" type="number" inputmode="decimal" placeholder="434776"></label>
+          <label class="a"><span>MAJOR</span><input id="in-major" type="number" inputmode="decimal" placeholder="75271"></label>
+          <label class="i"><span>MINOR</span><input id="in-minor" type="number" inputmode="decimal" placeholder="6291"></label>
+          <label class="m"><span>MINI</span><input id="in-mini" type="number" inputmode="decimal" placeholder="623"></label>
+        </div>
+        <button type="button" class="jr-go" id="jr-go">判讀</button>
       </div>
 
-      <div class="jr-rate" id="jr-rate"></div>
+      <div class="jr-out" id="jr-out" hidden>
+        <div class="jr-call2" id="jr-call2"></div>
+        <div class="jr-bars" id="jr-bars"></div>
+        <p class="jr-out-note" id="jr-out-note"></p>
+      </div>
 
-      <h2>這些水位是怎麼跑出來的</h2>
+      <h2>判讀基準是怎麼來的</h2>
       <div class="jr-verdict">
         <div class="jr-card yes">
           <span class="lab">已證實</span>
@@ -211,73 +253,156 @@
 
 <script src="/assets/jackpot-log.js?v=20260813-2"></script>
 <script>
-(function(){
+(function () {
+  'use strict';
   var L = window.JACKPOT_LOG; if (!L) return;
-  var n = function(v){ return v == null ? '—'
-    : v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); };
-  var sgn = function(v){ return v == null ? '—' : (v > 0 ? '+' : '') + n(v); };
+  var $ = function (id) { return document.getElementById(id); };
+  var n = function (v) { return v == null ? '—'
+    : v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+  var sgn = function (v) { return v == null ? '—' : (v > 0 ? '+' : '') + n(v); };
 
-  var s = L.snapshots[0];
-  document.getElementById('jr-stamp').textContent =
-    '實測於 ' + s.t + '　·　資料來源：' + s.src + '　·　累計觀測 ' + L.observedHours + ' 小時';
+  /* ── 觀測到的區間 ──────────────────────────────
+     🔴 只有「我們親眼看過重置」的池子才算得出有意義的高低點。
+        GRAND 與 MAJOR 在整個觀測期間一次都沒重置過，所以它們的
+        「最低」只是我們開始記錄的那一刻，不是真正的底。
+        這種情況要誠實講「還沒看過重置」，不能假裝算得出位置。 */
+  var POOLS = [
+    { k: 'grand', nm: 'GRAND', cls: 'g' },
+    { k: 'major', nm: 'MAJOR', cls: 'a' },
+    { k: 'minor', nm: 'MINOR', cls: 'i' },
+    { k: 'mini',  nm: 'MINI',  cls: 'm' }
+  ];
+  var SEEN_RESET = { minor: true, mini: true };   // 觀測期內看過重置的池子
 
-  /* 每個池子的狀態：拿現在的值跟我們記錄過的所有值比。
-     這是「該不該打」唯一有資料支撐的答案——不是預測，是位置。 */
-  var POOLS = [['g','GRAND','grand'],['a','MAJOR','major'],['i','MINOR','minor'],['m','MINI','mini']];
-  function status(key){
-    var vals = L.snapshots.map(function(x){ return x[key]; }).filter(function(v){ return v != null; });
-    if (vals.length < 2) return { cls:'lo', txt:'紀錄不足' };
-    var cur = vals[0], max = Math.max.apply(null, vals), min = Math.min.apply(null, vals);
-    if (cur >= max) return { cls:'hi', txt:'紀錄以來最高' };
-    if (vals[1] > cur)  return { cls:'lo', txt:'剛被打掉' };
-    var pos = (max - min) ? (cur - min) / (max - min) : 1;
-    return pos >= 0.6 ? { cls:'up', txt:'累積中・偏高' } : { cls:'lo', txt:'累積中・偏低' };
+  function band(k) {
+    var v = L.snapshots.map(function (x) { return x[k]; }).filter(function (x) { return x != null; });
+    if (!v.length) return null;
+    return { lo: Math.min.apply(null, v), hi: Math.max.apply(null, v), n: v.length };
   }
 
-  document.getElementById('jr-pools').innerHTML = POOLS.map(function(p){
-    var st = status(p[2]);
-    return '<div class="jr-pool '+p[0]+'"><div class="nm">'+p[1]+'</div>'
-         + '<div class="vl">'+n(s[p[2]])+'</div>'
-         + '<div class="st '+st.cls+'">'+st.txt+'</div></div>';
-  }).join('');
+  function judge(k, val) {
+    var b = band(k);
+    if (!b) return { known: false };
+    if (!SEEN_RESET[k]) {
+      /* 沒看過重置：只能講「比我們記錄過的高／低」，不能講在區間哪裡 */
+      return { known: false, aboveMax: val > b.hi, hi: b.hi, lo: b.lo };
+    }
+    var lo = b.lo, hi = Math.max(b.hi, val);
+    var pos = hi > lo ? (val - lo) / (hi - lo) : 1;
+    return { known: true, pos: pos, lo: lo, hi: hi };
+  }
 
-  /* 一句話結論：哪些池子現在划算、哪些剛被拿走 */
-  var high = POOLS.filter(function(p){ return status(p[2]).cls !== 'lo'; }).map(function(p){ return p[1]; });
-  var low  = POOLS.filter(function(p){ return status(p[2]).txt === '剛被打掉'; }).map(function(p){ return p[1]; });
-  var v = [];
-  if (high.length) v.push('<b>' + high.join('、') + '</b> 目前在我們記錄過的高檔區，中的話拿得比較多。');
-  if (low.length)  v.push('<b>' + low.join('、') + '</b> 剛被人拿走，正在從低點重新累積。');
-  if (!v.length)   v.push('四個池子都在中段，沒有特別高或特別低的。');
-  document.getElementById('jr-call').innerHTML = v.join(' ');
+  function readAll() {
+    var o = {};
+    POOLS.forEach(function (p) { o[p.k] = parseFloat($('in-' + p.k).value); });
+    return o;
+  }
 
-  /* 累積速度：讓你自己推算現在的水位 */
-  var rate = L.ratePerHour;
-  document.getElementById('jr-rate').innerHTML =
-    '<b>四個池子各自以每小時約 ' + rate.toLocaleString('en-US') + ' 元的速度累積。</b>'
-    + '所以看到上面的時間戳之後，你可以自己往前推：'
-    + '距離 ' + s.t + ' 過了幾個小時，就再加幾個 ' + rate.toLocaleString('en-US') + '。'
-    + '<br><span style="font-size:13px;color:var(--ink-mute,#5b6472)">'
-    + '這個速度是從「四池都沒重置」的觀測區間實測出來的，跟全平台的總下注量有關，會隨時段變動。</span>';
+  function run() {
+    var vals = readAll();
+    var filled = POOLS.filter(function (p) { return vals[p.k] > 0; });
+    if (!filled.length) { alert('至少填一個數字。遊戲畫面最上面那排就是。'); return; }
 
-  document.getElementById('jr-intervals').innerHTML = L.intervals.map(function(v){
-    var period = v.from.slice(5).replace(' ',' ') + ' → ' + v.to.slice(5);
-    return '<tr><td>'+period+'</td>'
-      + '<td data-l="GRAND">'+sgn(v.grand)+'</td>'
-      + '<td data-l="MAJOR">'+sgn(v.major)+'</td>'
-      + '<td data-l="MINOR">'+sgn(v.minor)+'</td>'
-      + '<td data-l="MINI">'+sgn(v.mini)+'</td></tr>';
+    /* 判讀每一個池子 */
+    var rows = filled.map(function (p) {
+      var j = judge(p.k, vals[p.k]);
+      return { p: p, val: vals[p.k], j: j };
+    });
+
+    /* 主結論：在「看得出位置」的池子裡挑位置最高的那個 */
+    var ranked = rows.filter(function (r) { return r.j.known; })
+                     .sort(function (a, b) { return b.j.pos - a.j.pos; });
+    var verdict, why, cls;
+    if (ranked.length && ranked[0].j.pos >= 0.6) {
+      var t = ranked[0];
+      cls = 'go'; verdict = '值得打';
+      why = '<b>' + t.p.nm + ' 現在 ' + n(t.val) + '</b>，在我們記錄過的區間偏高的位置'
+          + '（我們看過的最低是 ' + n(t.j.lo) + '）。四個池子裡它離爆點最近——要追就追這個。';
+    } else if (ranked.length) {
+      var b0 = ranked[0];
+      cls = 'wait'; verdict = '現在打會拿得比較少';
+      why = '看得出位置的池子都偏低。<b>' + b0.p.nm + ' 現在 ' + n(b0.val)
+          + '</b>，我們記錄過最高到 ' + n(b0.j.hi) + '——現在中了，拿到的彩金會小很多。'
+          + '想搏彩金的話，等它再累積一陣子。';
+    } else {
+      cls = 'wait'; verdict = '還判讀不出來';
+      why = '你填的池子我們都還沒觀測到重置，算不出高低位置。'
+          + '填 MINOR 或 MINI 看看——那兩個我們有完整的重置紀錄。';
+    }
+
+    /* GRAND 特別提示：它從沒被打掉過 */
+    if (vals.grand > 0) {
+      var g = judge('grand', vals.grand);
+      why += '<br><br><b>GRAND ' + n(vals.grand) + '：</b>'
+           + (g.aboveMax
+               ? '比我們記錄過的最高（' + n(g.hi) + '）還高。我們觀測期間它一次都沒被打掉，一直在漲。'
+               : '我們記錄過的範圍是 ' + n(g.lo) + ' ～ ' + n(g.hi) + '，觀測期間沒看過它被打掉。')
+           + '它的重置底值目前全網沒有人知道，我們還在累積。';
+    }
+
+    $('jr-call2').innerHTML = '<div class="verdict ' + cls + '">' + verdict + '</div>'
+                            + '<p class="why">' + why + '</p>';
+
+    $('jr-bars').innerHTML = rows.map(function (r) {
+      var j = r.j;
+      var pos = j.known ? Math.max(0, Math.min(1, j.pos)) : (j.aboveMax ? 1 : 0.5);
+      var lab = j.known
+        ? '我們看過的區間 ' + n(j.lo) + ' ～ ' + n(j.hi)
+        : '尚未觀測到重置，這條只代表「跟我們記錄過的比」';
+      return '<div class="jr-brow ' + r.p.cls + '">'
+        + '<div class="jr-btop"><span class="nm">' + r.p.nm + '</span><b>' + n(r.val) + '</b></div>'
+        + '<div class="jr-track"><i style="width:' + (pos * 100).toFixed(1) + '%"></i></div>'
+        + '<div class="jr-blab">' + lab + '</div></div>';
+    }).join('');
+
+    $('jr-out-note').innerHTML = '判讀基準來自我們目前累積的 ' + L.snapshots.length
+      + ' 筆實測紀錄（觀測 ' + L.observedHours + ' 小時）。<b>你每填一次，基準就更準一點。</b>'
+      + '四個池子各自以每小時約 ' + L.ratePerHour.toLocaleString('en-US') + ' 元累積。';
+
+    $('jr-out').hidden = false;
+
+    /* 把讀數留下來：本機記住＋送進 GA4，之後就有真實的水位分布可以算 */
+    try { localStorage.setItem('seth-jp-last', JSON.stringify(vals)); } catch (e) {}
+    if (typeof gtag === 'function') {
+      gtag('event', 'jackpot_reading', {
+        grand: Math.round(vals.grand || 0), major: Math.round(vals.major || 0),
+        minor: Math.round(vals.minor || 0), mini: Math.round(vals.mini || 0),
+        verdict: cls
+      });
+    }
+    $('jr-out').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  $('jr-go').addEventListener('click', run);
+  POOLS.forEach(function (p) {
+    $('in-' + p.k).addEventListener('keydown', function (e) { if (e.key === 'Enter') run(); });
+  });
+  /* 帶回上次填的，回訪不用重打 */
+  try {
+    var last = JSON.parse(localStorage.getItem('seth-jp-last'));
+    if (last) POOLS.forEach(function (p) { if (last[p.k] > 0) $('in-' + p.k).value = last[p.k]; });
+  } catch (e) {}
+
+  /* ── 下面是原有的觀測紀錄，維持不變 ── */
+  document.getElementById('jr-intervals').innerHTML = L.intervals.map(function (v) {
+    var period = v.from.slice(5) + ' → ' + v.to.slice(5);
+    return '<tr><td>' + period + '</td>'
+      + '<td data-l="GRAND">' + sgn(v.grand) + '</td>'
+      + '<td data-l="MAJOR">' + sgn(v.major) + '</td>'
+      + '<td data-l="MINOR">' + sgn(v.minor) + '</td>'
+      + '<td data-l="MINI">' + sgn(v.mini) + '</td></tr>';
   }).join('');
 
   document.getElementById('jr-resets').innerHTML = '<b>已確認的重置事件：</b><br>'
-    + L.resets.map(function(r){
+    + L.resets.map(function (r) {
         return '・' + r.pool + '　' + r.window
              + (r.drop != null ? '　掉落 <b>' + n(r.drop) + '</b>' : '')
              + '<br>　<span style="font-size:13px;opacity:.8">' + r.method + '</span>';
       }).join('<br>');
 
   var a = document.querySelector('[data-cta="line-radar"]');
-  if (a) a.addEventListener('click', function(){
-    if (typeof gtag === 'function') gtag('event','line_intent',{ source:'jackpot_radar' });
+  if (a) a.addEventListener('click', function () {
+    if (typeof gtag === 'function') gtag('event', 'line_intent', { source: 'jackpot_radar' });
   });
 })();
 </script>
