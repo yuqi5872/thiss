@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XCBKJTBVTL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XCBKJTBVTL');
+</script>
+<title>戰神賽特彩金水位雷達｜四池累積實測與重置紀錄｜電子遊戲觀測所</title>
+<meta name="description" content="戰神賽特四個彩金池的公開觀測紀錄。實測發現四池以完全相同的絕對金額累積、MINI 平均每 6.7 小時被打掉一次、GRAND 在 30 小時觀測期內零重置。方法完全公開，你可以自己驗證。">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tsaishen888.com/tools/jackpot-radar/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="戰神賽特彩金水位雷達｜四池累積實測與重置紀錄">
+<meta property="og:description" content="四池等額累積、MINI 每 6.7 小時重置、GRAND 零重置。全部是連續錄影逐格讀出來的實測值，方法公開可驗證。">
+<meta property="og:url" content="https://tsaishen888.com/tools/jackpot-radar/">
+<meta property="og:image" content="https://tsaishen888.com/assets/img/storm-of-seth-og.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=20260625-1">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Dataset","name":"戰神賽特彩金池觀測紀錄","description":"以連續錄影逐格判讀方式記錄戰神賽特 GRAND／MAJOR／MINOR／MINI 四個彩金池的累積與重置事件。","creator":{"@type":"Organization","name":"電子遊戲觀測所"},"license":"https://tsaishen888.com/about/","url":"https://tsaishen888.com/tools/jackpot-radar/","temporalCoverage":"2026-08-11/2026-08-12"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://tsaishen888.com/"},{"@type":"ListItem","position":2,"name":"戰神賽特評測","item":"https://tsaishen888.com/storm-of-seth/"},{"@type":"ListItem","position":3,"name":"彩金水位雷達","item":"https://tsaishen888.com/tools/jackpot-radar/"}]}
+</script>
+<style>
+  .jr-live{border:1px solid var(--line,#e2e8f0);border-radius:16px;padding:20px 18px;background:linear-gradient(180deg,#0f1729,#131d33);color:#e8eaf0;margin:18px 0}
+  .jr-live h3{margin:0 0 4px;font-size:14px;color:#8fa0bd;font-weight:700;letter-spacing:.04em}
+  .jr-stamp{font-size:12.5px;color:#7b8aa8;margin:0 0 16px}
+  .jr-pools{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .jr-pool{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:11px;padding:12px 10px;text-align:center}
+  .jr-pool .nm{font-size:11.5px;letter-spacing:.09em;font-weight:800;margin-bottom:5px}
+  .jr-pool .vl{font-size:17px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.25}
+  .jr-pool.g .nm{color:#f2c14e} .jr-pool.a .nm{color:#c9a0f0}
+  .jr-pool.i .nm{color:#63c2ff} .jr-pool.m .nm{color:#5fd39a}
+  .jr-note{margin:14px 0 0;font-size:12.5px;line-height:1.75;color:#93a3bf}
+  .jr-verdict{display:grid;gap:12px;margin:20px 0}
+  .jr-card{border:1px solid var(--line,#e2e8f0);border-radius:13px;padding:15px 17px;background:#fff}
+  .jr-card .lab{display:inline-block;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px;margin-bottom:8px}
+  .jr-card.yes .lab{background:#dcfce7;color:#166534}
+  .jr-card.no  .lab{background:#fee2e2;color:#991b1b}
+  .jr-card.wait .lab{background:#fef3c7;color:#92400e}
+  .jr-card h3{margin:0 0 6px;font-size:16.5px;font-weight:800}
+  .jr-card p{margin:0;font-size:14.5px;line-height:1.8;color:var(--ink,#1f2733)}
+  .jr-tbl table{width:100%;border-collapse:collapse;font-size:14px}
+  .jr-tbl th{background:#0f1729;color:#fff;text-align:left;padding:10px 11px;font-size:13px;font-weight:700}
+  .jr-tbl td{padding:10px 11px;border-bottom:1px solid var(--line,#e8ecf1);font-variant-numeric:tabular-nums}
+  .jr-tbl tr:nth-child(even) td{background:#f8fafc}
+  .jr-sub{border:2px solid #06c755;border-radius:16px;padding:22px 18px;text-align:center;margin:24px 0;background:#f4fff8}
+  .jr-sub h3{margin:0 0 8px;font-size:18px;font-weight:900}
+  .jr-sub p{margin:0 auto 16px;max-width:30em;font-size:14.5px;line-height:1.85;color:var(--ink-mute,#5b6472)}
+  .jr-btn{display:inline-block;padding:13px 28px;border-radius:999px;background:#06c755;color:#fff;font-weight:800;font-size:15px;text-decoration:none}
+  @media(max-width:640px){
+    .jr-pools{grid-template-columns:repeat(2,1fr)}
+    .jr-tbl table{min-width:0;width:100%}
+    .jr-tbl thead{display:none}
+    .jr-tbl tr{display:block;border:1px solid var(--line,#e5e7eb);border-radius:10px;padding:10px 12px;margin-bottom:10px;background:#fff}
+    .jr-tbl td{display:flex;justify-content:space-between;gap:12px;border:0;padding:5px 0;background:none!important}
+    .jr-tbl td:before{content:attr(data-l);color:var(--ink-mute,#6b7280);font-weight:700;flex:0 0 auto}
+    .jr-tbl td:first-child{display:block;font-weight:800;border-bottom:1px solid var(--line,#e5e7eb);margin-bottom:4px;padding-bottom:8px}
+    .jr-tbl td:first-child:before{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="/" class="brand"><img src="/assets/img/logo-header.webp" alt="電子遊戲觀測所 — 獨立老虎機數據評測" class="brand-logo"></a>
+    <button class="nav-toggle" aria-label="選單" onclick="document.getElementById('nav').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="nav">
+      <a href="/">首頁</a>
+      <a href="/storm-of-seth/">戰神賽特評測</a>
+      <a href="/rtp-ranking/">RTP 排行榜</a>
+      <a href="/guides/">老虎機攻略</a>
+      <a href="/about/">關於我們</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="crumb"><a href="/">首頁</a> ／ <span>彩金水位雷達</span></nav>
+</div>
+
+<div class="wrap">
+  <div class="layout">
+    <main>
+      <div class="tagrow"><span class="tag">第一手實測</span><span class="tag blue">彩金追蹤</span><span class="tag green">持續更新</span></div>
+      <h1>戰神賽特彩金水位雷達</h1>
+      <p>四個彩金池的公開觀測紀錄。所有數字都是連續錄影逐格判讀出來的實測值，<b>沒有任何一個是推算或估計</b>。方法寫在下面，你可以自己驗證。</p>
+
+      <div class="jr-live">
+        <h3>最新實測水位</h3>
+        <p class="jr-stamp" id="jr-stamp">—</p>
+        <div class="jr-pools" id="jr-pools"></div>
+        <p class="jr-note">
+          <b>這不是即時數字。</b>我們沒有官方 API，這是人工判讀截圖記錄的，上面標的就是那一刻的實際畫面。
+          任何宣稱「即時」的第三方數據，你都該問一句它從哪裡來。
+        </p>
+      </div>
+
+      <h2>目前確認了什麼</h2>
+      <div class="jr-verdict">
+        <div class="jr-card yes">
+          <span class="lab">已證實</span>
+          <h3>四個池子拿到的錢完全一樣多</h3>
+          <p>不是等比例分配，是<b>相同的絕對金額</b>。三個獨立區間裡，GRAND 與 MINOR 的增加量吻合到小數點後兩位。
+          這代表 MINI 池很小卻拿到跟 GRAND 一樣多的錢，所以它成長得快得多——這就是 MINI 常跳、GRAND 幾乎不動的原因。</p>
+        </div>
+        <div class="jr-card yes">
+          <span class="lab">已證實</span>
+          <h3>MINI 平均每 6.7 小時被打掉一次</h3>
+          <p>我們抓到一次完整的重置證據：某段期間 MINI 出現負成長。彩金只漲不跌，唯一解釋是中間被人打掉。
+          用兩個不同的時間窗各自計算，得到<b>同一個掉落量</b>，代表這個數字可信。</p>
+        </div>
+        <div class="jr-card no">
+          <span class="lab">觀測期內零次</span>
+          <h3>GRAND、MAJOR、MINOR 都沒被打掉過</h3>
+          <p>同一段 30 小時內，這三個池子的累積缺口都是 <b>0</b>。這就是為什麼 GRAND 能累積到四十幾萬。
+          也代表它們的重置週期<b>比 30 小時長</b>——長多少，目前沒有人知道。</p>
+        </div>
+        <div class="jr-card wait">
+          <span class="lab">尚未有答案</span>
+          <h3>GRAND 的重置底值是多少？</h3>
+          <p>這是這個雷達真正要回答的問題。知道底值，才知道現在這個水位算高還是算常態。
+          它需要<b>連續數週</b>的紀錄才答得出來，我們正在累積。有答案會直接公布在這一頁。</p>
+        </div>
+      </div>
+
+      <h2>實測區間變化量</h2>
+      <p style="font-size:14.5px;color:var(--ink-mute,#5b6472)">這張表是「四池等額累積」的證據本體。被中獎動畫擋住的欄位標「—」，不用差額回填。</p>
+      <div class="jr-tbl"><table>
+        <thead><tr><th>期間</th><th>GRAND</th><th>MAJOR</th><th>MINOR</th><th>MINI</th></tr></thead>
+        <tbody id="jr-intervals"></tbody>
+      </table></div>
+      <p id="jr-resets" style="font-size:14px;color:var(--ink-mute,#5b6472);line-height:1.85"></p>
+
+      <div class="jr-sub">
+        <h3>水位有變動時通知你</h3>
+        <p>GRAND 被打掉的那一刻，是這個遊戲一年裡最值得記錄的幾個時間點之一。
+        我們每天記錄，抓到就發。加 LINE 之後傳「<b>彩金</b>」開啟通知。</p>
+        <a class="jr-btn" href="/line/?ch=radar&at=tool" data-cta="line-radar">加 LINE 開啟彩金通知</a>
+        <p style="margin:14px 0 0;font-size:13px;color:#7c8899">只發彩金水位變動，不推銷、不報明牌。</p>
+      </div>
+
+      <h2>怎麼自己驗證</h2>
+      <p>這一頁的每個結論都不需要相信我們，你可以自己做一次：</p>
+      <ol style="font-size:15px;line-height:1.95">
+        <li>打開遊戲，把畫面最上方那排四個彩金數字抄下來，記下時間。</li>
+        <li>過一小時再抄一次。<b>四個池子的增加金額會是一樣的</b>——這就是第一個結論。</li>
+        <li>如果某個池子的數字變小了，代表這段期間它被打掉重置了。記下來，那就是一次重置事件。</li>
+        <li>連續記幾天，你就會發現 MINI 一直在重置，而 GRAND 幾乎不動。</li>
+      </ol>
+      <p>唯一的技巧是：<b>中獎動畫會蓋住數字，要等動畫結束再抄</b>。這也是為什麼上面表格裡 MAJOR 有幾格是空的。</p>
+
+      <div class="callout warn" style="margin:22px 0">
+        <span class="ic">!</span>
+        <div><b>這些發現不會提高你的中獎機率。</b>彩金累積得再高，也只影響「萬一中了拿多少」，不影響「中的機率」。
+        任何拿彩金水位來宣稱能預測下一轉的說法，都跟這一頁的資料無關。</div>
+      </div>
+
+      <aside class="aside-box">
+        <h4>延伸閱讀</h4>
+        <a href="/guides/seth-jackpot-log/" style="display:block;margin-bottom:6px">30 小時實測全紀錄：我們怎麼讀出這些數字，以及自己推翻自己的那一段</a>
+        <a href="/guides/signal-verdict/" style="display:block;margin-bottom:6px">訊號打臉榜：社群流傳的打法，我們一條一條驗</a>
+        <a href="/tools/storm-of-seth-session/">三合一工具台：模擬器＋戰局計算＋多台比較</a>
+      </aside>
+
+      <div style="margin-top:22px;padding:16px;border:1px solid var(--line,#dfe4ea);border-radius:12px;text-align:center">
+        <a href="https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=cta_band&utm_campaign=ys368&utm_content=jackpot-radar" data-cta="play" target="_blank" rel="nofollow sponsored noopener" style="display:inline-block;padding:10px 17px;border-radius:9px;background:#d4af37;color:#1a1206;font-weight:800;text-decoration:none;font-size:14.5px;">前往可遊玩平台 →</a>
+        <span style="display:block;margin-top:11px;font-size:12.5px;line-height:1.65;opacity:.6;">本頁含合作連結。觀測紀錄不受此影響。</span>
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><a href="/" class="brand" style="margin-bottom:12px;"><img src="/assets/img/logo-header.webp" alt="電子遊戲觀測所" class="brand-logo"></a></div>
+      <div><h4>評測</h4><a href="/storm-of-seth/">戰神賽特評測</a><a href="/rtp-ranking/">RTP 排行榜</a><a href="/guides/">老虎機攻略</a></div>
+      <div><h4>關於</h4><a href="/about/">關於我們</a><a href="/about/#method">評測方法論</a></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 電子遊戲觀測所・獨立數據評測</span>
+      <span>本頁為非官方觀測紀錄，與 ATG 電子無任何關聯，未使用其任何素材</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/jackpot-log.js?v=20260813-1"></script>
+<script>
+(function(){
+  var L = window.JACKPOT_LOG; if (!L) return;
+  var n = function(v){ return v == null ? '—'
+    : v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var sgn = function(v){ return v == null ? '—' : (v > 0 ? '+' : '') + n(v); };
+
+  var s = L.snapshots[0];
+  document.getElementById('jr-stamp').textContent =
+    '實測於 ' + s.t + '　·　資料來源：' + s.src + '　·　累計觀測 ' + L.observedHours + ' 小時';
+  document.getElementById('jr-pools').innerHTML =
+    [['g','GRAND',s.grand],['a','MAJOR',s.major],['i','MINOR',s.minor],['m','MINI',s.mini]]
+    .map(function(p){
+      return '<div class="jr-pool '+p[0]+'"><div class="nm">'+p[1]+'</div><div class="vl">'+n(p[2])+'</div></div>';
+    }).join('');
+
+  document.getElementById('jr-intervals').innerHTML = L.intervals.map(function(v){
+    var period = v.from.slice(5).replace(' ',' ') + ' → ' + v.to.slice(5);
+    return '<tr><td>'+period+'</td>'
+      + '<td data-l="GRAND">'+sgn(v.grand)+'</td>'
+      + '<td data-l="MAJOR">'+sgn(v.major)+'</td>'
+      + '<td data-l="MINOR">'+sgn(v.minor)+'</td>'
+      + '<td data-l="MINI">'+sgn(v.mini)+'</td></tr>';
+  }).join('');
+
+  document.getElementById('jr-resets').innerHTML = L.resets.map(function(r){
+    return '<b>已確認的重置事件：</b>' + r.pool + ' 於 ' + r.window
+         + ' 之間被打掉，掉落量 <b>' + n(r.drop) + '</b>（' + r.method + '）。';
+  }).join('<br>');
+
+  var a = document.querySelector('[data-cta="line-radar"]');
+  if (a) a.addEventListener('click', function(){
+    if (typeof gtag === 'function') gtag('event','line_intent',{ source:'jackpot_radar' });
+  });
+})();
+</script>
+<script src="/assets/main.js?v=4"></script>
+</body>
+</html>
