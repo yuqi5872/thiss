@@ -26,7 +26,7 @@
   var UNLOCK_KEY = 'seth-gate-unlock-v1';
   var LEGACY_AI_KEY = 'seth-room-unlocked';
   var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
-  var NEED_LEVEL = 1;                                  // 完成註冊
+  var NEED_LEVEL = 2;                                  // 當月累計存款 2,000
   var LINE_URL = 'https://line.me/R/ti/p/@128zirab';   // 發碼的 bot 在這個帳號
   var REG_URL = 'https://ys89.bet/activity/entry?url=/activity/detail/firstDeposit/NTD'
               + '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate'
@@ -50,8 +50,9 @@
     g.className = 'tp-gate';
     g.id = 'tp-gate';
     g.innerHTML =
-      '<h3>打法卡需要完成註冊才看得到</h3>'
-    + '<p>在合作平台完成註冊之後，加 LINE 傳一張截圖，系統核對後會自動給你解鎖碼。'
+      '<h3>打法卡需要當月累計存款 2,000 才看得到</h3>'
+    + '<p>在合作平台完成註冊、且當月累計存款滿 2,000 之後，加 LINE 傳一張截圖，'
+    + '系統核對後會自動給你解鎖碼。<b>同一組碼一併解開賽特觀測手冊。</b>'
     + '已經拿過解鎖碼的人，貼上就直接開。</p>'
     + '<div class="btns">'
     +   '<a class="reg" href="' + REG_URL + '" target="_blank" rel="nofollow sponsored noopener">前往平台註冊 →</a>'

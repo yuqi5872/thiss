@@ -40,18 +40,26 @@
       // 記住上次看的那一格，回訪不用重選
       try { localStorage.setItem('sethHubPane', want); } catch (err) {}
     });
-    /* 網址帶 #plan 之類的 hash 就直接開那一格——
-       /tools/target-plan/ 已經 301 導到這裡，靠 hash 落在分注打法上。
-       hash 優先於「上次看的那一格」，不然從廣告點進來會落到別的分頁。 */
-    var wanted = (location.hash || '').replace('#', '');
-    if (!PANES.indexOf || PANES.indexOf(wanted) < 0) wanted = '';
+    /* 網址帶 #plan 之類的 hash 就直接開那一格。
+       hash 優先於「上次看的那一格」，不然從外部連結點進來會落到別的分頁。
+
+       🔴 一定要同時監聽 hashchange：在同一頁上只改 hash 是「同文件導航」，
+          瀏覽器不會重新載入，這段初始化程式碼根本不會再跑一次。
+          少了這個監聽，使用者從 #plan 點到 #pre 時網址變了但畫面沒變——
+          看起來就像每個連結都導到同一個地方。2026-08-13 實際踩到。 */
+    function hashPane() {
+      var w = (location.hash || '').replace('#', '');
+      return PANES.indexOf(w) >= 0 ? w : '';
+    }
+    function openPane(k) {
+      if (!k) return;
+      var btn = tabs.querySelector('button[data-pane="' + k + '"]');
+      if (btn) btn.click();
+    }
     try {
-      var last = wanted || localStorage.getItem('sethHubPane');
-      if (last && last !== 'live') {
-        var btn = tabs.querySelector('button[data-pane="' + last + '"]');
-        if (btn) btn.click();
-      }
+      openPane(hashPane() || localStorage.getItem('sethHubPane'));
     } catch (err) {}
+    window.addEventListener('hashchange', function () { openPane(hashPane()); });
   }
 
   /* ---------- ① 機制模擬器 ---------- */

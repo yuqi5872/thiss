@@ -87,6 +87,20 @@
   .jr-out-note{margin:0;padding:12px 18px 16px;font-size:12.5px;line-height:1.75;color:#8b95a3;
                border-top:1px solid #f0f3f7;background:#fafbfc}
   @media(max-width:640px){ .jr-fields{grid-template-columns:repeat(2,1fr)} }
+  .jr-gate{border:2px solid #d4af37;border-radius:16px;padding:22px 18px;margin:14px 0 0;
+           background:#fffdf5;text-align:center}
+  .jr-gate h3{margin:0 0 8px;font-size:18px;font-weight:900;color:#1f2733}
+  .jr-gate p{margin:0 auto 14px;max-width:30em;font-size:14.5px;line-height:1.85;color:#5b6472}
+  .jr-gate .btns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+  .jr-gate a.reg{display:inline-block;padding:12px 24px;border-radius:999px;background:#d4af37;
+                 color:#1a1206;font-weight:800;font-size:15px;text-decoration:none}
+  .jr-gate a.line{display:inline-block;padding:12px 24px;border-radius:999px;background:#06c755;
+                  color:#fff;font-weight:800;font-size:15px;text-decoration:none}
+  .jr-gate .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  .jr-gate input{height:42px;padding:0 13px;border:1px solid #cbd5e1;border-radius:9px;font-size:15px;min-width:180px}
+  .jr-gate button{height:42px;padding:0 22px;border-radius:9px;border:1px solid #0f1729;
+                  background:#0f1729;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+  .jr-gate .note{margin:10px 0 0;font-size:13px;color:#b45309;min-height:1.2em}
   .jr-verdict{display:grid;gap:12px;margin:20px 0}
   .jr-card{border:1px solid var(--line,#e2e8f0);border-radius:13px;padding:15px 17px;background:#fff}
   .jr-card .lab{display:inline-block;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px;margin-bottom:8px}
@@ -251,7 +265,7 @@
   </div>
 </footer>
 
-<script src="/assets/jackpot-log.js?v=20260813-2"></script>
+<script src="/assets/jackpot-log.js?v=20260813-3"></script>
 <script>
 (function () {
   'use strict';
@@ -311,6 +325,86 @@
          + '中途被人打掉就會重來，所以這是下限不是保證。';
   }
 
+
+  /* ── 儲值 3,000 解鎖 ──────────────────────────────
+     🔴 跟站上其他工具共用同一組 localStorage key 與 REDEEM_API，
+        已經拿過等級 3 的碼就直接開。
+     刻意讓「輸入四個數字」保持免費：他打完數字才撞到門，
+     那時候已經投入了，比一進來就擋住有力得多。 */
+  var UNLOCK_KEY = 'seth-gate-unlock-v1';
+  var LEGACY_AI_KEY = 'seth-room-unlocked';
+  var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
+  var NEED_LEVEL = 3;
+  var LINE_URL = 'https://line.me/R/ti/p/@128zirab';
+  var REG_URL = 'https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD'
+              + '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate'
+              + '&utm_campaign=ys368&utm_content=jackpot-radar';
+
+  var unlocked = (function () {
+    var u = {};
+    try { u = JSON.parse(localStorage.getItem(UNLOCK_KEY)) || {}; } catch (e) {}
+    try { if (localStorage.getItem(LEGACY_AI_KEY) === '1') u.level = 3; } catch (e) {}
+    if (u.dep) u.level = 3; else if (u.reg && !u.level) u.level = 2;
+    return u;
+  })();
+  function opened() { return Number(unlocked.level || 0) >= NEED_LEVEL; }
+
+  function showGate() {
+    if ($('jr-gate')) { $('jr-gate').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    var g = document.createElement('div');
+    g.className = 'jr-gate'; g.id = 'jr-gate';
+    g.innerHTML =
+      '<h3>判讀需要當月累計存款 3,000</h3>'
+    + '<p>這是站上唯一能告訴你「現在該不該打」的東西，也是我們自己每天在累積的資料。'
+    + '完成註冊、當月累計存款滿 3,000 之後，加 LINE 傳一張截圖就會自動給你解鎖碼。</p>'
+    + '<div class="btns">'
+    +   '<a class="reg" href="' + REG_URL + '" target="_blank" rel="nofollow sponsored noopener">前往平台註冊 →</a>'
+    +   '<a class="line" href="' + LINE_URL + '" target="_blank" rel="noopener">加 LINE 拿解鎖碼</a>'
+    + '</div>'
+    + '<div class="row"><input id="jr-code" type="text" autocomplete="off" placeholder="貼上解鎖碼">'
+    +   '<button type="button" id="jr-unlock">解鎖</button></div>'
+    + '<p class="note" id="jr-gate-note"></p>';
+    $('jr-out').parentNode.insertBefore(g, $('jr-out'));
+
+    g.querySelector('.reg').addEventListener('click', function () {
+      if (typeof gtag === 'function') gtag('event', 'reg_intent', { source: 'jackpot_radar_gate' });
+    });
+    g.querySelector('.line').addEventListener('click', function () {
+      if (typeof gtag === 'function') gtag('event', 'line_intent', { source: 'jackpot_radar_gate' });
+    });
+    var inp = $('jr-code'), btn = $('jr-unlock'), note = $('jr-gate-note');
+    function submit() {
+      var code = (inp.value || '').trim().toLowerCase();
+      if (!code) { note.textContent = '請先貼上解鎖碼。'; return; }
+      btn.disabled = true; note.textContent = '核對中…';
+      fetch(REDEEM_API, { method: 'POST', headers: { 'content-type': 'application/json' },
+                          body: JSON.stringify({ code: code }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          btn.disabled = false;
+          if (!d || !d.ok) {
+            note.textContent = d && d.error === 'limit'
+              ? '這組碼已經用滿裝置數上限。加 LINE 說一聲，我們人工看。'
+              : '解鎖碼不對。加 LINE 傳截圖就會自動給你。';
+            return;
+          }
+          unlocked.level = Number(d.level);
+          try { localStorage.setItem(UNLOCK_KEY, JSON.stringify(unlocked)); } catch (e) {}
+          if (Number(d.level) < NEED_LEVEL) {
+            note.textContent = '這組碼是「' + (d.level === 1 ? '完成註冊' : '當月累計存款 2,000')
+              + '」等級的。彩金判讀需要 3,000 的那一組。';
+            return;
+          }
+          if (typeof gtag === 'function') gtag('event', 'radar_unlock', { level: d.level });
+          g.remove(); note.textContent = ''; run();
+        })
+        .catch(function () { btn.disabled = false; note.textContent = '連線失敗，稍後再試一次。'; });
+    }
+    btn.addEventListener('click', submit);
+    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+    g.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
   function readAll() {
     var o = {};
     POOLS.forEach(function (p) { o[p.k] = parseFloat($('in-' + p.k).value); });
@@ -321,6 +415,11 @@
     var vals = readAll();
     var filled = POOLS.filter(function (p) { return vals[p.k] > 0; });
     if (!filled.length) { alert('至少填一個數字。遊戲畫面最上面那排就是。'); return; }
+    if (!opened()) {
+      try { localStorage.setItem('seth-jp-last', JSON.stringify(vals)); } catch (e) {}
+      if (typeof gtag === 'function') gtag('event', 'radar_gate_hit', {});
+      showGate(); return;
+    }
 
     /* 判讀每一個池子 */
     var rows = filled.map(function (p) {
