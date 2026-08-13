@@ -148,7 +148,7 @@
         <p>所以「RTP 計算」不是玩家自己能算的東西——你算不出官方賠付表，也跑不了幾百萬次模擬。玩家能做的只有<strong>查證官方公布的數字</strong>，方法見上面「怎麼查一台機的真實 RTP」那段。</p>
 
         <h2>「長期」到底是多長？我們實測給你看</h2>
-        <p>所有攻略都會寫「RTP 是長期統計」，但很少有人說清楚<strong>長期是多長</strong>。我們用自製的<a href="/tools/seth-simulator/">機制模擬器</a>跑了 <strong>800 萬轉</strong>（8 個獨立種子、每個 100 萬轉），結果是這樣：</p>
+        <p>所有攻略都會寫「RTP 是長期統計」，但很少有人說清楚<strong>長期是多長</strong>。我們用自製的<a href="/tools/storm-of-seth-session/#pre">機制模擬器</a>跑了 <strong>800 萬轉</strong>（8 個獨立種子、每個 100 萬轉），結果是這樣：</p>
         <div class="t-scroll">
           <table>
             <thead><tr><th>跑多少轉</th><th>算出來的回收率</th><th>離目標值多遠</th></tr></thead>
@@ -163,7 +163,7 @@
           <span class="ic">!</span>
           <div><strong>這是最該記住的一件事：連跑 100 萬轉，回收率都還可能落在 94.7% 到 100.4% 之間。</strong>而一般人一個晚上大概轉幾百次。所以「這台今天的 RTP 好像不對」這種感覺，在統計上完全沒有意義——你的樣本數距離能驗證 RTP 還差好幾個數量級。RTP 能告訴你的是「這台長期對玩家友不友善」，不是「今天會不會贏」。</div>
         </div>
-        <p>模擬器的方法、限制與完整統計都公開在<a href="/tools/seth-simulator/">那一頁</a>，你也可以自己按下去重跑一次。要說明的是：那是我們依公開賠率表自製的模型，不是原版遊戲，所以數字反映的是「高波動機制長什麼樣」，不是任何特定機台的實際表現。</p>
+        <p>模擬器的方法、限制與完整統計都公開在<a href="/tools/storm-of-seth-session/#pre">那一頁</a>，你也可以自己按下去重跑一次。要說明的是：那是我們依公開賠率表自製的模型，不是原版遊戲，所以數字反映的是「高波動機制長什麼樣」，不是任何特定機台的實際表現。</p>
 
         <h2>RTP 與波動率要一起看</h2>
         <p>只看 RTP 不夠。<strong>波動率</strong>決定回報的「分布方式」——同樣 96% RTP，高波動讓你偶爾大爆、平時消耗快；低波動讓你頻繁小贏、資金耐用。</p>
@@ -231,7 +231,7 @@
         <a href="/guides/rtp-vs-payout/" class="side-link">平台 RTP 可不可信</a>
         <a href="/rtp-ranking/" class="side-link">RTP 排行榜</a>
         <a href="/guides/high-rtp-slots/" class="side-link">高 RTP 老虎機推薦</a>
-        <a href="/tools/seth-simulator/" class="side-link">機制模擬器</a>
+        <a href="/tools/storm-of-seth-session/#pre" class="side-link">機制模擬器</a>
         <a href="/guides/slot-providers/" class="side-link">五大電子商比較</a>
         <a href="/storm-of-seth/" class="side-link">戰神賽特評測</a>
       </div>

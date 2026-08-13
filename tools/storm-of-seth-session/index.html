@@ -35,6 +35,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/seth-session.css?v=20260813-panetop">
 <link rel="stylesheet" href="/assets/target-plan.css?v=20260813-5">
+<link rel="stylesheet" href="/assets/jackpot-radar.css?v=20260813-1">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -74,6 +75,7 @@
 
 
   <nav class="tool-tabs" id="tool-tabs" aria-label="工具切換">
+    <button type="button" data-pane="radar"><b>⓿ 開打前</b>彩金判讀</button>
     <button type="button" data-pane="plan"><b>⓪ 開打前</b>分注打法</button>
     <button type="button" data-pane="pre"><b>① 進場前</b>機制模擬器</button>
     <button type="button" data-pane="live" class="on"><b>② 玩的時候</b>戰局計算</button>
@@ -89,7 +91,7 @@
       <p>開始一場後，只要更新餘額與注額。工具會即時計算淨利、回本距離、最大回撤，以及下一步要再投入多少。</p>
       <div class="tool-promise"><b>它不會告訴你哪台會爆。</b><span>它會告訴你每個選擇確定要花多少。</span></div>
       <a class="review-link" href="/storm-of-seth/">查看戰神賽特 RTP 與機制資料 <span>↗</span></a>
-      <a class="review-link" href="/tools/seth-ai-assistant/">多台一起記？看 AI 快速數據助手（完成註冊開啟） <span>↗</span></a>
+      <a class="review-link" href="/tools/storm-of-seth-session/#pick">多台一起記？看 AI 快速數據助手（完成註冊開啟） <span>↗</span></a>
     </div>
     <form class="setup-panel" id="setup-form">
       <div class="panel-title"><span>建立本場基準</span><small>資料只存在這台裝置・首場免費完整記錄</small></div>
@@ -186,6 +188,99 @@
 
   </div><!-- /pane-live -->
 
+  <section class="tool-pane" id="pane-radar" hidden>
+    <div class="jr-wrap">
+      <p class="section-kicker">開打前・彩金水位判讀</p>
+      <h2 style="font-size:clamp(21px,4vw,27px);font-weight:900;line-height:1.3;margin:0 0 8px">
+        現在該不該打？</h2>
+      <p style="font-size:15px;line-height:1.85;margin-bottom:14px">
+        彩金水位是這個遊戲裡唯一會隨時間變、而且真的影響你拿多少的東西。
+        打在高水位跟打在剛被人拿走之後，中同一個獎拿到的錢差很多。</p>
+      <div class="jr-in">
+        <h3>把你畫面上的四個數字打進來</h3>
+        <p class="jr-in-hint">遊戲最上面那排就是。輸入後告訴你現在該不該打，以及四個池子裡哪一個最值得追。</p>
+        <div class="jr-fields">
+          <label class="g"><span>GRAND</span><input id="in-grand" type="number" inputmode="decimal" placeholder="434776"></label>
+          <label class="a"><span>MAJOR</span><input id="in-major" type="number" inputmode="decimal" placeholder="75271"></label>
+          <label class="i"><span>MINOR</span><input id="in-minor" type="number" inputmode="decimal" placeholder="6291"></label>
+          <label class="m"><span>MINI</span><input id="in-mini" type="number" inputmode="decimal" placeholder="623"></label>
+        </div>
+        <button type="button" class="jr-go" id="jr-go">判讀</button>
+      </div>
+
+      <div class="jr-out" id="jr-out" hidden>
+        <div class="jr-call2" id="jr-call2"></div>
+        <div class="jr-bars" id="jr-bars"></div>
+        <p class="jr-out-note" id="jr-out-note"></p>
+      </div>
+
+      <h2>判讀基準是怎麼來的</h2>
+      <div class="jr-verdict">
+        <div class="jr-card yes">
+          <span class="lab">已證實</span>
+          <h3>四個池子拿到的錢完全一樣多</h3>
+          <p>不是等比例分配，是<b>相同的絕對金額</b>。三個獨立區間裡，GRAND 與 MINOR 的增加量吻合到小數點後兩位。
+          這代表 MINI 池很小卻拿到跟 GRAND 一樣多的錢，所以它成長得快得多——這就是 MINI 常跳、GRAND 幾乎不動的原因。</p>
+        </div>
+        <div class="jr-card yes">
+          <span class="lab">已證實</span>
+          <h3>MINI 平均每 6.7 小時被打掉一次</h3>
+          <p>我們抓到一次完整的重置證據：某段期間 MINI 出現負成長。彩金只漲不跌，唯一解釋是中間被人打掉。
+          用兩個不同的時間窗各自計算，得到<b>同一個掉落量</b>，代表這個數字可信。</p>
+        </div>
+        <div class="jr-card no">
+          <span class="lab">觀測期內零次</span>
+          <h3>GRAND、MAJOR、MINOR 都沒被打掉過</h3>
+          <p>同一段 30 小時內，這三個池子的累積缺口都是 <b>0</b>。這就是為什麼 GRAND 能累積到四十幾萬。
+          也代表它們的重置週期<b>比 30 小時長</b>——長多少，目前沒有人知道。</p>
+        </div>
+        <div class="jr-card wait">
+          <span class="lab">尚未有答案</span>
+          <h3>GRAND 的重置底值是多少？</h3>
+          <p>這是這個雷達真正要回答的問題。知道底值，才知道現在這個水位算高還是算常態。
+          它需要<b>連續數週</b>的紀錄才答得出來，我們正在累積。有答案會直接公布在這一頁。</p>
+        </div>
+      </div>
+
+      <h2>實測區間變化量</h2>
+      <p style="font-size:14.5px;color:var(--ink-mute,#5b6472)">這張表是「四池等額累積」的證據本體。被中獎動畫擋住的欄位標「—」，不用差額回填。</p>
+      <div class="jr-tbl"><table>
+        <thead><tr><th>期間</th><th>GRAND</th><th>MAJOR</th><th>MINOR</th><th>MINI</th></tr></thead>
+        <tbody id="jr-intervals"></tbody>
+      </table></div>
+      <p id="jr-resets" style="font-size:14px;color:var(--ink-mute,#5b6472);line-height:1.85"></p>
+
+      <div class="jr-sub">
+        <h3>水位有變動時通知你</h3>
+        <p>GRAND 被打掉的那一刻，是這個遊戲一年裡最值得記錄的幾個時間點之一。
+        我們每天記錄，抓到就發。加 LINE 之後傳「<b>彩金</b>」開啟通知。</p>
+        <a class="jr-btn" href="/line/?ch=radar&at=tool" data-cta="line-radar">加 LINE 開啟彩金通知</a>
+        <p style="margin:14px 0 0;font-size:13px;color:#7c8899">只發彩金水位變動，不推銷、不報明牌。</p>
+      </div>
+
+      <h2>怎麼自己驗證</h2>
+      <p>這一頁的每個結論都不需要相信我們，你可以自己做一次：</p>
+      <ol style="font-size:15px;line-height:1.95">
+        <li>打開遊戲，把畫面最上方那排四個彩金數字抄下來，記下時間。</li>
+        <li>過一小時再抄一次。<b>四個池子的增加金額會是一樣的</b>——這就是第一個結論。</li>
+        <li>如果某個池子的數字變小了，代表這段期間它被打掉重置了。記下來，那就是一次重置事件。</li>
+        <li>連續記幾天，你就會發現 MINI 一直在重置，而 GRAND 幾乎不動。</li>
+      </ol>
+      <p>唯一的技巧是：<b>中獎動畫會蓋住數字，要等動畫結束再抄</b>。這也是為什麼上面表格裡 MAJOR 有幾格是空的。</p>
+
+      <div class="callout warn" style="margin:22px 0">
+        <span class="ic">!</span>
+        <div><b>這些發現不會提高你的中獎機率。</b>彩金累積得再高，也只影響「萬一中了拿多少」，不影響「中的機率」。
+        任何拿彩金水位來宣稱能預測下一轉的說法，都跟這一頁的資料無關。</div>
+      </div>
+
+      <p style="margin-top:18px;font-size:13.5px;color:var(--ink-mute,#5b6472);line-height:1.8">
+        完整的觀測方法與重置紀錄寫在
+        <a href="/guides/seth-jackpot-log/">30 小時實測全紀錄</a>。
+      </p>
+    </div>
+  </section>
+
   <section class="tool-pane" id="pane-plan" hidden>
     <div class="tp">
       <p class="section-kicker">開打前・分注打法</p>
@@ -250,7 +345,7 @@
         <details style="margin-top:22px;border:1px solid var(--line,#e2e8f0);border-radius:12px;padding:14px 16px">
           <summary style="font-weight:800;font-size:15px;cursor:pointer">這些數字怎麼算出來的</summary>
           <div style="font-size:14.3px;line-height:1.85;margin-top:11px">
-            <p style="margin:0 0 9px">用本站<a href="/tools/seth-simulator/">機制模擬器</a>的同一份引擎跑蒙地卡羅。
+            <p style="margin:0 0 9px">用本站<a href="/tools/storm-of-seth-session/#pre">機制模擬器</a>的同一份引擎跑蒙地卡羅。
             每一格放 <b>1,500 個模擬玩家</b>，從滿本金開始，固定押注一直打，
             直到<b>達到目標金額</b>或<b>本金用完</b>為止。達標率就是達到目標的比例。</p>
             <p style="margin:0 0 9px"><b>為什麼小注達標率比較高：</b>這款機台的大分集中在少數幾轉。
@@ -456,9 +551,11 @@
 <script src="/assets/seth-session.js?v=20260812-timelineedit" defer></script>
 <script src="/assets/seth-sim.js?v=20260729" defer></script>
 <script src="/assets/seth-ai-assistant.js?v=20260803" defer></script>
+<script src="/assets/jackpot-log.js?v=20260813-3"></script>
+<script src="/assets/jackpot-radar.js?v=20260813-1"></script>
 <script src="/assets/target-grid.js?v=20260813-1"></script>
 <script src="/assets/target-plan.js?v=20260813-9"></script>
-<script src="/assets/seth-hub.js?v=20260813-hashchange" defer></script>
+<script src="/assets/seth-hub.js?v=20260813-radartab" defer></script>
 <script src="/assets/seth-gate.js?v=20260813-tiers" defer></script>
 <script src="/assets/seth-pwa.js?v=20260811-2" defer></script>
 

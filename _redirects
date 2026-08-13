@@ -7,3 +7,8 @@
 
 # 2026-08-13 分注打法只留工具台那一份，獨立頁是同一個東西不必兩個網址
 /tools/target-plan/ /tools/storm-of-seth-session/#plan 301
+
+# 2026-08-13 工具全部集中到工具台，不再散落在站上各處
+/tools/jackpot-radar/     /tools/storm-of-seth-session/#radar 301
+/tools/seth-simulator/    /tools/storm-of-seth-session/#pre   301
+/tools/seth-ai-assistant/ /tools/storm-of-seth-session/#pick  301
