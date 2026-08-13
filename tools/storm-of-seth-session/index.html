@@ -36,6 +36,7 @@
 <link rel="stylesheet" href="/assets/seth-session.css?v=20260813-hitrate">
 <link rel="stylesheet" href="/assets/target-plan.css?v=20260813-merge">
 <link rel="stylesheet" href="/assets/jackpot-radar.css?v=20260813-trial">
+<link rel="stylesheet" href="/assets/bonus-calc.css?v=20260813-1">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -80,6 +81,7 @@
     <button type="button" data-pane="pre"><b>① 進場前</b>機制模擬器</button>
     <button type="button" data-pane="live" class="on"><b>② 玩的時候</b>戰局計算</button>
     <button type="button" data-pane="pick"><b>③ 換台前</b>AI 選房數據助手</button>
+    <button type="button" data-pane="bonus"><b>④ 打完之後</b>領回饋</button>
     <button type="button" data-pane="faq"><b>？</b>常見問題</button>
   </nav>
 
@@ -486,6 +488,103 @@
       
 
   </div><!-- /#tool-body -->
+    </div><!-- /.pane-inner -->
+  </section><!-- /#pane-pick　🔴 2026-08-13 補上：這個閉合標籤原本漏了，
+       導致 #pane-pick 之後的所有東西（含 #pane-faq、footer）都被吞進它裡面。
+       pick 一隱藏，後面那些跟著消失——常見問題分頁其實一直是壞的。 -->
+
+  <section class="tool-pane" id="pane-bonus" hidden>
+    <div class="bc-wrap">
+      <p class="section-kicker">打完之後・領回饋</p>
+      <h2 class="bc-h2">你今天能多拿多少</h2>
+      <p class="bc-lead">這一頁的答案<b>不是機率，是確定的金額</b>。返水按投注量給、首充按存款給，兩個都不含運氣。</p>
+      <p class="bc-asof">條款版本：<span id="bc-asof">—</span>　平台隨時可能調整，以活動頁為準</p>
+
+      <section class="bc-sec">
+        <h3>電子投注回饋<small>當日 12:00 至隔日 11:59</small></h3>
+        <div class="bc-body">
+          <div class="bc-in one">
+            <label><span>今天已經打了多少投注</span>
+              <input id="bc-turnover" type="number" inputmode="decimal" value="17000" min="0" step="1000"></label>
+          </div>
+          <div id="bc-rebate-out"></div>
+        </div>
+      </section>
+
+      <section class="bc-sec">
+        <h3>首充 100%<small>流水只要 1 倍</small></h3>
+        <div class="bc-body">
+          <div id="bc-first-out"></div>
+          <div class="bc-note">流水倍數只有 1 倍是關鍵——多數平台首充要 10～20 倍，那會把贈金吃光。
+            不適用 USDT 存款；領過 368 體驗金要先完成它的流水並出款成功才能參與。</div>
+        </div>
+      </section>
+
+      <section class="bc-sec">
+        <h3>368 註冊體驗金<small>打碼 30 倍</small></h3>
+        <div class="bc-body"><div id="bc-trial-out"></div></div>
+      </section>
+
+      <section class="bc-sec">
+        <h3>買免遊划不划算<small>看本金倍數，不是看手感</small></h3>
+        <div class="bc-body">
+          <div class="bc-in">
+            <label><span>目前本金</span><input id="bc-bank" type="number" inputmode="decimal" value="3000" min="1" step="500"></label>
+            <label><span>單注</span><input id="bc-bet" type="number" inputmode="decimal" value="10" min="10" step="10"></label>
+          </div>
+          <div id="bc-buy-out"></div>
+        </div>
+      </section>
+
+      <section class="bc-sec">
+        <h3>三個最常被問的問題</h3>
+        <div class="bc-body">
+
+          <details class="bc-rule">
+            <summary>怎麼選房？</summary>
+            <div class="ans">
+              大廳格子上那個大大的百分比是「<b>今日</b>」的，而今日下注量只佔近 30 天的 0.35%——
+              我們統計的 18 台，今日得分率全距 50.97 個百分點，近 30 天只有 15.28。
+              <b>那個數字跳得兇是因為樣本小，不是因為機台在噴分。</b>
+              <div class="do"><b>可以照做的：</b>點進機台看「近 30 天」那一行，選高的那台。
+                理由不是它比較會出，而是<b>在沒有更好資訊時，這是唯一有樣本量支撐的排序，選它不會比選低的差</b>。
+                完全不要用「今日」那一格做決定。</div>
+            </div>
+          </details>
+
+          <details class="bc-rule">
+            <summary>什麼時候該買特色？</summary>
+            <div class="ans">
+              買免遊跟平轉等待的長期期望值是設計成一樣的——<b>它賣的是時間，不是優勢</b>。
+              所以「現在是不是好時機」沒有依據，該問的是「我的本金撐不撐得住這種波動」。
+              <div class="do"><b>可以照做的：</b>用上面那格算你的本金買得起幾次。
+                <b>買不到 3 次就不要買</b>，等於把整場壓在一兩次結果上。<br>
+                另外：<b>如果你是為了衝返水門檻，平轉比買免遊好</b>——同樣的錢產生同樣的流水，
+                但平轉波動小得多，比較不會在到達門檻前就歸零。</div>
+            </div>
+          </details>
+
+          <details class="bc-rule">
+            <summary>打幾轉才對？</summary>
+            <div class="ans">
+              免遊觸發間隔我們實測到的有 <b>0、3、8、14、23、55、111、172、255、344、499、555 轉</b>——
+              從 3 到 555 都有。<b>「幾轉沒開就代表快開了」用這組數字就能直接否定</b>，
+              而且這些數字就印在遊戲的「選擇機台」面板上，你可以自己去看。
+              <div class="do"><b>可以照做的：</b>不要用「打了幾轉」決定去留，用兩件事決定——
+                <b>還剩多少本金</b>（去 ⓪ 分注打法算你這筆錢的達標率），
+                以及<b>離返水門檻還差多少</b>（上面那格會告訴你值不值得再打）。
+                轉數本身不帶任何資訊。</div>
+            </div>
+          </details>
+
+        </div>
+      </section>
+
+      <p class="bc-lead" style="margin-top:14px">
+        想知道現在打拿得多不多，去 <b>⓿ 彩金判讀</b>；想知道該押多少，去 <b>⓪ 分注打法</b>。
+      </p>
+    </div>
+  </section>
 
   <section class="tool-pane" id="pane-faq" hidden>
     <div class="pane-inner narrow">
@@ -550,11 +649,13 @@
 <script src="/assets/seth-session.js?v=20260813-hitrate" defer></script>
 <script src="/assets/seth-sim.js?v=20260729" defer></script>
 <script src="/assets/seth-ai-assistant.js?v=20260803" defer></script>
+<script src="/assets/bonus-data.js?v=20260813-1"></script>
+<script src="/assets/bonus-calc.js?v=20260813-1"></script>
 <script src="/assets/jackpot-log.js?v=20260813-3"></script>
 <script src="/assets/jackpot-radar.js?v=20260813-trial"></script>
 <script src="/assets/target-grid.js?v=20260813-1"></script>
 <script src="/assets/target-plan.js?v=20260813-merge"></script>
-<script src="/assets/seth-hub.js?v=20260813-radartab" defer></script>
+<script src="/assets/seth-hub.js?v=20260813-bonustab" defer></script>
 <script src="/assets/seth-gate.js?v=20260813-copy2" defer></script>
 <script src="/assets/seth-pwa.js?v=20260811-2" defer></script>
 

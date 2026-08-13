@@ -1,0 +1,91 @@
+/* 領回饋試算 — 樣式
+ * 沿用 seth-session.css 的設計語彙：無圓角、深色面板、金色描邊、
+ * 大數字 Georgia 襯線體、字級 .55–.85rem、強調用左側 2px 色條。
+ */
+
+.bc-wrap{max-width:760px;margin:0 auto}
+.bc-h2{margin:0 0 8px;color:var(--sand);font:500 clamp(1.25rem,4.5vw,1.7rem)/1.3 Georgia,"Noto Serif TC",serif}
+.bc-lead{margin:0 0 6px;color:#b9b2aa;font-size:.72rem;line-height:1.85}
+.bc-lead b{color:var(--bright)}
+.bc-asof{margin:0 0 13px;color:#7f7974;font-size:.58rem}
+
+.bc-sec{margin-top:14px;border:1px solid var(--line);
+        background:linear-gradient(145deg,rgba(16,12,20,.96),rgba(7,6,10,.89))}
+.bc-sec>h3{margin:0;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.07);
+           color:var(--bright);font-size:.75rem;font-weight:900;letter-spacing:.05em}
+.bc-sec>h3 small{color:var(--muted);font-size:.58rem;font-weight:400;margin-left:8px}
+.bc-body{padding:14px}
+
+.bc-in{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.bc-in label{display:block;min-width:0}
+.bc-in span{display:block;margin-bottom:5px;color:#bcb5ac;font-size:.62rem}
+.bc-in input{width:100%;height:46px;padding:0 11px;border:1px solid rgba(255,255,255,.14);
+             outline:none;background:rgba(255,255,255,.025);color:#fff;
+             font:500 1.2rem/1 Georgia,serif;font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.bc-in input::-webkit-outer-spin-button,.bc-in input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.bc-in input:focus{border-color:var(--gold);box-shadow:0 0 0 1px rgba(217,170,79,.18)}
+.bc-in.one{grid-template-columns:1fr}
+
+.bc-big{padding:14px 0 12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.07)}
+.bc-big .k{color:var(--muted);font-size:.62rem;letter-spacing:.14em}
+.bc-big .v{margin:5px 0 0;font:500 clamp(2.3rem,8vw,3.1rem)/1 Georgia,serif;font-variant-numeric:tabular-nums}
+.bc-big .v.ok{color:var(--green)}
+.bc-big .v.zero{color:#6d6862}
+.bc-big .n{margin-top:6px;color:#8b857e;font-size:.6rem}
+
+.bc-note{margin-top:11px;padding:9px 12px;border-left:2px solid rgba(255,255,255,.14);
+         background:rgba(255,255,255,.025);color:#a9a29a;font-size:.65rem;line-height:1.8}
+.bc-note b{color:var(--sand)}
+
+.bc-call{margin-top:11px;padding:11px 13px;border-left:2px solid var(--gold);
+         background:rgba(217,170,79,.07);color:#e2d6bd;font-size:.7rem;line-height:1.85}
+.bc-call b{color:var(--bright)}
+.bc-call.go{border-left-color:var(--green);background:rgba(116,211,164,.06);color:#c3e5d3}
+.bc-call.go b{color:var(--green)}
+.bc-call.stop{border-left-color:var(--red);background:rgba(255,97,116,.06);color:#f0c6cc}
+.bc-call.stop b{color:#ffb0bb}
+.bc-call b.ok{color:var(--green)}
+.bc-call b.stop{color:#ffb0bb}
+.bc-sub{display:inline-block;margin-top:4px;color:#9a938c;font-size:.62rem;line-height:1.75}
+.bc-hint{margin:0;color:var(--muted);font-size:.66rem}
+
+.bc-tbl{margin-top:12px}
+.bc-tbl table{width:100%;min-width:0;border-collapse:collapse;font-size:.66rem}
+.bc-tbl th{padding:7px 10px;border-bottom:1px solid var(--line);color:var(--muted);
+           font-size:.55rem;font-weight:700;text-align:left;letter-spacing:.08em}
+.bc-tbl td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.06);
+           color:#cdc6bd;font-variant-numeric:tabular-nums}
+.bc-tbl tr.me td{background:rgba(116,211,164,.1);color:var(--green);font-weight:900}
+.bc-tbl tr.nx td{background:rgba(217,170,79,.09);color:var(--bright);font-weight:900}
+
+.bc-fd{padding:11px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.bc-fd:last-child{border-bottom:0}
+.bc-fd .hd{color:var(--bright);font-size:.76rem;font-weight:900}
+.bc-fd .bd{margin-top:4px;color:#a9a29a;font-size:.64rem;line-height:1.8}
+.bc-fd .net{margin-top:6px;color:#c3e5d3;font-size:.72rem}
+.bc-fd .net b{color:var(--green);font:500 1.15rem/1 Georgia,serif;font-variant-numeric:tabular-nums}
+
+/* 打法規則（選房 / 買特色 / 幾轉） */
+.bc-rule{border-top:1px solid rgba(255,255,255,.06)}
+.bc-rule:first-of-type{border-top:0}
+.bc-rule summary{padding:11px 0;color:var(--sand);font-size:.74rem;font-weight:900;cursor:pointer;
+                 list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.bc-rule summary::-webkit-details-marker{display:none}
+.bc-rule summary:after{content:"＋";color:var(--gold);font-weight:400}
+.bc-rule[open] summary:after{content:"－"}
+.bc-rule .ans{padding:0 0 12px;color:#b3ada5;font-size:.68rem;line-height:1.9}
+.bc-rule .ans b{color:var(--bright)}
+.bc-rule .do{margin-top:8px;padding:9px 12px;border-left:2px solid var(--cyan);
+             background:rgba(67,216,211,.06);color:#bcd5d3;font-size:.68rem;line-height:1.8}
+.bc-rule .do b{color:var(--cyan)}
+
+@media(max-width:640px){
+  .bc-in{grid-template-columns:1fr}
+  .bc-tbl thead{display:none}
+  .bc-tbl tr{display:block;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+  .bc-tbl tr.me td,.bc-tbl tr.nx td{background:none}
+  .bc-tbl td{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border:0}
+  .bc-tbl td:before{content:attr(data-l);color:var(--muted)}
+  .bc-tbl td:first-child{margin-bottom:3px;color:var(--sand);font-weight:900}
+  .bc-tbl td:first-child:before{display:none}
+}
