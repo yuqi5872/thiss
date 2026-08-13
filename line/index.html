@@ -111,24 +111,6 @@
   url.searchParams.set('utm_campaign', 'oa_join');
   url.searchParams.set('utm_content',  content);
 
-  if (GA_ID) {
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-    document.head.appendChild(s);
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', GA_ID, { page_location: url.toString(), transport_type: 'beacon' });
-    gtag('event', 'line_add_friend_click', {
-      channel: ch, placement: at, post_id: pid || '(none)',
-      station: key || 'unknown',
-      // 沒有專屬管道的走共用 OA；這個旗標讓事後看得出哪些是共用的
-      has_line_route: CHANNELS[ch] ? 'yes' : 'no',
-      transport_type: 'beacon'
-    });
-  }
-
   // 這一站還沒設好 OA 的話不要轉——轉去空白網址只會是一個壞掉的頁面。
   // 留在這裡至少畫面上說得清楚，也不會把使用者丟到不存在的地方。
   if (!target) {
@@ -143,10 +125,45 @@
     if (a) a.href = target;
   });
 
-  // 等 300ms 再轉，讓 beacon 有時間送出去。不等的話慢速網路會漏掉一部分點擊。
-  // 用 location.replace 不留歷史紀錄，使用者在 LINE 按上一頁不會又被彈回來
-  // （meta refresh 在部分 in-app 瀏覽器就會這樣卡住）。
-  setTimeout(function () { location.replace(target); }, 300);
+  // 固定等 300ms 再轉的做法會漏事件：GA4 的追蹤庫是另外向 Google 下載的，
+  // 4G 或 LINE 內建瀏覽器有時候來不及在 300ms 內把 line_add_friend_click
+  // 這筆事件真的送出去，頁面就先跳轉、整個 JS 環境被銷毀，事件就憑空消失。
+  // 2026-08-13 實測過：同一份程式碼，電子站那次 session_start 和事件都送到了，
+  // 體育站這次只有 session_start 送到、事件本身沒送到——是時序問題，不是邏輯錯。
+  //
+  // 改用 GA4 官方建議的做法：event_callback 確認事件真的送出去之後才轉址，
+  // 比原本「賭 300ms 夠不夠」可靠。同時保留一個較長的保底時間（1200ms），
+  // 萬一 GA4 被瀏覽器隱私設定整個擋掉、callback 永遠不會觸發，
+  // 使用者也不會被卡住太久。go() 用旗標防止 callback 和保底計時器
+  // 同時觸發時轉址兩次。
+  var redirected = false;
+  function go() {
+    if (redirected) return;
+    redirected = true;
+    location.replace(target);
+  }
+
+  if (GA_ID) {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', GA_ID, { page_location: url.toString(), transport_type: 'beacon' });
+    gtag('event', 'line_add_friend_click', {
+      channel: ch, placement: at, post_id: pid || '(none)',
+      station: key || 'unknown',
+      // 沒有專屬管道的走共用 OA；這個旗標讓事後看得出哪些是共用的
+      has_line_route: CHANNELS[ch] ? 'yes' : 'no',
+      transport_type: 'beacon',
+      event_callback: go
+    });
+    setTimeout(go, 1200);  // 保底：GA4 連不上時不要卡住使用者
+  } else {
+    go();  // 這一站沒設 GA4，沒有事件要等，直接轉
+  }
 })();
 </script>
 <style>
