@@ -537,12 +537,12 @@
       </section>
 
       <section class="bc-sec">
-        <h3>三個最常被問的問題</h3>
-        <div class="bc-body">
+        <h3>三個最常被問的問題<small id="bc-rules-badge">會員內容</small></h3>
+        <div class="bc-body" id="bc-rules-body">
 
           <details class="bc-rule">
             <summary>怎麼選房？</summary>
-            <div class="ans">
+            <div class="ans" data-rule-locked>
               大廳格子上那個大大的百分比是「<b>今日</b>」的，而今日下注量只佔近 30 天的 0.35%——
               我們統計的 18 台，今日得分率全距 50.97 個百分點，近 30 天只有 15.28。
               <b>那個數字跳得兇是因為樣本小，不是因為機台在噴分。</b>
@@ -554,7 +554,7 @@
 
           <details class="bc-rule">
             <summary>什麼時候該買特色？</summary>
-            <div class="ans">
+            <div class="ans" data-rule-locked>
               買免遊跟平轉等待的長期期望值是設計成一樣的——<b>它賣的是時間，不是優勢</b>。
               所以「現在是不是好時機」沒有依據，該問的是「我的本金撐不撐得住這種波動」。
               <div class="do"><b>可以照做的：</b>用上面那格算你的本金買得起幾次。
@@ -566,7 +566,7 @@
 
           <details class="bc-rule">
             <summary>打幾轉才對？</summary>
-            <div class="ans">
+            <div class="ans" data-rule-locked>
               免遊觸發間隔我們實測到的有 <b>0、3、8、14、23、55、111、172、255、344、499、555 轉</b>——
               從 3 到 555 都有。<b>「幾轉沒開就代表快開了」用這組數字就能直接否定</b>，
               而且這些數字就印在遊戲的「選擇機台」面板上，你可以自己去看。
@@ -656,7 +656,7 @@
 <script src="/assets/target-grid.js?v=20260813-1"></script>
 <script src="/assets/target-plan.js?v=20260813-merge"></script>
 <script src="/assets/seth-hub.js?v=20260813-bonustab" defer></script>
-<script src="/assets/seth-gate.js?v=20260813-simfix" defer></script>
+<script src="/assets/seth-gate.js?v=20260813-simfix2" defer></script>
 <script src="/assets/seth-pwa.js?v=20260811-2" defer></script>
 
 </body>
