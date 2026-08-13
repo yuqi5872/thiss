@@ -292,6 +292,25 @@
     return { known: true, pos: pos, lo: lo, hi: hi };
   }
 
+
+  /* 還要多久才會回到我們看過的高點。
+     四池以每小時約 187 元累積（由「四池都沒重置」的觀測區間實測），
+     所以差額除以速度就是時數。這是這頁最實用的一句話——
+     它把一次性判讀變成「幾點回來看」。
+     🔴 這是「以目前累積速度推算」，不是預測誰會中。
+        中途被人打掉就重來，畫面上要講清楚。 */
+  function eta(cur, hi, nm) {
+    var gap = hi - cur;
+    if (gap <= 0) return '';
+    var hrs = gap / L.ratePerHour;
+    var txt = hrs < 1 ? Math.round(hrs * 60) + ' 分鐘'
+            : hrs < 48 ? hrs.toFixed(1) + ' 小時'
+            : (hrs / 24).toFixed(1) + ' 天';
+    return '<br><br><b>以目前每小時約 ' + L.ratePerHour.toLocaleString('en-US') + ' 元的累積速度算，'
+         + nm + ' 大約再 ' + txt + ' 會回到我們看過的高點</b>（還差 ' + n(gap) + '）。'
+         + '中途被人打掉就會重來，所以這是下限不是保證。';
+  }
+
   function readAll() {
     var o = {};
     POOLS.forEach(function (p) { o[p.k] = parseFloat($('in-' + p.k).value); });
@@ -317,13 +336,14 @@
       var t = ranked[0];
       cls = 'go'; verdict = '值得打';
       why = '<b>' + t.p.nm + ' 現在 ' + n(t.val) + '</b>，在我們記錄過的區間偏高的位置'
-          + '（我們看過的最低是 ' + n(t.j.lo) + '）。四個池子裡它離爆點最近——要追就追這個。';
+          + '（我們看過的最低是 ' + n(t.j.lo) + '）。四個池子裡它離爆點最近——要追就追這個。'
+          + (t.val < t.j.hi ? eta(t.val, t.j.hi, t.p.nm) : '');
     } else if (ranked.length) {
       var b0 = ranked[0];
       cls = 'wait'; verdict = '現在打會拿得比較少';
       why = '看得出位置的池子都偏低。<b>' + b0.p.nm + ' 現在 ' + n(b0.val)
           + '</b>，我們記錄過最高到 ' + n(b0.j.hi) + '——現在中了，拿到的彩金會小很多。'
-          + '想搏彩金的話，等它再累積一陣子。';
+          + eta(b0.val, b0.j.hi, b0.p.nm);
     } else {
       cls = 'wait'; verdict = '還判讀不出來';
       why = '你填的池子我們都還沒觀測到重置，算不出高低位置。'
