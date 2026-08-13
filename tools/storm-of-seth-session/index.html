@@ -33,7 +33,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/seth-session.css?v=20260812-timelineedit">
+<link rel="stylesheet" href="/assets/seth-session.css?v=20260813-panetop">
+<link rel="stylesheet" href="/assets/target-plan.css?v=20260813-2">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -73,6 +74,7 @@
 
 
   <nav class="tool-tabs" id="tool-tabs" aria-label="工具切換">
+    <button type="button" data-pane="plan"><b>⓪ 開打前</b>分注打法</button>
     <button type="button" data-pane="pre"><b>① 進場前</b>機制模擬器</button>
     <button type="button" data-pane="live" class="on"><b>② 玩的時候</b>戰局計算</button>
     <button type="button" data-pane="pick"><b>③ 換台前</b>AI 選房數據助手</button>
@@ -183,6 +185,90 @@
   </section>
 
   </div><!-- /pane-live -->
+
+  <section class="tool-pane" id="pane-plan" hidden>
+    <div class="tp">
+      <p class="section-kicker">開打前・分注打法</p>
+      <h2 style="font-size:clamp(21px,4vw,27px);font-weight:900;line-height:1.3;margin:0 0 8px">
+        先決定押多少，再開打</h2>
+      <p style="font-size:15px;line-height:1.85;margin-bottom:14px">
+        同樣 1,000 元想翻倍，<b>押 2 元的達標率 30.8%，押 50 元只有 14.4%</b>——差 2.1 倍。
+        輸入本金和目標，直接給你該押多少。</p>
+        <div class="tp-in">
+          <div class="tp-grid">
+            <div class="tp-f">
+              <label for="tp-bank">我的本金</label>
+              <div class="box"><input id="tp-bank" type="number" inputmode="decimal" value="1000" min="1" step="100"><span class="u">元</span></div>
+            </div>
+            <div class="tp-f">
+              <label for="tp-goal">我想打到</label>
+              <div class="box"><input id="tp-goal" type="number" inputmode="decimal" value="2000" min="1" step="100"><span class="u">元</span></div>
+            </div>
+          </div>
+          <div class="tp-mult" id="tp-mult">
+            <button type="button" data-m="1.5">1.5 倍</button>
+            <button type="button" data-m="2" class="on">翻倍</button>
+            <button type="button" data-m="3">3 倍</button>
+            <button type="button" data-m="5">5 倍</button>
+          </div>
+        </div>
+
+        <div class="tp-card">
+          <div class="tp-card-hd"><span>你的打法卡</span><span id="tp-tag">分注打法</span></div>
+          <div class="tp-body">
+            <div class="tp-hero">
+              <div class="k">建議押注</div>
+              <div class="v" id="tp-bet">—</div>
+              <div class="tp-rate" id="tp-rate">—</div>
+            </div>
+            <div class="tp-rows">
+              <div class="tp-row"><span class="k">預計要打</span><span class="v" id="tp-spins">—</span></div>
+              <div class="tp-row take"><span class="k">停利　打到就收</span><span class="v" id="tp-take">—</span></div>
+              <div class="tp-row stop"><span class="k">停損　剩這個數就停</span><span class="v" id="tp-stop">—</span></div>
+            </div>
+            <div class="tp-warn" id="tp-alt" style="display:none"></div>
+          </div>
+        </div>
+
+        <div class="tp-slider">
+          <div class="hd"><span>如果我押大一點？</span><span>押 <b id="tp-sl-bet">—</b> 元</span></div>
+          <input type="range" id="tp-slider" min="0" max="5" step="1" value="0">
+          <div class="tp-scale"><span>本金 1/1000</span><span>1/500</span><span>1/200</span><span>1/100</span><span>1/50</span><span>1/20</span></div>
+          <div class="tp-warn" id="tp-warn">—</div>
+        </div>
+
+        <h2 style="font-size:19px;font-weight:900;margin:26px 0 4px">押注大小怎麼影響達標率</h2>
+        <p style="font-size:14.5px;color:var(--ink-mute,#5b6472);margin-bottom:4px" id="tp-cmp-sub">—</p>
+        <div class="tp-cmp"><table>
+          <thead><tr><th>押注</th><th>把本金切成幾份</th><th>達標率</th><th>中位數轉數</th></tr></thead>
+          <tbody id="tp-cmp"></tbody>
+        </table></div>
+
+        <div class="tp-cta" id="tp-cta"></div>
+
+        <details style="margin-top:22px;border:1px solid var(--line,#e2e8f0);border-radius:12px;padding:14px 16px">
+          <summary style="font-weight:800;font-size:15px;cursor:pointer">這些數字怎麼算出來的</summary>
+          <div style="font-size:14.3px;line-height:1.85;margin-top:11px">
+            <p style="margin:0 0 9px">用本站<a href="/tools/seth-simulator/">機制模擬器</a>的同一份引擎跑蒙地卡羅。
+            每一格放 <b>1,500 個模擬玩家</b>，從滿本金開始，固定押注一直打，
+            直到<b>達到目標金額</b>或<b>本金用完</b>為止。達標率就是達到目標的比例。</p>
+            <p style="margin:0 0 9px"><b>為什麼小注達標率比較高：</b>這款機台的大分集中在少數幾轉。
+            押小注可以撐到更多轉數，等於買到更多次摸到大分的機會；押大注則是在摸到之前就先把本金用完。</p>
+            <p style="margin:0 0 9px"><b>關鍵是比例不是金額。</b>本金 1,000 押 2 元，跟本金 10,000 押 20 元，
+            結果完全一樣——兩個都是把本金切成 500 份。</p>
+            <p style="margin:0 0 9px"><b>停損那一格是紀律建議，不是模擬算出來的。</b>設在本金的 20%，
+            用意是讓你在還有錢的時候離開，下一場才有本金按這套打法重來。你可以自己調整。</p>
+            <p style="margin:0"><b>限制：</b>這是模型不是 ATG 官方數字。官方從未公開符號權重，
+            模型是回推校準到接近官方標示的 96.89%（800 萬轉實測 97.28%）。
+            實際遊戲的最低押注限制可能讓你切不到那麼細。</p>
+          </div>
+        </details>
+      <p style="margin-top:16px;font-size:14px;color:var(--ink-mute,#5b6472)">
+        配好之後切到 <b>② 玩的時候</b> 開一場，工具會照這個押注幫你記錄。
+        想看完整說明頁：<a href="/tools/target-plan/">分注打法產生器</a>
+      </p>
+    </div>
+  </section>
 
   <section class="tool-pane" id="pane-pre" hidden>
   <div class="pane-inner narrow">
@@ -373,7 +459,9 @@
 <script src="/assets/seth-session.js?v=20260812-timelineedit" defer></script>
 <script src="/assets/seth-sim.js?v=20260729" defer></script>
 <script src="/assets/seth-ai-assistant.js?v=20260803" defer></script>
-<script src="/assets/seth-hub.js?v=20260812-fastauto" defer></script>
+<script src="/assets/target-grid.js?v=20260813-1"></script>
+<script src="/assets/target-plan.js?v=20260813-1"></script>
+<script src="/assets/seth-hub.js?v=20260813-panetop" defer></script>
 <script src="/assets/seth-gate.js?v=20260812-fallback" defer></script>
 <script src="/assets/seth-pwa.js?v=20260811-2" defer></script>
 

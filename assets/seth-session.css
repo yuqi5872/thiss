@@ -23,8 +23,11 @@
 .tool-tabs button b{display:block;font-size:.58rem;font-weight:700;opacity:.7;margin-bottom:2px}
 .tool-tabs button.on{border-color:var(--bright);background:linear-gradient(135deg,#f4cf78,#a97b2c);color:#15100a;font-weight:900}
 .tool-tabs button.on b{opacity:.75}
-#pane-live>.session-setup,#pane-live>.session-cockpit,#pane-live>.session-summary{inset:118px 0 36px}
-.tool-pane{position:absolute;inset:118px 0 36px;overflow-y:auto;padding:10px}
+/* 🔴 上緣改吃 --pane-top（由 seth-hub.js 依實際分頁列高度算出）。
+   原本寫死 118px，是「分頁只有一列」的假設；2026-08-13 加到 5 個分頁
+   變成兩列之後，分頁列就蓋住內容了。寫死的數字每次加分頁都會再壞一次。 */
+#pane-live>.session-setup,#pane-live>.session-cockpit,#pane-live>.session-summary{inset:var(--pane-top,118px) 0 36px}
+.tool-pane{position:absolute;inset:var(--pane-top,118px) 0 36px;overflow-y:auto;padding:10px}
 .pane-inner{display:grid;grid-template-columns:minmax(340px,1fr) minmax(320px,420px);gap:10px;align-items:start}
 .pane-inner.narrow{grid-template-columns:minmax(0,760px);justify-content:center}
 .pane-hint{margin:8px 0 0;color:var(--muted);font-size:.66rem;line-height:1.7}
@@ -45,8 +48,8 @@
 
 @media(max-width:900px){.pane-inner{grid-template-columns:1fr}}
 @media(max-width:760px){.tool-tabs{top:54px;padding:6px 6px 0;gap:4px}.tool-tabs button{padding:7px 4px;font-size:.62rem}.tool-tabs button b{font-size:.5rem}
-#pane-live>.session-setup,#pane-live>.session-cockpit,#pane-live>.session-summary{inset:104px 0 32px}
-.tool-pane{inset:104px 0 32px;padding:6px}}
+#pane-live>.session-setup,#pane-live>.session-cockpit,#pane-live>.session-summary{inset:var(--pane-top,104px) 0 32px}
+.tool-pane{inset:var(--pane-top,104px) 0 32px;padding:6px}}
 
 
 

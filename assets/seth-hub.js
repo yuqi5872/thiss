@@ -11,8 +11,22 @@
   var $ = function (id) { return document.getElementById(id); };
 
   /* ---------- 分頁切換 ---------- */
-  var PANES = ['pre', 'live', 'pick', 'faq'];
+  /* 🔴 新增分頁時這裡一定要跟著加，不然按鈕點得到但面板不會展開。
+     2026-08-13 加 'plan'（分注打法）時就是漏了這一行才發現。 */
+  var PANES = ['plan', 'pre', 'live', 'pick', 'faq'];
   var tabs = $('tool-tabs');
+
+  /* 分頁列可能是一列也可能是兩列（看有幾個分頁、看螢幕寬度），
+     所以面板的上緣要照實際高度算，不能寫死。加新分頁時這裡不用改。 */
+  function syncPaneTop() {
+    if (!tabs) return;
+    var top = tabs.offsetTop + tabs.offsetHeight + 4;
+    document.documentElement.style.setProperty('--pane-top', top + 'px');
+  }
+  syncPaneTop();
+  window.addEventListener('resize', syncPaneTop);
+  window.addEventListener('load', syncPaneTop);
+
   if (tabs) {
     tabs.addEventListener('click', function (e) {
       var b = e.target.closest('button[data-pane]');

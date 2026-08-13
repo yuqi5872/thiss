@@ -1,0 +1,78 @@
+  .tp{max-width:660px;margin:0 auto}
+  .tp-in{background:#0f1729;border-radius:18px;padding:20px 18px;color:#e8eaf0}
+  .tp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tp-f label{display:block;font-size:12.5px;color:#8fa0bd;font-weight:700;margin-bottom:6px}
+  .tp-f{min-width:0}
+  .tp-f .box{display:flex;align-items:center;min-width:0;background:rgba(255,255,255,.07);
+             border:1px solid rgba(255,255,255,.13);border-radius:11px;padding:0 12px}
+  .tp-f input{flex:1;min-width:0;background:none;border:0;color:#fff;font-size:23px;font-weight:900;
+              padding:13px 0;font-variant-numeric:tabular-nums;outline:none;-moz-appearance:textfield}
+  .tp-f input::-webkit-outer-spin-button,.tp-f input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .tp-f .u{color:#7b8aa8;font-size:14px;font-weight:700;padding-left:6px}
+  .tp-mult{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+  .tp-mult button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#c6d0e2;
+                  border-radius:999px;padding:8px 15px;font-size:13.5px;font-weight:800;cursor:pointer}
+  .tp-mult button.on{background:#d4af37;border-color:#d4af37;color:#1a1206}
+
+  .tp-card{margin-top:14px;border:3px solid #d4af37;border-radius:18px;overflow:hidden;background:#fff}
+  .tp-card-hd{background:#0f1729;color:#f2c14e;padding:12px 18px;font-weight:900;font-size:15px;
+              display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .tp-card-hd span:last-child{color:#8fa0bd;font-size:12.5px;font-weight:700}
+  .tp-body{padding:18px}
+  .tp-hero{text-align:center;padding:6px 0 16px;border-bottom:1px dashed #e2e8f0;margin-bottom:16px}
+  .tp-hero .k{font-size:13px;color:var(--ink-mute,#5b6472);font-weight:800}
+  .tp-hero .v{font-size:clamp(40px,11vw,56px);font-weight:900;line-height:1.05;color:#0f1729;
+              font-variant-numeric:tabular-nums;margin-top:4px}
+  .tp-hero .v small{font-size:.45em;font-weight:800;color:#5b6472}
+  .tp-rate{margin-top:10px;display:inline-block;background:#f0fdf4;border:1px solid #16a34a;color:#15803d;
+           border-radius:999px;padding:7px 17px;font-size:16px;font-weight:900}
+  .tp-rows{display:grid;gap:0}
+  .tp-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+          padding:11px 0;border-bottom:1px solid #f0f3f7;font-size:15px}
+  .tp-row:last-child{border-bottom:0}
+  .tp-row .k{color:var(--ink-mute,#5b6472);font-weight:700;flex:0 0 auto}
+  .tp-row .v{font-weight:900;font-size:18px;font-variant-numeric:tabular-nums;text-align:right}
+  .tp-row.stop .v{color:#b91c1c}
+  .tp-row.take .v{color:#15803d}
+
+  .tp-slider{margin-top:16px;background:#f8fafc;border:1px solid var(--line,#e2e8f0);border-radius:14px;padding:15px 16px}
+  .tp-slider .hd{display:flex;justify-content:space-between;font-size:13.5px;font-weight:800;margin-bottom:10px}
+  .tp-slider .hd b{font-size:16px}
+  .tp-slider input[type=range]{width:100%;accent-color:#d4af37;height:26px}
+  .tp-scale{display:flex;justify-content:space-between;font-size:11.5px;color:#8b95a3;margin-top:2px}
+  .tp-warn{margin-top:11px;font-size:14.5px;line-height:1.75;padding:11px 13px;border-radius:10px;
+           background:#fffbeb;border-left:4px solid #f59e0b;color:#78350f}
+  .tp-warn.ok{background:#f0fdf4;border-left-color:#16a34a;color:#14532d}
+
+  .tp-cmp table{width:100%;border-collapse:collapse;font-size:14.2px;margin-top:10px}
+  .tp-cmp th{background:#0f1729;color:#fff;text-align:left;padding:9px 11px;font-size:12.5px}
+  .tp-cmp td{padding:9px 11px;border-bottom:1px solid #eef2f6;font-variant-numeric:tabular-nums}
+  .tp-cmp tr.me td{background:#fffbeb;font-weight:800}
+  .tp-cta{margin-top:16px;text-align:center}
+  .tp-cta a{display:inline-block;padding:13px 26px;border-radius:999px;background:#06c755;color:#fff;
+            font-weight:800;font-size:15px;text-decoration:none}
+  @media(max-width:520px){ .tp-grid{grid-template-columns:1fr} }
+  /* 🔴 斷點設 640 不是 520：站上全域 table{min-width:560px} 會撐破 560~640 這一段，
+     每次做新表格都踩一次，所以這裡一定要連 min-width:0 一起寫。 */
+  @media(max-width:640px){
+    .tp-cmp table{min-width:0;width:100%}
+    .tp-cmp thead{display:none}
+    .tp-cmp tr{display:block;border:1px solid #e5e7eb;border-radius:10px;padding:9px 12px;margin-bottom:9px}
+    .tp-cmp td{display:flex;justify-content:space-between;border:0;padding:4px 0;background:none!important}
+    .tp-cmp td:before{content:attr(data-l);color:#6b7280;font-weight:700}
+    .tp-cmp td:first-child{font-weight:900;border-bottom:1px solid #e5e7eb;margin-bottom:3px;padding-bottom:7px}
+    .tp-cmp td:first-child:before{display:none}
+  }
+/* ── 深色宿主頁（三合一工具台）的顏色修正 ────────────────
+   工具台的 body 文字色是淺色（#f2eadc）。這些區塊自己是淺底，
+   不強制指定深色文字的話，白卡片上會出現淺色字＝看不見。
+   2026-08-13 實測踩過：打法卡的「約 5,939 轉」整行讀不到。 */
+.tp-card, .tp-slider, .tp-cmp table, .tp-cta{color:#1f2733}
+.tp-card .tp-hero .k{color:#5b6472}
+.tp-row .k{color:#5b6472}
+.tp-row .v{color:#0f1729}
+.tp-cmp td{color:#1f2733;background:#fff}
+.tp-cmp tr:nth-child(even) td{background:#f8fafc}
+.tp-cmp tr.me td{background:#fffbeb}
+.tp-slider .hd{color:#1f2733}
+.tp-scale span{color:#8b95a3}
