@@ -51,8 +51,17 @@
   var NEED = { sim: 0, session: 2, summary: 2, ai: 3 };
   var LEVEL_NAME = { 1: '完成註冊', 2: '當月累計存款 2,000', 3: '當月累計存款 3,000' };
   var LINE_URL = 'https://line.me/R/ti/p/@128zirab';
-  var REG_BASE = 'https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD' +
-                 '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate&utm_campaign=ys368';
+  /* 🔴 2026-08-13 從 368 體驗金改指首充 100%。
+     原因（官方活動頁條款確認，不是推測）：首充活動規則第 1 條寫著
+     「若有領取體驗金，請先完成體驗金流水以及出款成功後，才可參與首存活動」。
+     368 要跑 30 倍流水（368×30＝NT$11,040）、滾到 ≥1,000 才出得了款，
+     多數人中途輸光 → 永久喪失首充 100%（存 1000 送 1000、只要 1 倍流水）。
+
+     而這個工具台的閘門本身就是靠儲值解鎖的（L2 累計存款 2,000、L3 累計存款 3,000）。
+     先把人送去領 368 等於讓他之後儲值時付全額，而不是拿到加倍額度——
+     是在跟自己的閘門作對。所以這站一律指首充。 */
+  var REG_BASE = 'https://ys89.bet/activity/entry?url=/activity/detail/firstDeposit/NTD' +
+                 '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate&utm_campaign=first_deposit';
   /* ──────────────────────────────────────────────── */
 
   var USE_KEY = 'seth-gate-uses-v1';
@@ -360,7 +369,7 @@
       title: '模擬器免費試用已用完（' + LIMITS.sim + ' 次）',
       copy: '模擬器已經停用。下面的 800 萬轉實測統計、機制說明與常見問題不受影響，' +
             '照常看得到。在合作平台完成註冊後跟我們拿解鎖碼，就不再有次數限制。',
-      cta: '前往平台註冊', line: true
+      cta: '前往註冊・首充送 1000', line: true
     });
     host.parentNode.insertBefore(gates.sim, host);
 
@@ -452,7 +461,7 @@
       copy: '你已經完整記錄過一場。想繼續記錄下一場，需要在合作平台<b>單月累計存款滿 2,000</b>——' +
             '加 LINE 傳一張後台截圖，系統核對後會自動給你解鎖碼。' +
             '已經記過的那一場資料還在你這台裝置上，不會消失。',
-      cta: '前往平台註冊', line: true
+      cta: '前往註冊・首充送 1000', line: true
     });
     /* 🔴 放進表單裡面，不要插在 form 前面。
        #setup-view 是雙欄格線（左文案／右表單），在它底下多塞一個子元素
@@ -486,7 +495,7 @@
       copy: '上面這場的數字會留在你這台裝置上，隨時回來都看得到。' +
             '要開始記錄新的一場，需要在合作平台<b>單月累計存款滿 2,000</b>——' +
             '加 LINE 傳一張後台截圖，系統核對後會自動給你解鎖碼。',
-      cta: '前往平台註冊', line: true
+      cta: '前往註冊・首充送 1000', line: true
     });
     var reset = $('reset-session');
     reset.parentNode.insertBefore(gates.summary, reset);
@@ -528,7 +537,7 @@
       '</p>' +
       '<div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">' +
         '<a class="seth-gate-go" href="' + REG_BASE + '&utm_content=gate-ai-assistant" ' +
-          'data-cta="play" target="_blank" rel="nofollow sponsored noopener">前往平台註冊 →</a>' +
+          'data-cta="play" target="_blank" rel="nofollow sponsored noopener">前往註冊・首充送 1000 →</a>' +
         '<a class="seth-gate-line" href="' + LINE_URL + '" target="_blank" rel="noopener">加 LINE 拿解鎖碼</a>' +
       '</div>' +
       '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:15px" id="claim-boxslot">' +
