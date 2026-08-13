@@ -112,7 +112,12 @@
     }).then(function (r) {
       return r.json().then(function (data) { return { status: r.status, data: data }; });
     }).then(function (res) {
-      if (res.data && res.data.ok) return { ok: true, level: Number(res.data.level) };
+      if (res.data && res.data.ok) {
+        /* 🔴 碼也要存：完整攻略的正文是跟後端要的，只有等級沒有碼就拿不到內容。
+           在任何一個閘門解鎖，其他地方都該一起開。 */
+        try { localStorage.setItem('seth-gate-code-v1', code); } catch (e) {}
+        return { ok: true, level: Number(res.data.level) };
+      }
       return { ok: false, error: (res.data && res.data.error) || 'invalid' };
     }).catch(function () { return { ok: false, error: 'network' }; });
   }

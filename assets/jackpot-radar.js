@@ -139,7 +139,10 @@
             return;
           }
           unlocked.level = Number(d.level);
-          try { localStorage.setItem(UNLOCK_KEY, JSON.stringify(unlocked)); } catch (e) {}
+          try {
+            localStorage.setItem(UNLOCK_KEY, JSON.stringify(unlocked));
+            localStorage.setItem('seth-gate-code-v1', code);   // 完整攻略要靠這個碼跟後端要內容
+          } catch (e) {}
           if (Number(d.level) < NEED_LEVEL) {
             note.textContent = '這組碼是「' + (d.level === 1 ? '完成註冊' : '當月累計存款 2,000')
               + '」等級的。彩金判讀需要 3,000 的那一組。';

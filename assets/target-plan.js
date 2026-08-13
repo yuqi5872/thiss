@@ -115,7 +115,10 @@
             return;
           }
           unlocked.level = Number(d.level);
-          try { localStorage.setItem(UNLOCK_KEY, JSON.stringify(unlocked)); } catch (e) {}
+          try {
+            localStorage.setItem(UNLOCK_KEY, JSON.stringify(unlocked));
+            localStorage.setItem('seth-gate-code-v1', code);   // 完整攻略要靠這個碼跟後端要內容
+          } catch (e) {}
           if (typeof gtag === 'function') gtag('event', 'target_plan_unlock', { level: d.level });
           applyGate(); note.textContent = '';
         })
