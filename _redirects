@@ -1,3 +1,6 @@
 # Cloudflare Pages redirects
 # 2026-07-31 合併戰神賽特新手教學進主攻略頁，避免內容重疊
 /guides/storm-of-seth-beginner/ /storm-of-seth/ 301
+
+# 2026-08-13 本金試算併進分注打法：分注打法連「該押多少、打多久、何時收」都給了，是它的超集
+/tools/bankroll-check/ /tools/target-plan/ 301
