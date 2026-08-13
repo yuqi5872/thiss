@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>加入 LINE</title>
+<!--
+  加好友轉址頁　同一份檔案部署到各站的 /line/index.html
+
+  ── 為什麼要有這一頁 ──
+  加好友的網址在 line.me 網域，我們裝不了 GA4。從 IG bio 直接連過去的話，
+  一次點擊都記不到，儀表板永遠是 0。這一頁在自家網域，GA4 正常觸發，記完再轉走。
+
+  ── 為什麼一份檔案而不是每站一份 ──
+  四個站各有自己的 GA4 資源與官方帳號。做成四份的話，改一次邏輯要改四個地方，
+  遲早會有一份忘了改。這裡用 location.hostname 選設定，部署時原樣複製即可。
+
+  **一定要部署在該站自己的網域**。放錯網域的話點擊會記到別站的 GA4 資源，
+  會議總覽的站別就標錯了（例如電子站的加好友被算成體育站）。
+
+  ── 跟 LINE 原生「設定加入好友管道」的關係：兩個一起用，不是二選一 ──
+    LINE 原生   記「實際加了幾個好友」，只在 LINE 後台看得到
+    這一頁      記「點了幾次」，進 GA4 → 儀表板 → 會議報告
+  兩者相減＝點了但沒加成的流失率。channels 裡填該人設在 LINE 後台的專屬
+  「加入好友管道」網址，LINE 那邊也就分得出來源；沒建專屬管道就留空字串，
+  會退回該站共用的官方帳號網址——**GA4 這邊照樣分得出是誰帶的**（靠 ch），
+  只是 LINE 後台那份看不到細分。人手不夠時先這樣用，不必為每支開一個管道。
+
+  ── 網址參數 ──
+    ?ch=<persona code>   誰帶來的
+    &at=<bio|post>       放在哪
+    &pid=<貼文utm>       選填。貼文專用，例 miya-0811-1
+                         有帶的話 utm_content 就用它，該則貼文的 LINE 點擊
+                         會跟它其他成效並排在同一列，不用另外對照。
+  也吃標準的 utm_source / utm_medium / utm_content（見下方 ch/at/pid 推導）。
+-->
+<script>
+(function () {
+  // 站別設定。key 是網域（比對後綴，所以 www. 開頭也吃得到）。
+  // ga 必須是該網域自己的評估 ID——填成別站的話，點擊會進錯資源，
+  // 會議總覽讀不到（實測過：ys89 站群那個資源完全收不到 picks168.com 的流量）。
+  var STATIONS = {
+    'picks168.com': {
+      name: '體育賽事情報站｜Picks168',
+      ga: 'G-G961Y6MX5Q',          // GA4 資源 541257936
+      oa: '@554zzkjg',
+      channels: {
+        god:     'https://lin.ee/NGNtzBj',   // 財神
+        shizu:   'https://lin.ee/Ydc5kq8',   // 體育賽事排雷大叔
+        cc:      'https://lin.ee/zdjqjY6',   // AI體育賽事分析
+        miya:    'https://lin.ee/tOztxat',   // 米亞運動賽事
+        cyq:     'https://lin.ee/S6OFVIJ',   // 陳亦強
+        hahaqiu: 'https://lin.ee/UqoYjNiS'   // 哈哈看球
+      }
+    },
+    'tsaishen888.com': {
+      name: '電子遊戲觀測所',
+      ga: 'G-XCBKJTBVTL',          // GA4 資源 543041773
+      oa: '@806ugpjh',
+      // 每支都有自己的「加入好友管道」（管道欄＝code，來源＝bio），
+      // 所以 LINE 後台也分得出是誰帶的。轉址頁記點擊、LINE 記加成，
+      // 兩者相減＝點了但沒加成的流失率。
+      channels: {
+        yuchiazhi:  'https://lin.ee/puEeCFy',   // P-08 魚池阿智
+        fishdriver: 'https://lin.ee/6VKN9bp',   // P-09 捕魚老司機阿網
+        haogame:    'https://lin.ee/VHSZna5c',  // P-10 小豪遊戲筆記
+        zhansen:    'https://lin.ee/5GQtcEp',   // P-12 戰術阿森
+        egameobs:   'https://lin.ee/7DEgSYm'    // P-30 電子遊戲觀測所
+      }
+    },
+    // 百家站與彩票站的官方帳號還沒建，先留設定位置。
+    // ga 已確認：dgcasnio.com → GA4 資源 543332819；lott168.com → 543984577。
+    'dgcasnio.com': { name: '百家站', ga: '', oa: '', channels: {} },
+    'lott168.com':  { name: '彩票站', ga: '', oa: '', channels: {} }
+  };
+
+  var host = location.hostname.toLowerCase();
+  var key = Object.keys(STATIONS).filter(function (d) {
+    return host === d || host.endsWith('.' + d);
+  })[0];
+  // 認不出網域時（本機測試、部署到沒設定過的網域）不要猜，用第一個站的設定
+  // 但把 station 標成 unknown，事後在 GA4 看得出來這批是從哪來的。
+  var ST = STATIONS[key] || STATIONS['picks168.com'];
+  var CHANNELS   = ST.channels || {};
+  var OA_URL     = ST.oa ? 'https://line.me/R/ti/p/' + encodeURIComponent(ST.oa) : '';
+  var GA_ID      = ST.ga;
+
+  var q = new URLSearchParams(location.search);
+  var pick = function (k, max) {
+    return (q.get(k) || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, max);
+  };
+  // ch/at/pid 是這頁自己的短參數；沒帶的話就從標準 UTM 參數推。
+  // 這樣系統裡「追蹤工具 → UTM 產生器」不必為 LINE 加特例——它照常產
+  // utm_source/utm_medium/utm_content，落地頁選這一頁就會自動對上。
+  var med = pick('utm_medium', 32);
+  var ch  = pick('ch', 32) || pick('utm_source', 32) || 'unknown';
+  var at  = pick('at', 16) || (med.indexOf('bio') >= 0 ? 'bio'
+                             : med ? 'post' : 'unknown');
+  var pid = pick('pid', 48) || pick('utm_content', 48);
+
+  var target = CHANNELS[ch] || OA_URL;
+
+  // utm_content 的取法：有 pid 就用 pid，讓這次點擊跟該則貼文的其他成效對得起來；
+  // 沒有就用 <ch>_<at>，代表這是 bio 或通用位置的長期連結。
+  var content = pid || (ch + '_' + at);
+
+  var url = new URL(location.href);
+  url.searchParams.set('utm_source',   ch);
+  url.searchParams.set('utm_medium',   'line_addfriend');
+  url.searchParams.set('utm_campaign', 'oa_join');
+  url.searchParams.set('utm_content',  content);
+
+  if (GA_ID) {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', GA_ID, { page_location: url.toString(), transport_type: 'beacon' });
+    gtag('event', 'line_add_friend_click', {
+      channel: ch, placement: at, post_id: pid || '(none)',
+      station: key || 'unknown',
+      // 沒有專屬管道的走共用 OA；這個旗標讓事後看得出哪些是共用的
+      has_line_route: CHANNELS[ch] ? 'yes' : 'no',
+      transport_type: 'beacon'
+    });
+  }
+
+  // 這一站還沒設好 OA 的話不要轉——轉去空白網址只會是一個壞掉的頁面。
+  // 留在這裡至少畫面上說得清楚，也不會把使用者丟到不存在的地方。
+  if (!target) {
+    document.addEventListener('DOMContentLoaded', function () {
+      var b = document.querySelector('.box');
+      if (b) b.innerHTML = '<p>這一站的官方帳號還沒設定完成。</p>';
+    });
+    return;
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var a = document.getElementById('fallback');
+    if (a) a.href = target;
+  });
+
+  // 等 300ms 再轉，讓 beacon 有時間送出去。不等的話慢速網路會漏掉一部分點擊。
+  // 用 location.replace 不留歷史紀錄，使用者在 LINE 按上一頁不會又被彈回來
+  // （meta refresh 在部分 in-app 瀏覽器就會這樣卡住）。
+  setTimeout(function () { location.replace(target); }, 300);
+})();
+</script>
+<style>
+  body{margin:0;height:100dvh;display:grid;place-items:center;
+       font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+       background:#0b1220;color:#e8eaf0}
+  .box{text-align:center;padding:24px}
+  .dot{width:34px;height:34px;margin:0 auto 14px;border-radius:50%;
+       border:3px solid #2a3550;border-top-color:#06c755;animation:s .8s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+  a{color:#06c755}
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="dot"></div>
+    <p>正在帶你前往 LINE…</p>
+    <p><a id="fallback" href="#">沒有自動跳轉？點這裡</a></p>
+  </div>
+</body>
+</html>
