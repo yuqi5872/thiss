@@ -44,7 +44,11 @@
      🔴 這個長度必須跟 seth-unlock-bot 的 worker.js 的 SEG_LENS 一字不差，
      否則貼碼自動分配到三格時會切錯位置，兌換一定失敗。 */
   var SEG_LENS = [3, 3, 2];
-  var NEED = { sim: 1, session: 2, summary: 2, ai: 3 };   // 各工具需要的等級
+  /* 各工具需要的等級。0 = 完全免費，不擋。
+     2026-08-13：機制模擬器改成免費（原本要註冊），
+     把「註冊」這道門讓給分注打法——那個才是使用者真正想要的東西，
+     拿它換註冊比拿模擬器換有力得多。 */
+  var NEED = { sim: 0, session: 2, summary: 2, ai: 3 };
   var LEVEL_NAME = { 1: '完成註冊', 2: '當月累計存款 2,000', 3: '當月累計存款 3,000' };
   var LINE_URL = 'https://line.me/R/ti/p/@128zirab';
   var REG_BASE = 'https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD' +

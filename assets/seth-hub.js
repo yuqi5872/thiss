@@ -284,53 +284,63 @@
       });
   }
 
-  function bindReport() {
-    var btn = $('btn-report');
-    if (!btn) return;
-    btn.onclick = function () {
-      // seth-ai-assistant.js 宣告了 STORAGE_KEY 但沒有真的寫進 localStorage，
-      // 房間資料只活在它的記憶體裡。所以直接讀畫面上的欄位，看到什麼就送什麼。
-      var ok = [].slice.call(document.querySelectorAll('#room-list .room-card')).map(function (card) {
-        var get = function (f) {
-          var el = card.querySelector('[data-field="' + f + '"]');
-          return el ? el.value : '';
-        };
-        return {
-          roomNo: (get('roomNo') || '').trim(),
-          spins: +get('spins') || 0,
-          totalBet: +get('totalBet') || 0,
-          totalReturn: +get('totalReturn') || 0,
-          maxDrySpins: +get('maxDrySpins') || 0,
-          naturalFeatureCount: +get('naturalFeatureCount') || 0,
-        };
-      }).filter(function (r) { return r.roomNo && r.totalBet > 0 && r.spins >= 30; });
+  /* 匿名統計回報
+     ────────────────────────────────────────────
+     🔴 2026-08-13 改成自動送，不再有按鈕與確認視窗。
+     送出的欄位只有房號、轉數、總投入、總回收、最大連續未中、免遊次數，
+     不含帳號、姓名、聯絡方式或任何可辨識個人的東西。
+     client_id 是隨機字串，只用來做「同一裝置不得佔超過七成樣本」的去重。
 
-      var msg = $('report-msg');
-      if (!ok.length) {
-        msg.textContent = '至少要有一台填了房號、總投入，而且轉數 30 以上才能回報。';
-        return;
-      }
-      if (!confirm('要把 ' + ok.length + ' 台的數字匿名上傳嗎？\n只送房號、轉數、投入、回收，沒有任何個人資料。')) return;
-      btn.disabled = true; msg.textContent = '上傳中…';
-      var cid = cidOf(), done = 0;
-      Promise.all(ok.map(function (r) {
-        return fetch(RANK_API + '/api/report', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json', 'x-report-key': RANK_KEY },
-          body: JSON.stringify({
-            game: 'seth1', room: String(r.roomNo).slice(0, 40), client_id: cid,
-            spins: Math.round(+r.spins), total_in: +r.totalBet, total_out: +(r.totalReturn || 0),
-            max_dry: Math.round(+(r.maxDrySpins || 0)),
-            free_hits: Math.round(+(r.naturalFeatureCount || 0)),
-          }),
-        }).then(function (x) { return x.json(); }).then(function (j) { if (j.ok) done++; }).catch(function () {});
-      })).then(function () {
-        btn.disabled = false;
-        msg.textContent = '已回報 ' + done + ' 台。你的資料要跟其他人的合在一起、且來自不同網路來源，才會出現在排行上。';
-        loadRank();
-      });
-    };
+     🔴 頁面上原本的「預設不上傳」承諾已經一併移除——留著那句話卻照送，
+     就是明著騙人。要收資料可以，但不能同時掛著相反的承諾。
+     關於頁需要有一行說明本站收集匿名遊玩統計。 */
+  var reportSent = {};      // 同一組數字不重複送
+  function autoReport() {
+    var ok = [].slice.call(document.querySelectorAll('#room-list .room-card')).map(function (card) {
+      var get = function (f) {
+        var el = card.querySelector('[data-field="' + f + '"]');
+        return el ? el.value : '';
+      };
+      return {
+        roomNo: (get('roomNo') || '').trim(),
+        spins: +get('spins') || 0,
+        totalBet: +get('totalBet') || 0,
+        totalReturn: +get('totalReturn') || 0,
+        maxDrySpins: +get('maxDrySpins') || 0,
+        naturalFeatureCount: +get('naturalFeatureCount') || 0,
+      };
+    }).filter(function (r) { return r.roomNo && r.totalBet > 0 && r.spins >= 30; });
+    if (!ok.length) return;
+
+    var cid = cidOf();
+    ok.forEach(function (r) {
+      var key = [r.roomNo, r.spins, r.totalBet, r.totalReturn].join('|');
+      if (reportSent[key]) return;      // 這組數字送過了
+      reportSent[key] = true;
+      fetch(RANK_API + '/api/report', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-report-key': RANK_KEY },
+        body: JSON.stringify({
+          game: 'seth1', room: String(r.roomNo).slice(0, 40), client_id: cid,
+          spins: Math.round(+r.spins), total_in: +r.totalBet, total_out: +(r.totalReturn || 0),
+          max_dry: Math.round(+(r.maxDrySpins || 0)),
+          free_hits: Math.round(+(r.naturalFeatureCount || 0)),
+        }),
+      }).catch(function () {});        // 失敗不打擾使用者，工具本身不受影響
+    });
   }
+
+  /* 什麼時候送：使用者按「比較」或「算」之後，資料才算填完整。
+     不在每次 input 就送——那會把半填的髒資料灌進排行。 */
+  function bindReport() {
+    ['calc-all'].forEach(function (id) {
+      var b = $(id);
+      if (b) b.addEventListener('click', function () { setTimeout(autoReport, 300); });
+    });
+    // 離開頁面前補送一次，接住只填了沒按鈕就走的人
+    window.addEventListener('pagehide', autoReport);
+  }
+
 
   /* ---------- ③ AI 選房：解鎖閘門 ---------- */
   // 🔴 2026-08-11 移走：三個工具的閘門全部改由 /assets/seth-gate.js 管。

@@ -18,6 +18,98 @@
   var MULTS = [1.5, 2, 3, 5];
   var SAVE = 'seth-target-plan-v1';
 
+
+  /* ── 註冊閘門 ──────────────────────────────────────
+     🔴 跟 seth-gate.js / handbook-gate.js 共用同一組 localStorage key
+        與同一支 REDEEM_API。已經拿過任何等級的碼就直接開，不用再要一次。
+     2026-08-13：分注打法從「免費」改成「註冊解鎖」，機制模擬器則改成免費。
+     理由是這個才是使用者真正想要的東西，拿它換註冊比拿模擬器換有力。 */
+  var UNLOCK_KEY = 'seth-gate-unlock-v1';
+  var LEGACY_AI_KEY = 'seth-room-unlocked';
+  var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
+  var NEED_LEVEL = 1;                                  // 完成註冊
+  var LINE_URL = 'https://line.me/R/ti/p/@128zirab';   // 發碼的 bot 在這個帳號
+  var REG_URL = 'https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD'
+              + '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate'
+              + '&utm_campaign=ys368&utm_content=target-plan';
+
+  function readUnlock() {
+    var u = {};
+    try { u = JSON.parse(localStorage.getItem(UNLOCK_KEY)) || {}; } catch (e) {}
+    try { if (localStorage.getItem(LEGACY_AI_KEY) === '1') u.level = 3; } catch (e) {}
+    if (u.dep) u.level = 3; else if (u.reg && !u.level) u.level = 2;
+    return u;
+  }
+  var unlocked = readUnlock();
+  function lvl() { return Number(unlocked.level || 0); }
+  function open_() { return lvl() >= NEED_LEVEL; }
+
+  function buildGate() {
+    var host = document.querySelector('.tp');
+    if (!host || document.getElementById('tp-gate')) return;
+    var g = document.createElement('div');
+    g.className = 'tp-gate';
+    g.id = 'tp-gate';
+    g.innerHTML =
+      '<h3>打法卡需要完成註冊才看得到</h3>'
+    + '<p>在合作平台完成註冊之後，加 LINE 傳一張截圖，系統核對後會自動給你解鎖碼。'
+    + '已經拿過解鎖碼的人，貼上就直接開。</p>'
+    + '<div class="btns">'
+    +   '<a class="reg" href="' + REG_URL + '" target="_blank" rel="nofollow sponsored noopener">前往平台註冊 →</a>'
+    +   '<a class="line" href="' + LINE_URL + '" target="_blank" rel="noopener">加 LINE 拿解鎖碼</a>'
+    + '</div>'
+    + '<div class="row"><input id="tp-code" type="text" autocomplete="off" placeholder="貼上解鎖碼">'
+    +   '<button type="button" id="tp-unlock">解鎖</button></div>'
+    + '<p class="note" id="tp-gate-note"></p>';
+    var card = host.querySelector('.tp-card');
+    if (card) host.insertBefore(g, card); else host.appendChild(g);
+
+    g.querySelector('.reg').addEventListener('click', function () {
+      if (typeof gtag === 'function') gtag('event', 'reg_intent', { source: 'target_plan_gate' });
+    });
+    g.querySelector('.line').addEventListener('click', function () {
+      if (typeof gtag === 'function') gtag('event', 'line_intent', { source: 'target_plan_gate' });
+    });
+
+    var inp = document.getElementById('tp-code');
+    var btn = document.getElementById('tp-unlock');
+    var note = document.getElementById('tp-gate-note');
+    function submit() {
+      var code = (inp.value || '').trim().toLowerCase();
+      if (!code) { note.textContent = '請先貼上解鎖碼。'; return; }
+      btn.disabled = true; note.textContent = '核對中…';
+      fetch(REDEEM_API, { method: 'POST', headers: { 'content-type': 'application/json' },
+                          body: JSON.stringify({ code: code }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          btn.disabled = false;
+          if (!d || !d.ok) {
+            note.textContent = d && d.error === 'limit'
+              ? '這組碼已經用滿裝置數上限。加 LINE 說一聲，我們人工看。'
+              : '解鎖碼不對。加 LINE 傳截圖就會自動給你。';
+            return;
+          }
+          unlocked.level = Number(d.level);
+          try { localStorage.setItem(UNLOCK_KEY, JSON.stringify(unlocked)); } catch (e) {}
+          if (typeof gtag === 'function') gtag('event', 'target_plan_unlock', { level: d.level });
+          applyGate(); note.textContent = '';
+        })
+        .catch(function () { btn.disabled = false; note.textContent = '連線失敗，稍後再試一次。'; });
+    }
+    btn.addEventListener('click', submit);
+    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+  }
+
+  function applyGate() {
+    var host = document.querySelector('.tp');
+    if (!host) return;
+    var ok = open_();
+    host.classList.toggle('tp-locked', !ok);
+    if (!ok) buildGate();
+    var g = document.getElementById('tp-gate');
+    if (g) g.style.display = ok ? 'none' : '';
+  }
+
   var $ = function (id) { return document.getElementById(id); };
   if (!G || !$('tp-bank') || !$('tp-goal')) return;   // 宿主頁沒放這個工具就跳過
   var money = function (n) { return Math.round(n).toLocaleString('en-US'); };
@@ -159,5 +251,5 @@
     var s = JSON.parse(localStorage.getItem(SAVE));
     if (s && s.bank > 0 && s.goal > s.bank) { $('tp-bank').value = s.bank; $('tp-goal').value = s.goal; }
   } catch (e) {}
-  syncMult(); render();
+  syncMult(); render(); applyGate();
 })();
