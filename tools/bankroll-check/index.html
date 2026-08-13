@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XCBKJTBVTL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XCBKJTBVTL');
+</script>
+<title>你撐得到免費遊戲嗎？戰神賽特本金試算｜電子遊戲觀測所</title>
+<meta name="description" content="輸入本金和單注，立刻算出你撐到第一次免費遊戲的機率、大概第幾轉會遇到，以及要有八成把握單注最多能押多少。用本站模擬引擎跑出來的實際數字。">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tsaishen888.com/tools/bankroll-check/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="你撐得到免費遊戲嗎？戰神賽特本金試算">
+<meta property="og:description" content="帶 1,000 元押 10 元，只有六成機會撐到第一次免遊。輸入你的數字看看。">
+<meta property="og:url" content="https://tsaishen888.com/tools/bankroll-check/">
+<meta property="og:image" content="https://tsaishen888.com/assets/img/storm-of-seth-og.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=20260625-1">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"戰神賽特本金試算","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"TWD"},"publisher":{"@type":"Organization","name":"電子遊戲觀測所"},"description":"輸入本金與單注，計算撐到第一次免費遊戲的機率與建議押注上限。不預測結果。"}
+</script>
+<style>
+  .bc{max-width:640px;margin:0 auto}
+  .bc-in{background:#0f1729;border-radius:18px;padding:20px 18px;color:#e8eaf0}
+  .bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .bc-f label{display:block;font-size:12.5px;color:#8fa0bd;font-weight:700;margin-bottom:6px}
+  .bc-f .wrap2{display:flex;align-items:center;background:rgba(255,255,255,.07);
+               border:1px solid rgba(255,255,255,.13);border-radius:11px;padding:0 12px}
+  .bc-f input{flex:1;min-width:0;background:none;border:0;color:#fff;font-size:23px;font-weight:900;
+              padding:13px 0;font-variant-numeric:tabular-nums;outline:none;-moz-appearance:textfield}
+  .bc-f input::-webkit-outer-spin-button,.bc-f input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .bc-f .u{color:#7b8aa8;font-size:14px;font-weight:700;padding-left:6px}
+  .bc-quick{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+  .bc-quick button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#c6d0e2;
+                   border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer}
+  .bc-quick button:hover{background:rgba(255,255,255,.15)}
+
+  .bc-out{margin-top:14px;border-radius:18px;padding:24px 20px;text-align:center;border:2px solid}
+  .bc-out.good{background:#f0fdf4;border-color:#16a34a}
+  .bc-out.mid{background:#fffbeb;border-color:#f59e0b}
+  .bc-out.bad{background:#fef2f2;border-color:#dc2626}
+  .bc-big{font-size:clamp(46px,13vw,64px);font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+  .bc-out.good .bc-big{color:#15803d} .bc-out.mid .bc-big{color:#b45309} .bc-out.bad .bc-big{color:#b91c1c}
+  .bc-cap{font-size:14.5px;font-weight:700;margin-top:8px;color:var(--ink,#1f2733)}
+  .bc-line{font-size:15px;line-height:1.8;margin-top:14px;padding-top:14px;
+           border-top:1px dashed rgba(0,0,0,.14);color:var(--ink,#1f2733)}
+  .bc-line b{font-size:17px}
+
+  .bc-two{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:12px}
+  .bc-cell{border:1px solid var(--line,#e2e8f0);border-radius:13px;padding:14px;text-align:center;background:#fff}
+  .bc-cell .k{font-size:12.5px;color:var(--ink-mute,#5b6472);font-weight:700}
+  .bc-cell .v{font-size:25px;font-weight:900;margin-top:5px;font-variant-numeric:tabular-nums;color:#0f1729}
+  .bc-cell .n{font-size:12px;color:#8b95a3;margin-top:3px}
+
+  .bc-adv{border-left:4px solid #d4af37;background:#fffdf5;padding:13px 15px;border-radius:0 10px 10px 0;
+          margin-top:13px;font-size:15px;line-height:1.85}
+  .bc-cta{margin-top:16px;text-align:center}
+  .bc-cta a{display:inline-block;padding:13px 26px;border-radius:999px;background:#06c755;color:#fff;
+            font-weight:800;font-size:15px;text-decoration:none}
+  @media(max-width:520px){ .bc-grid,.bc-two{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="/" class="brand"><img src="/assets/img/logo-header.webp" alt="電子遊戲觀測所 — 獨立老虎機數據評測" class="brand-logo"></a>
+    <button class="nav-toggle" aria-label="選單" onclick="document.getElementById('nav').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="nav">
+      <a href="/">首頁</a>
+      <a href="/storm-of-seth/">戰神賽特評測</a>
+      <a href="/rtp-ranking/">RTP 排行榜</a>
+      <a href="/guides/">老虎機攻略</a>
+      <a href="/about/">關於我們</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="crumb"><a href="/">首頁</a> ／ <span>本金試算</span></nav>
+</div>
+
+<div class="wrap">
+  <div class="layout">
+    <main>
+      <div class="bc">
+        <h1 style="font-size:clamp(24px,5vw,32px);font-weight:900;line-height:1.3;margin:14px 0 6px">你撐得到免費遊戲嗎？</h1>
+        <p style="font-size:15px;color:var(--ink-mute,#5b6472);line-height:1.8;margin-bottom:16px">
+          免費遊戲平均 <b>192 轉</b>才來一次。輸入你的本金和單注，看你撐不撐得到。</p>
+
+        <div class="bc-in">
+          <div class="bc-grid">
+            <div class="bc-f">
+              <label for="bc-bank">本金</label>
+              <div class="wrap2"><input id="bc-bank" type="number" inputmode="decimal" value="1000" min="1" step="100"><span class="u">元</span></div>
+            </div>
+            <div class="bc-f">
+              <label for="bc-bet">單注</label>
+              <div class="wrap2"><input id="bc-bet" type="number" inputmode="decimal" value="10" min="0.1" step="1"><span class="u">元／轉</span></div>
+            </div>
+          </div>
+          <div class="bc-quick">
+            <button type="button" data-set="368,2">368 體驗金・押 2</button>
+            <button type="button" data-set="1000,10">1000・押 10</button>
+            <button type="button" data-set="3000,20">3000・押 20</button>
+            <button type="button" data-set="5000,50">5000・押 50</button>
+          </div>
+        </div>
+
+        <div class="bc-out" id="bc-out">
+          <div class="bc-big" id="bc-pct">—</div>
+          <div class="bc-cap" id="bc-cap">撐到第一次免費遊戲的機率</div>
+          <div class="bc-line" id="bc-line"></div>
+        </div>
+
+        <div class="bc-two">
+          <div class="bc-cell"><div class="k">大概第幾轉遇到</div><div class="v" id="bc-med">—</div><div class="n">有撐到的人的中位數</div></div>
+          <div class="bc-cell"><div class="k">你的本金能撐幾轉</div><div class="v" id="bc-life">—</div><div class="n">一半的人在這之前歸零</div></div>
+        </div>
+
+        <div class="bc-adv" id="bc-adv"></div>
+
+        <div class="bc-cta" id="bc-cta"></div>
+
+        <details style="margin-top:22px;border:1px solid var(--line,#e2e8f0);border-radius:12px;padding:14px 16px">
+          <summary style="font-weight:800;font-size:15px;cursor:pointer">這些數字怎麼算出來的</summary>
+          <div style="font-size:14.3px;line-height:1.85;margin-top:11px;color:var(--ink,#1f2733)">
+            <p style="margin:0 0 9px">用本站<a href="/tools/seth-simulator/">機制模擬器</a>的同一份引擎跑蒙地卡羅：
+            每個本金倍數放 <b>2,000 個模擬玩家</b>，從滿本金開始平轉，直到觸發第一次免費遊戲或本金歸零。
+            押注固定、不買免遊、不加碼。</p>
+            <p style="margin:0 0 9px"><b>關鍵只有一個數字：本金 ÷ 單注。</b>帶 1,000 押 10，跟帶 100 押 1，結果完全一樣。
+            所以「本金夠不夠」這件事跟金額大小無關，只跟比例有關。</p>
+            <p style="margin:0 0 9px"><b>限制要講清楚：</b>這是模型不是 ATG 官方數字。官方從未公開符號權重，
+            模型是回推校準到接近官方標示的 96.89%（800 萬轉實測 97.28%）。真實遊戲可能有差距。</p>
+            <p style="margin:0"><b>這個工具不預測任何結果。</b>它算的是「機率」，不是「你這次會不會中」。
+            算出 80% 也可能第 5 轉就歸零——那 20% 是真的。</p>
+          </div>
+        </details>
+
+        <div class="callout warn" style="margin:20px 0">
+          <span class="ic">!</span>
+          <div><b>本金再大，長期期望值仍然是負的。</b>這個工具能做的是讓你知道自己在賭什麼，
+          不是讓你比較容易贏。撐得到免遊，不代表免遊會給你分。</div>
+        </div>
+
+        <aside class="aside-box">
+          <h4>算完之後</h4>
+          <a href="/guides/signal-verdict/" style="display:block;margin-bottom:6px">訊號打臉榜：那些「幾轉沒開就快開了」的說法，我們用資料驗過了</a>
+          <a href="/tools/jackpot-radar/" style="display:block;margin-bottom:6px">彩金水位雷達：四池累積與重置的公開紀錄</a>
+          <a href="/tools/storm-of-seth-session/">三合一工具台：模擬器＋戰局計算＋多台比較</a>
+        </aside>
+
+        <div style="margin-top:20px;padding:16px;border:1px solid var(--line,#dfe4ea);border-radius:12px;text-align:center">
+          <a href="https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=cta_band&utm_campaign=ys368&utm_content=bankroll-check" data-cta="play" target="_blank" rel="nofollow sponsored noopener" style="display:inline-block;padding:10px 17px;border-radius:9px;background:#d4af37;color:#1a1206;font-weight:800;text-decoration:none;font-size:14.5px;">前往可遊玩平台 →</a>
+          <span style="display:block;margin-top:11px;font-size:12.5px;line-height:1.65;opacity:.6;">本頁含合作連結。計算結果不受此影響。</span>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><a href="/" class="brand" style="margin-bottom:12px;"><img src="/assets/img/logo-header.webp" alt="電子遊戲觀測所" class="brand-logo"></a></div>
+      <div><h4>評測</h4><a href="/storm-of-seth/">戰神賽特評測</a><a href="/rtp-ranking/">RTP 排行榜</a><a href="/guides/">老虎機攻略</a></div>
+      <div><h4>關於</h4><a href="/about/">關於我們</a><a href="/about/#method">評測方法論</a></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 電子遊戲觀測所・獨立數據評測</span>
+      <span>本工具為非官方教學工具，與 ATG 電子無任何關聯，未使用其任何素材</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/survival-data.js?v=20260813-1"></script>
+<script>
+(function () {
+  'use strict';
+  var T = window.SURVIVAL_TABLE, R = window.RUIN_TABLE;
+
+  /* 線性內插。超出表格範圍就夾到兩端——不要外推，
+     外推出來的數字沒有任何模擬支撐，會變成憑空捏造。 */
+  function lerp(tbl, ratio, key) {
+    if (ratio <= tbl[0].ratio) return tbl[0][key];
+    var last = tbl[tbl.length - 1];
+    if (ratio >= last.ratio) return last[key];
+    for (var i = 0; i < tbl.length - 1; i++) {
+      var a = tbl[i], b = tbl[i + 1];
+      if (ratio >= a.ratio && ratio <= b.ratio) {
+        var f = (ratio - a.ratio) / (b.ratio - a.ratio);
+        return a[key] + (b[key] - a[key]) * f;
+      }
+    }
+    return last[key];
+  }
+  /* 反推：要達到目標機率，需要多少本金倍數 */
+  function ratioFor(p) {
+    if (p <= T[0].p) return T[0].ratio;
+    for (var i = 0; i < T.length - 1; i++) {
+      if (p >= T[i].p && p <= T[i + 1].p) {
+        var f = (p - T[i].p) / (T[i + 1].p - T[i].p || 1);
+        return T[i].ratio + (T[i + 1].ratio - T[i].ratio) * f;
+      }
+    }
+    return T[T.length - 1].ratio;
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var money = function (n) { return Math.round(n).toLocaleString('en-US'); };
+  var last = '';
+
+  function calc() {
+    var bank = parseFloat($('bc-bank').value);
+    var bet = parseFloat($('bc-bet').value);
+    if (!(bank > 0) || !(bet > 0)) {
+      $('bc-pct').textContent = '—';
+      $('bc-line').textContent = '把本金和單注都填上去。';
+      $('bc-adv').textContent = ''; $('bc-cta').innerHTML = '';
+      $('bc-med').textContent = '—'; $('bc-life').textContent = '—';
+      return;
+    }
+    var ratio = bank / bet;
+    var p = lerp(T, ratio, 'p');
+    var med = Math.round(lerp(T, ratio, 'med'));
+    var life = Math.round(lerp(R, ratio, 'med'));
+    var pct = Math.round(p * 100);
+
+    /* 🔴 低於模擬下限時不能直接顯示夾住的值——那會「高估」存活，
+       是最危險的方向（讓人以為自己撐得比實際久）。改成明確標示上界。 */
+    var below = ratio < T[0].ratio;
+
+    var box = $('bc-out');
+    box.className = 'bc-out ' + (below ? 'bad' : p >= 0.8 ? 'good' : p >= 0.5 ? 'mid' : 'bad');
+    $('bc-pct').textContent = (below ? '<' : '') + pct + '%';
+    $('bc-med').textContent = (below ? '<' : '') + med + ' 轉';
+    $('bc-life').textContent = below ? '<' + money(R[0].med) + ' 轉'
+                                     : (ratio >= 1000 ? '6,500+' : money(life)) + ' 轉';
+
+    if (below) {
+      $('bc-line').innerHTML = '你的本金只有單注的 <b>' + Math.round(ratio) + ' 倍</b>，'
+        + '低於我們模擬過的最小配置（' + T[0].ratio + ' 倍）。'
+        + '<b>實際機率比 ' + pct + '% 還低</b>，具體多低我們沒有跑過，不編給你。';
+    } else {
+      var outOf10 = Math.round(p * 10);
+      $('bc-line').innerHTML = '你這樣打，<b>10 個人裡面大約 ' + outOf10 + ' 個</b>撐得到第一次免費遊戲，'
+        + '其他 ' + (10 - outOf10) + ' 個在那之前就歸零了。';
+    }
+
+    /* 反推建議：要八成把握，單注最多能押多少 */
+    var need80 = ratioFor(0.8);
+    var maxBet = bank / need80;
+    var adv;
+    if (p >= 0.8) {
+      adv = '<b>這個配置是站得住的。</b>你的本金是單注的 ' + Math.round(ratio)
+          + ' 倍，已經越過八成把握的門檻（' + Math.round(need80) + ' 倍）。'
+          + '想更保險就把單注再壓低，不用加本金。';
+    } else {
+      adv = '<b>要有八成把握撐到免遊，你的單注最多押 ' + (maxBet >= 1 ? money(maxBet) : maxBet.toFixed(1)) + ' 元。</b>'
+          + '或者維持押 ' + bet + ' 元，本金要拉到 <b>' + money(need80 * bet) + ' 元</b>。'
+          + '（八成把握需要本金是單注的 ' + Math.round(need80) + ' 倍）';
+    }
+    $('bc-adv').innerHTML = adv;
+
+    if (p < 0.5 || below) {
+      $('bc-cta').innerHTML = '<a href="/line/?ch=bankroll&at=tool" data-cta="line-bc">'
+        + '加 LINE 拿完整本金對照表</a>'
+        + '<p style="margin:10px 0 0;font-size:12.5px;color:#7c8899">不報明牌、不賣訊號。</p>';
+      var a = $('bc-cta').querySelector('a');
+      a.addEventListener('click', function () {
+        if (typeof gtag === 'function') gtag('event', 'line_intent', { source: 'bankroll_check', pct: pct });
+      });
+    } else { $('bc-cta').innerHTML = ''; }
+
+    var key = ratio.toFixed(1);
+    if (key !== last) {
+      last = key;
+      if (typeof gtag === 'function') gtag('event', 'bankroll_calc', { ratio: Math.round(ratio), pct: pct });
+    }
+  }
+
+  ['bc-bank', 'bc-bet'].forEach(function (id) {
+    $(id).addEventListener('input', calc);
+  });
+  document.querySelectorAll('.bc-quick button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var v = b.getAttribute('data-set').split(',');
+      $('bc-bank').value = v[0]; $('bc-bet').value = v[1]; calc();
+    });
+  });
+  calc();
+})();
+</script>
+<script src="/assets/main.js?v=4"></script>
+</body>
+</html>
