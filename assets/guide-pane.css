@@ -65,3 +65,8 @@
   .gd-item{padding-left:36px}
   .gd-item:before{width:24px;font-size:1.35rem}
 }
+
+/* 未解鎖時的標題預覽：只有標題，沒有正文（正文根本沒下載） */
+.gd-teaser h3{opacity:.55}
+.gd-teaser:after{content:"解鎖後顯示";display:block;margin-top:6px;
+                 color:#6d6862;font-size:.6rem;letter-spacing:.08em}

@@ -77,7 +77,7 @@
     g.innerHTML =
       '<h3>打法卡需要當月累計存款 2,000 才看得到</h3>'
     + '<p>在合作平台完成註冊、且當月累計存款滿 2,000 之後，加 LINE 傳一張截圖，'
-    + '系統核對後會自動給你解鎖碼。<b>同一組碼一併解開賽特觀測手冊。</b>'
+    + '系統核對後會自動給你解鎖碼。'
     + '已經拿過解鎖碼的人，貼上就直接開。</p>'
     + '<div class="btns">'
     +   '<a class="reg" href="' + REG_URL + '" target="_blank" rel="nofollow sponsored noopener">前往平台註冊 →</a>'
@@ -186,7 +186,7 @@
         if (card) host.insertBefore(b, card);
       }
       b.innerHTML = '<b>這是免費試用的一次。</b>離開這一頁之後就會鎖起來——'
-        + '要一直用得到，需要在合作平台<b>當月累計存款滿 2,000</b>（同一組碼一併解開賽特觀測手冊）。';
+        + '要一直用得到，需要在合作平台<b>當月累計存款滿 2,000</b>。';
       b.style.display = '';
     } else if (b) { b.style.display = 'none'; }
 

@@ -33,8 +33,7 @@
 "datePublished":"2026-08-13","dateModified":"2026-08-13",
 "author":{"@type":"Organization","name":"電子遊戲觀測所"},
 "publisher":{"@type":"Organization","name":"電子遊戲觀測所","url":"https://tsaishen888.com/"},
-"isAccessibleForFree":false,
-"hasPart":{"@type":"WebPageElement","isAccessibleForFree":false,"cssSelector":"[data-hb-locked]"},
+"isAccessibleForFree":true,
 "mainEntityOfPage":"https://tsaishen888.com/tools/seth-handbook/"}
 </script>
 <script type="application/ld+json">
@@ -53,17 +52,8 @@
             background:#fef3c7;color:#92400e;margin-bottom:10px}
   .hb-toc{border:1px solid var(--line,#e2e8f0);border-radius:13px;padding:14px 17px;margin:18px 0;background:#f8fafc}
   .hb-toc ol{margin:0;padding-left:1.3em;font-size:14.8px;line-height:2}
-  .hb-gate{border:2px solid #06c755;border-radius:16px;padding:24px 18px;margin:22px 0;background:#f4fff8;text-align:center}
-  .hb-gate h3{margin:0 0 9px;font-size:19px;font-weight:900}
-  .hb-gate p{margin:0 auto 14px;max-width:32em;font-size:14.5px;line-height:1.85;color:var(--ink-mute,#5b6472)}
-  .hb-btn{display:inline-block;padding:13px 28px;border-radius:999px;background:#06c755;color:#fff;
           font-weight:800;font-size:15px;text-decoration:none}
-  .hb-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
-  .hb-row input{height:44px;padding:0 14px;border:1px solid var(--line,#cbd5e1);border-radius:9px;font-size:15px;min-width:190px}
-  .hb-row button{height:44px;padding:0 22px;border-radius:9px;border:1px solid #0f1729;background:#0f1729;
                  color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
-  .hb-row button:disabled{opacity:.55;cursor:default}
-  #hb-note{margin:11px 0 0;font-size:13.5px;color:#b45309;min-height:1.2em}
   .hb-ch{margin:30px 0 0;padding-top:22px;border-top:2px solid var(--line,#e8ecf1)}
   .hb-ch h2{margin:0 0 4px;font-size:21px;font-weight:900}
   .hb-ch .sub{margin:0 0 14px;font-size:14px;color:var(--ink-mute,#5b6472)}
@@ -112,7 +102,7 @@
 <div class="wrap">
   <div class="layout">
     <main id="hb-top">
-      <span class="hb-badge" id="hb-badge">會員內容</span>
+      <span class="hb-badge">免費公開</span>
       <h1 style="font-size:clamp(23px,4vw,32px);font-weight:900;line-height:1.35;margin-bottom:8px">賽特觀測手冊</h1>
 
       <div class="hb-hero">
@@ -136,24 +126,10 @@
       </div>
 
       <!-- ══════════ 閘門 ══════════ -->
-      <div class="hb-gate" id="hb-gate">
-        <h3>手冊內容需要解鎖</h3>
-        <p>門檻是<b>當月累計存款 2,000</b>。加 LINE 傳入金截圖，機器人會自動核對後給你一組解鎖碼。
-        <br>已經拿過解鎖碼的人，貼上就直接開，不用重拿。</p>
-        <a class="hb-btn" id="hb-line" href="#" target="_blank" rel="noopener">加 LINE 領取解鎖碼</a>
-        <div class="hb-row">
-          <input id="hb-code" type="text" autocomplete="off" placeholder="貼上解鎖碼">
-          <button type="button" id="hb-submit">解鎖</button>
-        </div>
-        <p id="hb-note"></p>
-        <p style="margin:16px 0 0;font-size:12.5px;color:#7c8899">
-          鎖的只有這一本手冊。<a href="/guides/signal-verdict/">訊號打臉榜</a>、
-          <a href="/tools/storm-of-seth-session/#radar">彩金水位雷達</a>、所有評測與攻略都是免費公開的。
-        </p>
-      </div>
+
 
       <!-- ══════════ 第一章 ══════════ -->
-      <div class="hb-ch" data-hb-locked>
+      <div class="hb-ch">
         <h2>第一章　你的本金實際上能撐多久</h2>
         <p class="sub">用站上那支機制模擬器的同一份引擎跑出來的。每一格都是 1,200 個模擬玩家的實際結果。</p>
 
@@ -200,7 +176,7 @@
       </div>
 
       <!-- ══════════ 第二章 ══════════ -->
-      <div class="hb-ch" data-hb-locked>
+      <div class="hb-ch">
         <h2>第二章　為什麼 50 萬轉都定不出 RTP</h2>
         <p class="sub">這一章是整本手冊裡最該記住的一件事。</p>
 
@@ -239,7 +215,7 @@
       </div>
 
       <!-- ══════════ 第三章 ══════════ -->
-      <div class="hb-ch" data-hb-locked>
+      <div class="hb-ch">
         <h2>第三章　彩金追蹤 SOP</h2>
         <p class="sub">一天一張截圖，兩週就能拿到全網沒有人知道的答案。</p>
 
@@ -267,7 +243,7 @@
       </div>
 
       <!-- ══════════ 第四章 ══════════ -->
-      <div class="hb-ch" data-hb-locked>
+      <div class="hb-ch">
         <h2>第四章　訊號驗證流程</h2>
         <p class="sub">這一章的目的不是給你訊號，是讓你有能力驗別人給你的訊號。</p>
 
@@ -298,7 +274,7 @@
       </div>
 
       <!-- ══════════ 第五章 ══════════ -->
-      <div class="hb-ch" data-hb-locked>
+      <div class="hb-ch">
         <h2>第五章　買免遊 vs 平轉</h2>
         <p class="sub">這題有明確答案，而且答案跟大部分人想的不一樣。</p>
 
@@ -331,7 +307,7 @@
       </div>
 
       <!-- ══════════ 結尾 ══════════ -->
-      <div class="hb-ch" data-hb-locked>
+      <div class="hb-ch">
         <h2>最後</h2>
         <p>這本手冊會持續更新。彩金紀錄每天累積，訊號驗證做完一條就補一條，
         <b>包括推翻我們自己原本說法的那些</b>。</p>
@@ -372,7 +348,6 @@
   </div>
 </footer>
 
-<script src="/assets/handbook-gate.js?v=20260813-1"></script>
 <script src="/assets/main.js?v=4"></script>
 </body>
 </html>

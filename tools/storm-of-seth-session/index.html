@@ -37,7 +37,7 @@
 <link rel="stylesheet" href="/assets/target-plan.css?v=20260813-merge">
 <link rel="stylesheet" href="/assets/jackpot-radar.css?v=20260813-trial">
 <link rel="stylesheet" href="/assets/bonus-calc.css?v=20260813-1">
-<link rel="stylesheet" href="/assets/guide-pane.css?v=20260813-1">
+<link rel="stylesheet" href="/assets/guide-pane.css?v=20260813-api">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -446,7 +446,7 @@
     <a href="https://line.me/R/ti/p/@128zirab" target="_blank" rel="noopener"
        style="display:inline-block;padding:13px 28px;border-radius:999px;background:#06c755;color:#fff;
               font-weight:800;font-size:15px;text-decoration:none">加 LINE 領取解鎖碼</a>
-    <p style="margin:14px 0 10px;font-size:13px;color:#7c8899">加好之後傳「領取工具」或「AI助手」<br>「當月累計存款 2,000」那一組同時解鎖<a href="/tools/seth-handbook/">賽特觀測手冊</a>與分注打法</p>
+    <p style="margin:14px 0 10px;font-size:13px;color:#7c8899">加好之後傳「領取工具」或「AI助手」<br>「當月累計存款 2,000」那一組解鎖分注打法</p>
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
       <input id="claim-code" type="text" autocomplete="off" placeholder="輸入解鎖碼"
              style="height:42px;padding:0 14px;border:1px solid var(--line);border-radius:8px;font-size:15px;min-width:180px">
@@ -565,79 +565,21 @@
       </div>
 
       <ol class="gd-list" id="gd-list">
-
-        <li class="gd-item">
-          <h3>押多少</h3>
-          <p class="do"><b>把本金切成 100～500 份，一份一注。</b>本金 1,000 就押 10（遊戲最低），
-            本金 5,000 也押 10，本金 10,000 押 10～20。</p>
-          <p class="why">同樣 1,000 元想翻倍：押 10 元達標率 <b>22.6%</b>，押 50 元只有 <b>14.5%</b>。
-            押越小達標率越高，因為撐得久＝摸到大分的機會多。
-            <span class="src">2,500 個模擬玩家 × 每個目標倍數</span></p>
-        </li>
-
-        <li class="gd-item">
-          <h3>本金要多少</h3>
-          <p class="do"><b>最低押注是 10 元，所以本金直接決定你能切多細。</b>
-            要用到最好的分注，本金至少 5,000。</p>
-          <p class="why">1,000 元只能切 100 份（翻倍達標率 22.6%）；5,000 元能切 500 份（<b>30.1%</b>）；
-            10,000 元能切 1,000 份（<b>32.8%</b>）。<b>差距不是運氣，是你切得夠不夠細。</b></p>
-        </li>
-
-        <li class="gd-item">
-          <h3>選哪一台</h3>
-          <p class="do"><b>點進機台，只看「近 30 天」那一行，選高的。完全不要用「今日」那一格做決定。</b></p>
-          <p class="why">大廳格子上那個大大的百分比是「今日」的，而今日下注量只佔近 30 天的 <b>0.35%</b>。
-            我們統計 18 台：今日得分率全距 50.97 個百分點，近 30 天只有 15.28——
-            <b>那個數字跳得兇是樣本小，不是機台在噴分。</b>
-            <span class="src">18 台的今日／30 天下注量與得分率對照</span></p>
-        </li>
-
-        <li class="gd-item">
-          <h3>什麼時候停</h3>
-          <p class="do"><b>開打前先寫死兩個數字：打到目標就收，剩本金的 20% 就停。</b>
-            不要用「打了幾轉」決定去留。</p>
-          <p class="why">免遊觸發間隔我們實測到 0、3、8、14、23、55、111、172、255、344、499、555 轉——
-            從 3 到 555 都有。<b>「幾轉沒開就代表快開了」用這組數字就能直接否定</b>，
-            而且這些數字就印在遊戲的「選擇機台」面板上。
-            <span class="src">遊戲內建的免遊觸發紀錄，23 個實測間隔</span></p>
-        </li>
-
-        <li class="gd-item">
-          <h3>要不要買免遊</h3>
-          <p class="do"><b>本金買不到 3 次就不要買。</b>買一次要 88 倍單注——押 10 元就是 880 元。
-            <br><b>而且如果你是為了衝返水門檻，平轉比買免遊好。</b></p>
-          <p class="why">買免遊跟平轉的長期期望值是設計成一樣的，它賣的是時間不是優勢。
-            差別在波動：同樣的錢產生同樣的流水，但平轉波動小得多，
-            <b>比較不會在到達返水門檻前就歸零。</b></p>
-        </li>
-
-        <li class="gd-item">
-          <h3>每天記得領回饋</h3>
-          <p class="do"><b>當日投注跨過 6,000 就有 20 元，這是所有檔位裡回饋率最高的一檔（0.333%）。</b>
-            差一點點才到門檻就打過去，差很多就不要硬追。</p>
-          <p class="why">臨界距離：離 6,000 差 <b>643 元以內</b>、離 18,000 差 <b>386 元以內</b>、
-            離 66,000 差 <b>2,765 元以內</b>、離 120,000 差 <b>3,215 元以內</b>——在這個範圍內打過去才划算。
-            <b>卡在門檻下面最虧</b>：打到 65,999 只拿 32，再打 1 元跨過去就拿 118。
-            <span class="src">用「多打的期望損失」對比「跨檔多拿的金額」算出來</span></p>
-        </li>
-
-        <li class="gd-item">
-          <h3>什麼時候打拿得最多</h3>
-          <p class="do"><b>開打前先看彩金水位。高水位時中了拿得多，剛被人打掉時拿得少。</b></p>
-          <p class="why">四個彩金池以<b>完全相同的絕對金額</b>累積（不是等比例），每小時各約 187 元。
-            MINI 平均每 6.7 小時被打掉一次，GRAND 我們觀測 30 小時內一次都沒掉——
-            所以 MINI 常在低檔，GRAND 一直在累積。
-            <span class="src">30 小時連續錄影逐格判讀，四池變化量吻合到小數點後兩位</span></p>
-        </li>
-
+        <!-- 🔴 這裡刻意留空。七條攻略的正文由 seth-unlock-bot 的 /api/guide 發，
+             驗證解鎖碼通過才回傳。放進 HTML 的話任何人 curl 就整篇拿走，
+             Google 也會收錄，「儲值 3,000 才看得到」等於不存在。
+             2026-08-13 實測過：搬進後端之前，未登入 curl 就抓得到全文。
+             未解鎖時只顯示下面這七個標題當預覽。 -->
+        <li class="gd-item gd-teaser"><h3>押多少</h3></li>
+        <li class="gd-item gd-teaser"><h3>本金要多少</h3></li>
+        <li class="gd-item gd-teaser"><h3>選哪一台</h3></li>
+        <li class="gd-item gd-teaser"><h3>什麼時候停</h3></li>
+        <li class="gd-item gd-teaser"><h3>要不要買免遊</h3></li>
+        <li class="gd-item gd-teaser"><h3>每天記得領回饋</h3></li>
+        <li class="gd-item gd-teaser"><h3>什麼時候打拿得最多</h3></li>
       </ol>
 
-      <div class="gd-bonus" id="gd-bonus">
-        <h3>還有一件事：首充 100% 是這裡唯一正期望值的東西</h3>
-        <p>存 1,000 送 1,000，<b>流水只要 1 倍</b>。打完 2,000 流水的期望損失只有約 62 元，
-          但你白拿 1,000——<b>淨得約 938 元</b>。<br>
-          流水倍數只有 1 倍是關鍵：多數平台首充要 10～20 倍，那會把贈金吃光。</p>
-      </div>
+      <div class="gd-bonus" id="gd-bonus" hidden></div>
 
       <p class="gd-foot">
         算你的專屬數字：<b>⓪ 分注打法</b>（押多少）、<b>⓿ 彩金判讀</b>（現在該不該打）、
@@ -709,7 +651,7 @@
 <script src="/assets/seth-session.js?v=20260813-hitrate" defer></script>
 <script src="/assets/seth-sim.js?v=20260729" defer></script>
 <script src="/assets/seth-ai-assistant.js?v=20260803" defer></script>
-<script src="/assets/guide-pane.js?v=20260813-1" defer></script>
+<script src="/assets/guide-pane.js?v=20260813-api" defer></script>
 <script src="/assets/bonus-data.js?v=20260813-1"></script>
 <script src="/assets/bonus-calc.js?v=20260813-1"></script>
 <script src="/assets/jackpot-log.js?v=20260813-3"></script>
