@@ -140,3 +140,6 @@
 .tk-hist .row:last-child{border-bottom:0}
 .tk-hist .ok{color:#15803d;font-weight:800} .tk-hist .no{color:#8b95a3}
 @media(max-width:520px){ .tk-form{grid-template-columns:1fr 1fr} .tk-form button{grid-column:1/-1} }
+
+/* 本金切不出來的分注份數：淡掉但不隱藏，讓人看到「這一格要更多本金」 */
+.tp-cmp tr.no td{background:#fafafa!important;color:#94a3b8}

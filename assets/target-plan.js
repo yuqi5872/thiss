@@ -195,7 +195,7 @@
       + '</div>' + histHtml() + '</div>';
       var b = $('tk-begin');
       if (b) b.addEventListener('click', function () {
-        var plan = pickPlan(Math.min(5, Math.max(1.5, goal / bank)));
+        var plan = pickPlan(Math.min(5, Math.max(1.5, goal / bank)), bank);
         sess = { start: bank, goal: goal, bet: bank / plan.best.ratio, ratio: plan.best.ratio,
                  bal: bank, spins: 0, startP: plan.best.p, log: [] };
         saveJSON(SESS_KEY, sess);
@@ -271,7 +271,7 @@
       var nb = parseFloat($('tk-bal').value), nbet = parseFloat($('tk-bet').value);
       if (!(nb >= 0)) return;
       sess.bal = nb;
-      if (nbet > 0) sess.actualBet = nbet;
+      if (nbet > 0) sess.actualBet = Math.max(MIN_BET, nbet);   // 低於最低押注是按不下去的數字
       sess.log.push({ bal: nb, bet: sess.actualBet || sess.bet });
       saveJSON(SESS_KEY, sess);
       if (typeof gtag === 'function') gtag('event', 'plan_track_update', { pct: pct });
@@ -333,20 +333,33 @@
 
   var META = window.TARGET_META;
 
+  /* 🔴 遊戲的最低押注。2026-08-13 user 實測回報：戰神賽特最低就是 10 元。
+     這個限制會直接卡死「本金能切多少份」——本金 1,000 最多只能切 100 份，
+     要切到 500 份得有 5,000 元。之前沒有這個限制，工具會建議押 1 元，
+     那是遊戲根本按不下去的數字，整張打法卡等於廢的。
+     如果之後遊戲改了最低押注，只要改這一個數字。 */
+  var MIN_BET = 10;
+
   /* 🔴 最佳分注份數會隨目標倍數移動，不能寫死。
      實測：打 5 倍時切 1000 份（11.9%）反而輸給切 500 份（12.6%），
      因為分太細會在還沒摸到大分之前就把轉數耗光。所以要按目標挑。 */
-  function pickPlan(mult) {
-    var rows = RATIOS.map(function (r) {
+  function pickPlan(mult, bank) {
+    var maxRatio = bank > 0 ? bank / MIN_BET : Infinity;   // 本金最多切幾份
+    var rows = RATIOS.filter(function (r) { return r <= maxRatio; }).map(function (r) {
       var c = cell(mult, r); return { ratio: r, p: c.p, med: c.med };
     });
+    if (!rows.length) {          // 本金連最粗的分注都切不出來
+      var r0 = RATIOS.slice().sort(function (a, b) { return a - b; })[0];
+      var c0 = cell(mult, r0);
+      return { best: { ratio: r0, p: c0.p, med: c0.med }, quick: null, rows: [], tooSmall: true };
+    }
     var best = rows.slice().sort(function (a, b) { return b.p - a.p; })[0];
     // 「兼顧時間」：在一場打得完的轉數內，達標率最高的那個
     var fits = rows.filter(function (x) { return x.med <= META.practicalSpins; })
                    .sort(function (a, b) { return b.p - a.p; });
     var quick = fits.length ? fits[0] : null;
     if (quick && quick.ratio === best.ratio) quick = null;
-    return { best: best, quick: quick, rows: rows };
+    return { best: best, quick: quick, rows: rows, maxRatio: maxRatio };
   }
 
   function render() {
@@ -361,7 +374,7 @@
     var multClamped = Math.min(5, Math.max(1.5, mult));
 
     /* ── 打法卡：按目標挑最佳分注 ── */
-    var plan = pickPlan(multClamped);
+    var plan = pickPlan(multClamped, bank);
     var BEST = plan.best.ratio;
     var bet = bank / BEST;
     var c = { p: plan.best.p, med: plan.best.med };
@@ -388,7 +401,12 @@
     var sc = cell(multClamped, sr);
     $('tp-sl-bet').textContent = betText(sb);
     var w = $('tp-warn');
-    if (sr >= BEST) {
+    if (sb < MIN_BET) {
+      w.className = 'tp-warn';
+      w.innerHTML = '切成 ' + sr + ' 份是每注 <b>' + betText(sb) + ' 元</b>，'
+        + '低於遊戲最低押注 ' + MIN_BET + ' 元，<b>按不下去</b>。'
+        + '要用這個份數，本金需要 ' + money(sr * MIN_BET) + ' 元。';
+    } else if (sr >= BEST) {
       w.className = 'tp-warn ok';
       w.innerHTML = '押 <b>' + betText(sb) + ' 元</b>（本金切 ' + sr + ' 份）→ 達標率 <b>'
         + (sc.p * 100).toFixed(1) + '%</b>。這是最好的那一區。';
@@ -413,15 +431,20 @@
     }).join('');
 
     /* ── 本金切不到 500 份就提醒（真實遊戲有最低押注） ── */
-    if (bet < 1) {
+    /* 本金被最低押注卡住時，講清楚差多少錢、差多少達標率。
+       這不是話術，是這個遊戲的實際限制：最低押注 10 元，
+       所以本金決定你能切多細，而切多細直接決定達標率。 */
+    var ideal = RATIOS.map(function (r) { return { r: r, p: cell(multClamped, r).p }; })
+                  .sort(function (a, b) { return b.p - a.p; })[0];
+    if (ideal && ideal.r > BEST) {
+      var needBank = ideal.r * MIN_BET;
+      var gain = (ideal.p - c.p) * 100;
       $('tp-cta').innerHTML = '<div class="tp-warn" style="text-align:left">'
-        + '你的本金切成 500 份是每注 <b>' + betText(bet) + ' 元</b>，可能低於遊戲的最低押注。'
-        + '要用到建議的分注份數，本金至少要 <b>' + money(BEST) + ' 元</b>。</div>'
-        + '<a href="/line/?ch=plan&at=tool" data-cta="line-tp" style="margin-top:12px">加 LINE 拿完整打法對照表</a>';
-      var a = $('tp-cta').querySelector('a');
-      if (a) a.addEventListener('click', function () {
-        if (typeof gtag === 'function') gtag('event', 'line_intent', { source: 'target_plan' });
-      });
+        + '<b>你的本金 ' + money(bank) + ' 元、最低押注 ' + MIN_BET + ' 元，最多只能切成 '
+        + Math.floor(bank / MIN_BET) + ' 份。</b><br>'
+        + '這個目標最好的分注是 <b>' + ideal.r + ' 份</b>（達標率 ' + (ideal.p * 100).toFixed(1) + '%），'
+        + '要切到那麼細，本金需要 <b>' + money(needBank) + ' 元</b>——'
+        + '差距是 <b>' + gain.toFixed(1) + ' 個百分點</b>。</div>';
     } else { $('tp-cta').innerHTML = ''; }
 
     try { localStorage.setItem(SAVE, JSON.stringify({ bank: bank, goal: goal })); } catch (e) {}
