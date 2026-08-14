@@ -38,7 +38,12 @@
   'use strict';
 
   /* ── 可調參數：要改就改這一段 ───────────────────── */
-  var LIMITS = { sim: 3, session: 1 };          // 免費次數
+  /* 🔴 sim: Infinity＝機制模擬器完全免費，不限次、不用碼。
+     2026-08-14 從 3 次改成不限。模擬器是純模擬、沒有真錢，它的工作是
+     讓人相信我們懂這個遊戲——鎖住它只是把還沒信任我們的人擋在門外。
+     對外文案（bot 的 HOWTO、解鎖門檻圖）一直寫的都是「完全免費」，
+     程式碼卡 3 次是文案在說謊，兩邊必須一致。 */
+  var LIMITS = { sim: Infinity, session: 1 };   // 免費次數
   var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
   var LEVEL_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/level';   // 只查等級，不扣兌換次數
   /* 解鎖碼分三段輸入，不用打「-」。
@@ -590,6 +595,8 @@
   function hint(tool) {
     var host = tool === 'sim' ? document.querySelector('#pane-pre .batch-box') : null;
     if (!host) return;
+    // 不限次就不要掛提示，否則會顯示「還剩 Infinity 次」
+    if (!isFinite(LIMITS.sim)) { var t0 = host.querySelector('.seth-gate-left'); if (t0) t0.remove(); return; }
     var left = Math.max(0, LIMITS.sim - used('sim'));
     var tag = host.querySelector('.seth-gate-left');
     if (!tag) {
