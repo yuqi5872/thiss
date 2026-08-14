@@ -3,7 +3,8 @@
 /guides/storm-of-seth-beginner/ /storm-of-seth/ 301
 
 # 2026-08-13 本金試算併進分注打法：分注打法連「該押多少、打多久、何時收」都給了，是它的超集
-/tools/bankroll-check/ /tools/target-plan/ 301
+# 2026-08-14 技術SEO稽核發現原本指向/tools/target-plan/會再跳第二次301到#plan，改直接指向最終目的地，省一次跳轉
+/tools/bankroll-check/ /tools/storm-of-seth-session/#plan 301
 
 # 2026-08-13 分注打法只留工具台那一份，獨立頁是同一個東西不必兩個網址
 /tools/target-plan/ /tools/storm-of-seth-session/#plan 301
