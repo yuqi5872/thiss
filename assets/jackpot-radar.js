@@ -71,7 +71,7 @@
   var LEGACY_AI_KEY = 'seth-room-unlocked';
   var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
   var NEED_LEVEL = 3;
-  var LINE_URL = 'https://line.me/R/ti/p/@128zirab';
+  var LINE_URL = 'https://line.me/R/ti/p/@806ugpjh';
   var REG_URL = 'https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD'
               + '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate'
               + '&utm_campaign=ys368&utm_content=jackpot-radar';

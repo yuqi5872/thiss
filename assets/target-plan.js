@@ -27,7 +27,7 @@
   var LEGACY_AI_KEY = 'seth-room-unlocked';
   var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
   var NEED_LEVEL = 2;                                  // 當月累計存款 2,000
-  var LINE_URL = 'https://line.me/R/ti/p/@128zirab';   // 發碼的 bot 在這個帳號
+  var LINE_URL = 'https://line.me/R/ti/p/@806ugpjh';   // 發碼的 bot 在這個帳號（2026-08-14 從小夜 @128zirab 搬過來）
   var REG_URL = 'https://ys89.bet/activity/entry?url=/activity/detail/firstDeposit/NTD'
               + '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate'
               + '&utm_campaign=first_deposit&utm_content=target-plan';

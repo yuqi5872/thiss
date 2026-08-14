@@ -18,7 +18,7 @@
   var LEGACY_AI_KEY = 'seth-room-unlocked';
   var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
   var NEED_LEVEL = 2;                       // 手冊門檻：當月累計存款 2,000
-  var LINE_URL = 'https://line.me/R/ti/p/@128zirab';   // 發碼的 bot 在這個帳號
+  var LINE_URL = 'https://line.me/R/ti/p/@806ugpjh';   // 發碼的 bot 在這個帳號（2026-08-14 從小夜 @128zirab 搬過來）
 
   function read() {
     try { return JSON.parse(localStorage.getItem(UNLOCK_KEY)) || {}; } catch (e) { return {}; }
