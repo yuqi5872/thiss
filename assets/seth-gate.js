@@ -40,6 +40,7 @@
   /* ── 可調參數：要改就改這一段 ───────────────────── */
   var LIMITS = { sim: 3, session: 1 };          // 免費次數
   var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
+  var LEVEL_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/level';   // 只查等級，不扣兌換次數
   /* 解鎖碼分三段輸入，不用打「-」。
      🔴 這個長度必須跟 seth-unlock-bot 的 worker.js 的 SEG_LENS 一字不差，
      否則貼碼自動分配到三格時會切錯位置，兌換一定失敗。 */
@@ -611,11 +612,40 @@
     hint('sim');
   }
 
+  /* 每次開啟拿存著的碼去後端問一次目前等級。
+     🔴 為什麼一定要有這段：解鎖碼是「一人一組、永遠不變」，升級時後端只把
+        那一列的 level 調高。但網站的等級是存在 localStorage 的，不問就永遠
+        停在他上次貼碼那一刻的等級——對外講的「同一組碼會自己升級」就是假的，
+        使用者儲了 3,000 卻發現攻略還鎖著。
+     🔴 用 /api/level 不是 /api/redeem：redeem 會加兌換次數（那是綁裝置數用的），
+        每開一次頁面就扣一次的話，兩次就把自己的名額用光。
+     只升不降：後端回比較低的等級（碼被改判）時這裡不動，避免網路異常或
+     回應殘缺把已經解鎖的人鎖回去。真要降級是另一條路。 */
+  function syncLevel() {
+    var code = '';
+    try { code = localStorage.getItem('seth-gate-code-v1') || ''; } catch (e) {}
+    if (!code) return;
+    fetch(LEVEL_API, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ code: code })
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d || !d.ok) return;
+      var lv = Number(d.level);
+      if (!(lv > level())) return;
+      unlocked.level = lv;
+      write(UNLOCK_KEY, unlocked);
+      refresh();
+      track('tool_level_sync', { unlock_level: lv });
+    }).catch(function () { /* 連不上就沿用本機存的等級，不要把人鎖回去 */ });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     bindSim();
     bindSession();
     bindAi();
     refresh();
+    syncLevel();
     track('tool_gate_state', {
       sim_used: used('sim'), session_used: used('session'),
       unlock_level: level()
