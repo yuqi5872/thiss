@@ -640,12 +640,43 @@
     }).catch(function () { /* 連不上就沿用本機存的等級，不要把人鎖回去 */ });
   }
 
+  /* 網址帶 ?k=解鎖碼 就直接解鎖，不用他自己複製貼上。
+     🔴 這是整條動線最會掉人的一段：他人在 LINE 裡收到碼，要複製、切回
+        瀏覽器、找回剛才那個鎖、貼進三格輸入框。四個動作，而且是掉在
+        「他已經儲值完」之後——最不該掉的位置。bot 現在發的是帶 ?k= 的
+        連結，點一下就開。
+     成功之後把 k 從網址上清掉（replaceState）：不清的話他把網址分享出去
+     等於連碼一起送人，而且重新整理會重複跑一次核對。 */
+  function claimFromUrl() {
+    var m = /[?&]k=([a-zA-Z0-9-]{4,40})/.exec(location.search);
+    if (!m) return false;
+    var code = m[1].toLowerCase();
+    function strip() {
+      try {
+        var u = new URL(location.href);
+        u.searchParams.delete('k');
+        history.replaceState(null, '', u.pathname + u.search + u.hash);
+      } catch (e) {}
+    }
+    redeem(code).then(function (res) {
+      strip();
+      if (!res.ok) {
+        track('tool_unlock_link_fail', { reason: res.error });
+        return;                       // 失敗就安靜落回一般閘門，讓他手動貼
+      }
+      grant(res.level, 'link');
+      track('tool_unlock_link', { unlock_level: res.level });
+    });
+    return true;
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     bindSim();
     bindSession();
     bindAi();
     refresh();
-    syncLevel();
+    // 帶 ?k= 進來的話那條路已經會核對並寫入等級，不用再問一次後端
+    if (!claimFromUrl()) syncLevel();
     track('tool_gate_state', {
       sim_used: used('sim'), session_used: used('session'),
       unlock_level: level()
