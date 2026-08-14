@@ -20,6 +20,14 @@
      所以面板的上緣要照實際高度算，不能寫死。加新分頁時這裡不用改。 */
   function syncPaneTop() {
     if (!tabs) return;
+    /* 🔴 桌機版（≥761px）分頁列是左側 sidebar，高度＝整個可視區，
+       這時算出來的 --pane-top 會是一個沒有意義的大數字。
+       側欄模式下 CSS 直接用固定 inset，不吃 --pane-top，
+       但還是要清掉，否則從桌機縮到手機時會留下過期的值。 */
+    if (window.matchMedia('(min-width:761px)').matches) {
+      document.documentElement.style.removeProperty('--pane-top');
+      return;
+    }
     var top = tabs.offsetTop + tabs.offsetHeight + 4;
     document.documentElement.style.setProperty('--pane-top', top + 'px');
   }
