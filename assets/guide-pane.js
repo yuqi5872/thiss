@@ -24,9 +24,9 @@
   var API = 'https://seth-unlock-bot.ysyyds1688.workers.dev';
   var NEED_LEVEL = 3;                                   // 當月累計存款 3,000
   var LINE_URL = 'https://line.me/R/ti/p/@806ugpjh';    // 發碼的 bot 在這個帳號（2026-08-14 從小夜 @128zirab 搬過來）
-  var REG_URL = 'https://ys89.bet/activity/entry?url=/activity/detail/RegistrationBonus/NTD'
+  var REG_URL = 'https://ys89.bet/activity/entry?url=/activity/detail/firstDeposit/NTD'
               + '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate'
-              + '&utm_campaign=ys368&utm_content=full-guide';
+              + '&utm_campaign=first_deposit&utm_content=full-guide';
 
   function savedCode() { try { return localStorage.getItem(CODE_KEY) || ''; } catch (e) { return ''; } }
   function saveCode(c) { try { localStorage.setItem(CODE_KEY, c); } catch (e) {} }
