@@ -27,12 +27,16 @@
 
   /* 代理碼。對照表在 .claude/skills/paid-acquisition/data/proxy_map.json。
      🔴 代理碼名稱（fu003）跟網址參數（dvjhkv）是兩回事，不要混用。 */
-  var PROXY = { ad: 'd83wfg' };          // fu005 落地頁面品牌曝光
+  var PROXY = {
+    ad:      'd83wfg',   // 舊值，先留著相容已經發出去的連結
+    ad_m3:   'd83wfg',   // fu005 落地頁面品牌曝光 → M3 數位
+    ad_miao: 'zspxbd'    // fu009（原 ys89.tw，2026-08-17 改為廣告線）→ 喵喵
+  };
   var KEY = 'seth-src-v1';
 
   function saved() { try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
 
-  var m = /[?&]src=([a-z]{2,12})/.exec(location.search);
+  var m = /[?&]src=([a-z0-9_]{2,16})/.exec(location.search);
   if (m && !saved()) {
     try { localStorage.setItem(KEY, m[1]); } catch (e) {}
   }
