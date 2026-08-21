@@ -61,13 +61,18 @@
       // 每支都有自己的「加入好友管道」（管道欄＝code，來源＝bio），
       // 所以 LINE 後台也分得出是誰帶的。轉址頁記點擊、LINE 記加成，
       // 兩者相減＝點了但沒加成的流失率。
+      // 2026-08-20 使用者裁示：電子站六支裡的五支（不含小夜，她有自己獨立的官方帳號，
+      // 見下面 xiaoye 那行）從「加好友」改用「蓋章連結」——不是 lin.ee 加好友深連結，
+      // 是 line.me/R/oaMessage/ 開頭的「直接開對話＋帶入預填訊息」深連結，全部指向
+      // 電子站共用官方帳號 @806ugpjh，用預填文字（例：「我要工具 P08」）分辨是哪支帶來的。
+      // 對這支轉址頁來說只是換一個目的地網址，GA4 事件照樣先記再轉走，邏輯不用改。
       channels: {
-        yuchiazhi:  'https://lin.ee/puEeCFy',   // P-08 魚池阿智
-        fishdriver: 'https://lin.ee/6VKN9bp',   // P-09 捕魚老司機阿網
-        haogame:    'https://lin.ee/VHSZna5c',  // P-10 小豪遊戲筆記
-        zhansen:    'https://lin.ee/5GQtcEp',   // P-12 戰術阿森
-        egameobs:   'https://lin.ee/7DEgSYm',   // P-30 電子遊戲觀測所
-        xiaoye:     'https://lin.ee/Rd7IBMdf'   // P-11 小夜
+        yuchiazhi:  'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P08',   // P-08 魚池阿智
+        fishdriver: 'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P09',   // P-09 捕魚老司機阿網
+        haogame:    'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P10',   // P-10 小豪遊戲筆記
+        zhansen:    'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P12',   // P-12 戰術阿森
+        egameobs:   'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P30',   // P-30 電子遊戲觀測所
+        xiaoye:     'https://lin.ee/Rd7IBMdf'   // P-11 小夜——她自己獨立的官方帳號，不套用蓋章連結，維持加好友
       }
     },
     // 百家站與彩票站的官方帳號還沒建，先留設定位置。
