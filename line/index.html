@@ -107,13 +107,27 @@
 
   var target = CHANNELS[ch] || OA_URL;
 
+  /* 🔴 2026-08-28 加：代號不在 channels 白名單時，medium 改標 _noroute。
+     為什麼要有這一段——2026-08-27 獎號通出現一個沒登記的代號 haotong（手打的，
+     連 &at= 都沒有），它照樣轉得過去、GA4 照樣記到點擊，但因為沒有專屬 lin.ee，
+     跳的是通用官方帳號連結、不帶 oat__id，**LINE 後台那半邊的歸因整個斷掉**，
+     而且斷得完全無聲——沒有錯誤、沒有告警，是查別的事才偶然發現的。
+     旗標 has_line_route 早就埋在下面的 gtag 事件裡，但它是自訂維度、沒註冊，
+     所以永遠看不到。與其去 GA4 設自訂維度（四個資源各設一次、還不能追溯），
+     不如借用「來源/媒介」這個每天都在看的內建報表：斷掉的會自己跳出來。
+        line_addfriend           正常，有 oat__id，LINE 後台分得出來
+        line_addfriend_noroute   斷了，只有 GA4 這半邊追得到
+     要修的話是把該代號加進上面的 channels，或把連結改成正確代號。 */
+  var hasRoute = !!CHANNELS[ch];
+  var MEDIUM   = hasRoute ? 'line_addfriend' : 'line_addfriend_noroute';
+
   // utm_content 的取法：有 pid 就用 pid，讓這次點擊跟該則貼文的其他成效對得起來；
   // 沒有就用 <ch>_<at>，代表這是 bio 或通用位置的長期連結。
   var content = pid || (ch + '_' + at);
 
   var url = new URL(location.href);
   url.searchParams.set('utm_source',   ch);
-  url.searchParams.set('utm_medium',   'line_addfriend');
+  url.searchParams.set('utm_medium',   MEDIUM);
   url.searchParams.set('utm_campaign', 'oa_join');
   url.searchParams.set('utm_content',  content);
 
