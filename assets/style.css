@@ -355,7 +355,7 @@ tbody tr.featured td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
   aside { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   aside .side-box { margin-bottom: 0; }
 
-  .foot-grid { grid-template-columns: 1.6fr 1fr 1fr; }
+  .foot-grid { grid-template-columns: 1.6fr 1fr 1fr 1fr; }
   .foot-bottom { flex-direction: row; justify-content: space-between; flex-wrap: wrap; }
 }
 
