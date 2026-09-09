@@ -135,3 +135,20 @@
 .tp-lead b{color:var(--bright)}
 .tp-foot{margin-top:14px;color:var(--muted);font-size:.64rem;line-height:1.8}
 .tp-foot a{color:var(--cyan)}
+
+/* ── 算完之後的出口（2026-09-07 加）────────────────
+   為什麼：這站 28 天 268 session、251 次 target_plan_calc，但只有 13 次
+   outbound_click（4.9%）；算完的畫面上原本沒有任何下一步。
+   顏色一律成對寫（背景配前景），沿用 .tp-gate 既有的金色系，不引入新色票。 */
+.tp-exit{margin-top:11px;padding:16px 15px;border:1px solid var(--line);
+         background:linear-gradient(145deg,rgba(22,17,12,.96),rgba(7,6,10,.9));
+         color:#b9b2aa;text-align:left}
+.tp-exit-h{margin:0 0 7px;color:var(--bright);font-size:.86rem;font-weight:900;line-height:1.5}
+.tp-exit p{margin:0 0 9px;color:#b9b2aa;font-size:.7rem;line-height:1.85}
+.tp-exit p b{color:var(--bright)}
+.tp-exit-note{color:#8d8880 !important;font-size:.63rem !important;line-height:1.75 !important}
+.tp-exit-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;
+             width:100%;max-width:22em;padding:0 20px;
+             border:1px solid var(--bright);background:linear-gradient(135deg,#f4cf78,#a97b2c);
+             color:#15100a;font-size:.74rem;font-weight:900;text-decoration:none}
+.tp-exit-btn:hover{filter:brightness(1.06)}

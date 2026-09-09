@@ -247,6 +247,13 @@
     return { best: best, quick: quick, rows: rows, maxRatio: maxRatio };
   }
 
+  /* 出口網址：代理碼與活動頁跟 seth-gate.js 的 REG_BASE 一致（proxy=dvjhkv、首充），
+     只有 utm_medium/utm_content 不同，才分得出這一條是「工具算完的那一刻」帶出去的。
+     SKILL.md §4c：全站 CTA 一律指 firstDeposit、按鈕文案「前往註冊・首充送 1000」。 */
+  var EXIT_URL = 'https://ys89.bet/activity/entry?url=/activity/detail/firstDeposit/NTD'
+               + '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_result'
+               + '&utm_campaign=first_deposit&utm_content=target-plan-result';
+
   function render() {
     var bank = parseFloat($('tp-bank').value);
     var goal = parseFloat($('tp-goal').value);
@@ -321,16 +328,49 @@
        所以本金決定你能切多細，而切多細直接決定達標率。 */
     var ideal = RATIOS.map(function (r) { return { r: r, p: cell(multClamped, r).p }; })
                   .sort(function (a, b) { return b.p - a.p; })[0];
+    var ctaHtml = '';
     if (ideal && ideal.r > BEST) {
       var needBank = ideal.r * MIN_BET;
       var gain = (ideal.p - c.p) * 100;
-      $('tp-cta').innerHTML = '<div class="tp-warn" style="text-align:left">'
+      ctaHtml += '<div class="tp-warn" style="text-align:left">'
         + '<b>你的本金 ' + money(bank) + ' 元、最低押注 ' + MIN_BET + ' 元，最多只能切成 '
         + Math.floor(bank / MIN_BET) + ' 份。</b><br>'
         + '這個目標最好的分注是 <b>' + ideal.r + ' 份</b>（達標率 ' + (ideal.p * 100).toFixed(1) + '%），'
         + '要切到那麼細，本金需要 <b>' + money(needBank) + ' 元</b>——'
         + '差距是 <b>' + gain.toFixed(1) + ' 個百分點</b>。</div>';
-    } else { $('tp-cta').innerHTML = ''; }
+    }
+
+    /* ── 算完之後的出口（2026-09-07 加）──────────────────────────────
+       為什麼加：GA4 2026-08-07~09-03 實查，這站 28 天 268 個 session、
+       target_plan_calc 觸發 251 次，但 outbound_click 只有 13 次（4.9%）。
+       對照 ys89.fun 論壇同期是 305 session／126 次註冊點擊（41%）。
+       差別不在流量也不在追蹤（main.js 的事件委派已涵蓋動態插入的連結），
+       而在於「算完的那一刻」畫面上沒有任何下一步——#tp-cta 只有在本金
+       被最低押注卡住時才有東西，其餘情況一律被設成空字串。
+
+       文案紀律（照 SKILL.md §2 紅線寫，不要放寬）：
+       · 不保證獲利、不暗示提高中獎機率——所以明寫「單轉中獎機率沒有改變」。
+       · 不假裝親身消費經驗，只講這個模型自己算得出來的東西。
+       · 達標率一律標明是模擬值。
+       數字是用同一支 pickPlan() 重算的（本金加倍→倍數減半＋能切更細），
+       不是另外編一組好看的數字。 */
+    var dblPlan = pickPlan(Math.min(5, Math.max(1.5, mult / 2)), bank * 2);
+    var dblP = dblPlan.best.p;
+    var lift = (dblP - c.p) * 100;
+    ctaHtml += '<div class="tp-exit">'
+      + '<div class="tp-exit-h">本金是這張表上唯一你能動的變數</div>'
+      + '<p>目標 <b>' + money(goal) + ' 元</b> 不變，本金從 ' + money(bank) + ' 元變成 '
+      + money(bank * 2) + ' 元時，同一套模擬算出來的達標率是 <b>' + (dblP * 100).toFixed(1) + '%</b>'
+      + '（現在是 ' + (c.p * 100).toFixed(1) + '%'
+      + (lift > 0.05 ? '，差 ' + lift.toFixed(1) + ' 個百分點' : '') + '）。'
+      + '原因只有兩個：倍數變低，而且本金夠切得更細。</p>'
+      + '<p class="tp-exit-note">單轉的中獎機率完全沒有改變，變的只是你能撐幾轉。'
+      + '達標率是模擬值不是保證，首充加碼有 1 倍流水要求。</p>'
+      + '<a class="tp-exit-btn" href="' + EXIT_URL + '" target="_blank" rel="nofollow noopener">'
+      + '前往註冊・首充送 1000</a>'
+      + '</div>';
+    $('tp-cta').innerHTML = ctaHtml;
+    if (typeof gtag === 'function') gtag('event', 'target_plan_exit_shown', { bank: bank, p_now: Math.round(c.p * 1000) / 10 });
 
     try { localStorage.setItem(SAVE, JSON.stringify({ bank: bank, goal: goal })); } catch (e) {}
     if (typeof gtag === 'function') gtag('event', 'target_plan_calc', { mult: Math.round(mult * 10) / 10, bank: bank });
