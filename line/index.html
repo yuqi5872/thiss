@@ -118,6 +118,26 @@
         line_addfriend           正常，有 oat__id，LINE 後台分得出來
         line_addfriend_noroute   斷了，只有 GA4 這半邊追得到
      要修的話是把該代號加進上面的 channels，或把連結改成正確代號。 */
+
+  /* 各站自己的代理碼（來源 ai-launcher/config/sites_mirror.json 的 proxy_param）。
+     一定要用該站自己的碼，填錯的話首存會記到別站頭上，帳本就分不出這條路值不值得做。 */
+  var REG_PROXY = {
+    'picks168.com':    'zsuv56',
+    'tsaishen888.com': 'dvjhkv',
+    'dgcasnio.com':    'rs82gq',
+    'lott168.com':     'ia4juq'
+  };
+  function regUrl(reason) {
+    var p = REG_PROXY[key];
+    if (!p) return '';
+    return 'https://ys89.bet/activity/entry?url=/activity/detail/firstDeposit/NTD'
+         + '&proxy=' + p
+         + '&utm_source=' + encodeURIComponent(key)
+         + '&utm_medium=line_fallback'
+         + '&utm_campaign=first_deposit'
+         + '&utm_content=' + encodeURIComponent(ch + '_' + reason);
+  }
+
   var hasRoute = !!CHANNELS[ch];
   var MEDIUM   = hasRoute ? 'line_addfriend' : 'line_addfriend_noroute';
 
@@ -157,11 +177,69 @@
   // 使用者也不會被卡住太久。go() 用旗標防止 callback 和保底計時器
   // 同時觸發時轉址兩次。
   var redirected = false;
+
+  /* ── 備援出口（2026-09-14 加）──────────────────────────────────────
+     只在「LINE 這條路已經失敗」的時候才出現，不跟主出口搶點擊。
+     shown 旗標防止 pageshow 與計時器重複觸發、重複送 GA4 事件。 */
+  var exitShown = false;
+  function showExit(reason) {
+    if (exitShown) return;
+    exitShown = true;
+    var box = document.querySelector('.box');
+    if (!box) return;
+    var reg = regUrl(reason);
+    var html = '<h1>LINE 沒有自動開啟</h1>'
+      + '<p class="lead">可以再試一次，或直接到平台註冊——'
+      + '加 LINE 是為了拿工具用的，<b>註冊不需要先加好友</b>。</p>'
+      + '<a class="btn b1" id="retry" href="' + target + '">再試一次・開啟 LINE</a>';
+    if (reg) {
+      html += '<a class="btn b2" id="goreg" href="' + reg + '" target="_blank"'
+            + ' rel="nofollow sponsored noopener">前往註冊・首充送 1000</a>'
+            + '<p class="note">首充加碼有 1 倍流水要求，詳細條件以平台活動頁為準。</p>';
+    }
+    box.innerHTML = html;
+    if (typeof gtag === 'function') {
+      gtag('event', 'line_fallback_shown', {
+        station: key || 'unknown', channel: ch, reason: reason,
+        has_reg_exit: reg ? 'yes' : 'no'
+      });
+    }
+    var r = document.getElementById('goreg');
+    if (r) r.addEventListener('click', function () {
+      if (typeof gtag !== 'function') return;
+      /* 同時送 outbound_click——站群既有的儀表板與 cro_behavior_watch.py 認的是
+         這個事件名，只送自訂事件的話這條路在報表上等於不存在。 */
+      gtag('event', 'outbound_click', {
+        link_domain: 'ys89.bet', link_url: r.href,
+        source_page: '/line/', channel: ch, station: key || 'unknown'
+      });
+      gtag('event', 'line_fallback_click', {
+        station: key || 'unknown', channel: ch, reason: reason
+      });
+    });
+  }
+
+  /* 桌機開 line.me/R/oaMessage/ 是已知必壞的組合（會落到 LINE 官網首頁，
+     不是對話視窗），所以桌機遇到蓋章連結時直接不轉址、改給雙出口卡。
+     一般的 lin.ee 加好友連結桌機是正常的，維持自動轉址。 */
+  var isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+  var stampLink = target.indexOf('/oaMessage/') !== -1;
+
   function go() {
     if (redirected) return;
     redirected = true;
+    if (!isMobile && stampLink) { showExit('desktop_oamessage'); return; }
+    /* 轉址成功的話這個頁面會被銷毀，計時器跟著消失；只有轉址沒生效
+       （被瀏覽器擋掉、深連結沒人接）才會走到 showExit。 */
+    setTimeout(function () { showExit('no_redirect'); }, 2500);
     location.replace(target);
   }
+
+  /* 使用者從 LINE 按上一頁回來時，頁面是從 bfcache 還原的，
+     不會重跑上面的程式；沒有這一段的話他看到的是一個轉不完的 spinner。 */
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) showExit('back_from_line');
+  });
 
   if (GA_ID) {
     var s = document.createElement('script');
@@ -195,6 +273,17 @@
        border:3px solid #2a3550;border-top-color:#06c755;animation:s .8s linear infinite}
   @keyframes s{to{transform:rotate(360deg)}}
   a{color:#06c755}
+  /* 備援出口卡（2026-09-14 加）。按鈕最小高度 48px 是手機可點區的下限；
+     b2 用實心綠是因為它才是這張卡真正要被點的那一顆。 */
+  .box h1{font-size:19px;margin:0 0 10px;color:#fff;font-weight:800}
+  .box .lead{font-size:14.5px;line-height:1.7;margin:0 auto 18px;max-width:20em;color:#c3c9d8}
+  .box .lead b{color:#fff}
+  .btn{display:block;box-sizing:border-box;width:100%;max-width:19em;margin:0 auto 10px;
+       min-height:48px;line-height:1.4;padding:13px 18px;border-radius:10px;
+       font-weight:800;font-size:15px;text-decoration:none;text-align:center}
+  .b1{background:#182238;color:#e8eaf0;border:1px solid #2a3550}
+  .b2{background:#06c755;color:#06210f;border:1px solid #06c755}
+  .box .note{font-size:12px;line-height:1.6;color:#8d95a8;margin:12px auto 0;max-width:22em}
 </style>
 </head>
 <body>
