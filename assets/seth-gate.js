@@ -60,7 +60,7 @@
      那個門檻——最貴的門配最弱的獎品，只會讓人覺得不值。 */
   var NEED = { sim: 0, session: 1, summary: 1, ai: 1 };
   var LEVEL_NAME = { 1: '完成註冊', 2: '當月累計存款 2,000', 3: '當月累計存款 3,000' };
-  var LINE_URL = 'https://line.me/R/ti/p/@806ugpjh';
+  var LINE_URL = 'https://line.me/R/oaMessage/%40806ugpjh/?%E8%A7%A3%E9%8E%96%E7%A2%BC';
   /* 🔴 2026-08-13 從 368 體驗金改指首充 100%。
      原因（官方活動頁條款確認，不是推測）：首充活動規則第 1 條寫著
      「若有領取體驗金，請先完成體驗金流水以及出款成功後，才可參與首存活動」。
