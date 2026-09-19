@@ -18,7 +18,12 @@
   var LEGACY_AI_KEY = 'seth-room-unlocked';
   var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
   var NEED_LEVEL = 2;                       // 手冊門檻：當月累計存款 2,000
-  var LINE_URL = 'https://line.me/R/oaMessage/%40806ugpjh/?%E8%A7%A3%E9%8E%96%E7%A2%BC';   // 發碼的 bot 在這個帳號（2026-08-14 從小夜 @128zirab 搬過來）
+  // 發碼的 bot 在這個帳號（2026-08-14 從小夜 @128zirab 搬過來）
+  // 2026-09-19：oaMessage 只有手機+已裝LINE才生效，桌機改用一般加好友連結（同 ad-bridge-m3 的做法）
+  var LINE_ADD_URL = 'https://line.me/R/ti/p/@806ugpjh';
+  var LINE_MSG_URL = 'https://line.me/R/oaMessage/%40806ugpjh/?%E8%A7%A3%E9%8E%96%E7%A2%BC';
+  var LINE_IS_MOBILE = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+  var LINE_URL = LINE_IS_MOBILE ? LINE_MSG_URL : LINE_ADD_URL;
 
   function read() {
     try { return JSON.parse(localStorage.getItem(UNLOCK_KEY)) || {}; } catch (e) { return {}; }

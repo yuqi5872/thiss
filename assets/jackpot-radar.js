@@ -71,7 +71,11 @@
   var LEGACY_AI_KEY = 'seth-room-unlocked';
   var REDEEM_API = 'https://seth-unlock-bot.ysyyds1688.workers.dev/api/redeem';
   var NEED_LEVEL = 3;
-  var LINE_URL = 'https://line.me/R/oaMessage/%40806ugpjh/?%E8%A7%A3%E9%8E%96%E7%A2%BC';
+  // 2026-09-19：oaMessage 只有手機+已裝LINE才生效，桌機改用一般加好友連結（同 ad-bridge-m3 的做法）
+  var LINE_ADD_URL = 'https://line.me/R/ti/p/@806ugpjh';
+  var LINE_MSG_URL = 'https://line.me/R/oaMessage/%40806ugpjh/?%E8%A7%A3%E9%8E%96%E7%A2%BC';
+  var LINE_IS_MOBILE = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+  var LINE_URL = LINE_IS_MOBILE ? LINE_MSG_URL : LINE_ADD_URL;
   var REG_URL = 'https://ys89.bet/activity/entry?url=/activity/detail/firstDeposit/NTD'
               + '&proxy=dvjhkv&utm_source=tsaishen888&utm_medium=tool_gate'
               + '&utm_campaign=first_deposit&utm_content=jackpot-radar';

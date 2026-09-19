@@ -60,7 +60,13 @@
      那個門檻——最貴的門配最弱的獎品，只會讓人覺得不值。 */
   var NEED = { sim: 0, session: 1, summary: 1, ai: 1 };
   var LEVEL_NAME = { 1: '完成註冊', 2: '當月累計存款 2,000', 3: '當月累計存款 3,000' };
-  var LINE_URL = 'https://line.me/R/oaMessage/%40806ugpjh/?%E8%A7%A3%E9%8E%96%E7%A2%BC';
+  /* 🔴 2026-09-19 oaMessage 只有「手機且已裝 LINE」才會自動填字，桌機點下去
+     會落到 line.me 官網首頁、什麼都不會發生（ad-bridge-m3/index.html 已驗證過
+     同一件事）。桌機改用一般加好友連結，不要把桌機使用者留在沒反應的按鈕上。 */
+  var LINE_ADD_URL = 'https://line.me/R/ti/p/@806ugpjh';
+  var LINE_MSG_URL = 'https://line.me/R/oaMessage/%40806ugpjh/?%E8%A7%A3%E9%8E%96%E7%A2%BC';
+  var LINE_IS_MOBILE = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+  var LINE_URL = LINE_IS_MOBILE ? LINE_MSG_URL : LINE_ADD_URL;
   /* 🔴 2026-08-13 從 368 體驗金改指首充 100%。
      原因（官方活動頁條款確認，不是推測）：首充活動規則第 1 條寫著
      「若有領取體驗金，請先完成體驗金流水以及出款成功後，才可參與首存活動」。
