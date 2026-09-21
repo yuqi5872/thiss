@@ -324,6 +324,17 @@
       '<p class="seth-gate-msg" role="status"></p>' +
       '<p class="seth-gate-fine">本頁含合作連結。工具的計算結果不受此影響，也不會因為你有沒有註冊而改變。18 歲以上適用。</p>';
 
+    /* 🔴 2026-09-21 補：這顆 LINE 按鈕從建立以來就沒有任何點擊追蹤，
+       導致完全不知道「加 LINE 拿解鎖碼」有沒有人按——GA4 裡查到的
+       line_add_friend_click 其實是另一支 /line/index.html（社群bio轉址頁）
+       在同一個GA4資源下報的數字，跟這個工具閘門無關。事件名跟其他四支
+       閘門(guide-pane/jackpot-radar/target-plan/handbook-gate)的 line_intent
+       對齊，才能用同一個維度比較。 */
+    var lineLink = box.querySelector('.seth-gate-line');
+    if (lineLink) lineLink.addEventListener('click', function () {
+      track('line_intent', { source: 'seth_gate_panel', tool: cfg.tool });
+    });
+
     var codeRow = box.querySelector('.seth-gate-code');
     var boxes = buildCodeBoxes();
     codeRow.querySelector('.seth-gate-boxslot').replaceWith(boxes);
@@ -572,6 +583,12 @@
       '</div>' +
       '<p id="claim-msg" role="status" style="margin:11px 0 0;font-size:13.5px;min-height:1.2em;color:#ff9c9c"></p>' +
       '<p class="seth-gate-fine" style="text-align:center">本頁含合作連結。工具的計算結果不受此影響。18 歲以上適用。</p>';
+
+    /* 2026-09-21：同一個追蹤缺口，AI助手這顆閘門也補上（理由見上面panel()裡的註解）。 */
+    var lineLinkAi = gate.querySelector('.seth-gate-line');
+    if (lineLinkAi) lineLinkAi.addEventListener('click', function () {
+      track('line_intent', { source: 'seth_gate_ai' });
+    });
 
     var btn = $('claim-submit'), msg = $('claim-msg');
     var boxes = buildCodeBoxes();
