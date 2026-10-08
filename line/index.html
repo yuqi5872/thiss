@@ -37,47 +37,34 @@
 -->
 <script>
 (function () {
-  // 站別設定。key 是網域（比對後綴，所以 www. 開頭也吃得到）。
-  // ga 必須是該網域自己的評估 ID——填成別站的話，點擊會進錯資源，
-  // 會議總覽讀不到（實測過：ys89 站群那個資源完全收不到 picks168.com 的流量）。
   var STATIONS = {
     'picks168.com': {
       name: '體育賽事情報站｜Picks168',
-      ga: 'G-G961Y6MX5Q',          // GA4 資源 541257936
+      ga: 'G-G961Y6MX5Q',
       oa: '@554zzkjg',
       channels: {
-        god:     'https://lin.ee/NGNtzBj',   // 財神
-        shizu:   'https://lin.ee/Ydc5kq8',   // 體育賽事排雷大叔
-        cc:      'https://lin.ee/zdjqjY6',   // AI體育賽事分析
-        miya:    'https://lin.ee/tOztxat',   // 米亞運動賽事
-        cyq:     'https://lin.ee/S6OFVIJ',   // 陳亦強
-        hahaqiu: 'https://lin.ee/UqoYjNiS'   // 哈哈看球
+        god:     'https://lin.ee/NGNtzBj',
+        shizu:   'https://lin.ee/Ydc5kq8',
+        cc:      'https://lin.ee/zdjqjY6',
+        miya:    'https://lin.ee/tOztxat',
+        cyq:     'https://lin.ee/S6OFVIJ',
+        hahaqiu: 'https://lin.ee/UqoYjNiS'
       }
     },
     'tsaishen888.com': {
       name: '電子遊戲觀測所',
-      ga: 'G-XCBKJTBVTL',          // GA4 資源 543041773
+      ga: 'G-XCBKJTBVTL',
       oa: '@806ugpjh',
-      // 每支都有自己的「加入好友管道」（管道欄＝code，來源＝bio），
-      // 所以 LINE 後台也分得出是誰帶的。轉址頁記點擊、LINE 記加成，
-      // 兩者相減＝點了但沒加成的流失率。
-      // 2026-08-20 使用者裁示：電子站六支裡的五支（不含小夜，她有自己獨立的官方帳號，
-      // 見下面 xiaoye 那行）從「加好友」改用「蓋章連結」——不是 lin.ee 加好友深連結，
-      // 是 line.me/R/oaMessage/ 開頭的「直接開對話＋帶入預填訊息」深連結，全部指向
-      // 電子站共用官方帳號 @806ugpjh，用預填文字（例：「我要工具 P08」）分辨是哪支帶來的。
-      // 對這支轉址頁來說只是換一個目的地網址，GA4 事件照樣先記再轉走，邏輯不用改。
       channels: {
-        yuchiazhi:  'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P08',   // P-08 魚池阿智
-        fishdriver: 'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P09',   // P-09 捕魚老司機阿網
-        haogame:    'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P10',   // P-10 小豪遊戲筆記
-        zhansen:    'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P12',   // P-12 戰術阿森
-        egameobs:   'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P30',   // P-30 電子遊戲觀測所
-        xiaoye:     'https://lin.ee/Rd7IBMdf',   // P-11 小夜——她自己獨立的官方帳號，不套用蓋章連結，維持加好友
-        jiaqing612: 'https://lin.ee/SuB0MiZ'    // P-34 NICO（2026-09-24 新增）
+        yuchiazhi:  'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P08',
+        fishdriver: 'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P09',
+        haogame:    'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P10',
+        zhansen:    'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P12',
+        egameobs:   'https://line.me/R/oaMessage/%40806ugpjh/?%E6%88%91%E8%A6%81%E5%B7%A5%E5%85%B7%20P30',
+        xiaoye:     'https://lin.ee/Rd7IBMdf',
+        jiaqing612: 'https://lin.ee/SuB0MiZ'
       }
     },
-    // 百家站與彩票站的官方帳號還沒建，先留設定位置。
-    // ga 已確認：dgcasnio.com → GA4 資源 543332819；lott168.com → 543984577。
     'dgcasnio.com': { name: '百家站', ga: '', oa: '', channels: {} },
     'lott168.com':  { name: '彩票站', ga: '', oa: '', channels: {} }
   };
@@ -86,8 +73,6 @@
   var key = Object.keys(STATIONS).filter(function (d) {
     return host === d || host.endsWith('.' + d);
   })[0];
-  // 認不出網域時（本機測試、部署到沒設定過的網域）不要猜，用第一個站的設定
-  // 但把 station 標成 unknown，事後在 GA4 看得出來這批是從哪來的。
   var ST = STATIONS[key] || STATIONS['picks168.com'];
   var CHANNELS   = ST.channels || {};
   var OA_URL     = ST.oa ? 'https://line.me/R/ti/p/' + encodeURIComponent(ST.oa) : '';
@@ -97,9 +82,6 @@
   var pick = function (k, max) {
     return (q.get(k) || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, max);
   };
-  // ch/at/pid 是這頁自己的短參數；沒帶的話就從標準 UTM 參數推。
-  // 這樣系統裡「追蹤工具 → UTM 產生器」不必為 LINE 加特例——它照常產
-  // utm_source/utm_medium/utm_content，落地頁選這一頁就會自動對上。
   var med = pick('utm_medium', 32);
   var ch  = pick('ch', 32) || pick('utm_source', 32) || 'unknown';
   var at  = pick('at', 16) || (med.indexOf('bio') >= 0 ? 'bio'
@@ -142,8 +124,6 @@
   var hasRoute = !!CHANNELS[ch];
   var MEDIUM   = hasRoute ? 'line_addfriend' : 'line_addfriend_noroute';
 
-  // utm_content 的取法：有 pid 就用 pid，讓這次點擊跟該則貼文的其他成效對得起來；
-  // 沒有就用 <ch>_<at>，代表這是 bio 或通用位置的長期連結。
   var content = pid || (ch + '_' + at);
 
   var url = new URL(location.href);
@@ -152,8 +132,6 @@
   url.searchParams.set('utm_campaign', 'oa_join');
   url.searchParams.set('utm_content',  content);
 
-  // 這一站還沒設好 OA 的話不要轉——轉去空白網址只會是一個壞掉的頁面。
-  // 留在這裡至少畫面上說得清楚，也不會把使用者丟到不存在的地方。
   if (!target) {
     document.addEventListener('DOMContentLoaded', function () {
       var b = document.querySelector('.box');
@@ -166,17 +144,6 @@
     if (a) a.href = target;
   });
 
-  // 固定等 300ms 再轉的做法會漏事件：GA4 的追蹤庫是另外向 Google 下載的，
-  // 4G 或 LINE 內建瀏覽器有時候來不及在 300ms 內把 line_add_friend_click
-  // 這筆事件真的送出去，頁面就先跳轉、整個 JS 環境被銷毀，事件就憑空消失。
-  // 2026-08-13 實測過：同一份程式碼，電子站那次 session_start 和事件都送到了，
-  // 體育站這次只有 session_start 送到、事件本身沒送到——是時序問題，不是邏輯錯。
-  //
-  // 改用 GA4 官方建議的做法：event_callback 確認事件真的送出去之後才轉址，
-  // 比原本「賭 300ms 夠不夠」可靠。同時保留一個較長的保底時間（1200ms），
-  // 萬一 GA4 被瀏覽器隱私設定整個擋掉、callback 永遠不會觸發，
-  // 使用者也不會被卡住太久。go() 用旗標防止 callback 和保底計時器
-  // 同時觸發時轉址兩次。
   var redirected = false;
 
   /* ── 備援出口（2026-09-14 加）──────────────────────────────────────
@@ -254,14 +221,13 @@
     gtag('event', 'line_add_friend_click', {
       channel: ch, placement: at, post_id: pid || '(none)',
       station: key || 'unknown',
-      // 沒有專屬管道的走共用 OA；這個旗標讓事後看得出哪些是共用的
       has_line_route: CHANNELS[ch] ? 'yes' : 'no',
       transport_type: 'beacon',
       event_callback: go
     });
-    setTimeout(go, 1200);  // 保底：GA4 連不上時不要卡住使用者
+    setTimeout(go, 1200);
   } else {
-    go();  // 這一站沒設 GA4，沒有事件要等，直接轉
+    go();
   }
 })();
 </script>
