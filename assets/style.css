@@ -286,12 +286,12 @@ tbody tr.featured td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
 .float-ad {
   position: fixed; right: 16px; bottom: 16px; z-index: 80;
   width: min(150px, calc(40vw)); 
-  filter: drop-shadow(0 12px 26px rgba(20,10,60,.45));
+  filter: drop-shadow(0 0 12px rgba(255,45,120,.5)) drop-shadow(0 10px 22px rgba(20,10,60,.45));
   animation: floatBob 3s ease-in-out infinite;
 }
 .float-ad[hidden] { display: none; }
 .float-ad a { display: block; }
-.float-ad img { width: 100%; height: auto; display: block; }
+.float-ad img { width: 100%; height: auto; display: block; border-radius: 50%; }
 .float-ad-close {
   position: absolute; top: -6px; right: -6px; width: 26px; height: 26px;
   border: 2px solid rgba(255,255,255,.6); border-radius: 50%;
@@ -306,7 +306,7 @@ tbody tr.featured td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
   .float-ad {
     right: 10px;
     bottom: 10px;
-    width: min(112px, calc(38vw));
+    width: min(96px, calc(30vw));
   }
   .float-ad-close {
     width: 28px;
